@@ -15,6 +15,18 @@ struct datos{
 void *sumaNumeros(void *aux);
 
 int main(int argc,char* argv[]){
+	//Comprobar argumentos
+	if(argc!=2){
+		printf("Error al ejecutar el programa: 'ejercicio3.exe <numero de hilos>\n");
+		exit(-1);
+	}
+
+	//Comprobar número de hilos
+	if(atoi(argv[1])<=0 || atoi(argv[1])>10){
+		printf("Error: el numero de hilos debe estar comprendido entre 1 y 10\n");
+		exit(-1);
+	}
+
 	int i;
 	int reparto,resto;
 	long suma;
@@ -22,7 +34,6 @@ int main(int argc,char* argv[]){
 	int nHilos=atoi(argv[1]);
 	pthread_t th[nHilos];
 	struct datos *aux=malloc(sizeof(struct datos));
-
 
 	//números aleatorios
 	srand(time(NULL));
@@ -34,27 +45,23 @@ int main(int argc,char* argv[]){
 	reparto=10/nHilos;
 	resto=10%nHilos;
 	aux->iterator=0;	
+	aux->hilo=1;
 
 	//Crear hilos
 	printf("Sumando los siguientes números...\n");
-	printf("\n");  
 	for(i=0;i<10;i++){
-		printf("%d,",aux->vector[i]);
+		printf("%d ",aux->vector[i]);
 	}
 	printf("\n");
 
 	for(i=1;i<=nHilos;i++){
-
 		if(i==nHilos){
 			aux->repartoN=reparto+resto;
 			pthread_create(&th[i-1],NULL,(void *)sumaNumeros,(void *)aux);
-			aux->iterator++;
-			sleep(1);
 		}
 		else{
 			aux->repartoN=reparto;
 			pthread_create(&th[i-1],NULL,(void *)sumaNumeros,(void *)aux);
-			aux->iterator++;
 			sleep(1);	
 		}	
 	}
@@ -70,16 +77,18 @@ int main(int argc,char* argv[]){
 	printf("Suma total: %ld\n",sumTotal);
 }
 
-
 void *sumaNumeros(void *aux){
 	struct datos * auxiliar= (struct datos*) aux;
 	int i;
 	long suma=0;
-	printf("Hilo %d: suma %d numeros, que son %d, %d y %d
-	for(i=auxiliar->iterator;i<auxiliar->repartoN;i++){
-		suma+=auxiliar->vector[i];
-		printf("%ld\n",suma);
-	}
 
+	printf("\nHilo %d: sumando",auxiliar->hilo);
+	for(i=0;i<auxiliar->repartoN;i++){
+		printf(" %d",auxiliar->vector[auxiliar->iterator]);
+		suma+=auxiliar->vector[auxiliar->iterator];
+		auxiliar->iterator++;
+	}
+	printf("...\nSuma=%ld\n",suma);
+	auxiliar->hilo++;
 	pthread_exit((void*)suma);
 }
