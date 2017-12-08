@@ -91,4 +91,4 @@ void *sumaNumeros(void *aux){
 	printf("...\nSuma=%ld\n",suma);
 	auxiliar->hilo++;
 	pthread_exit((void*)suma);
-}
+} 
