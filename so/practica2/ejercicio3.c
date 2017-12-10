@@ -1,8 +1,6 @@
-#include <stdio.h> 
 #include <stdlib.h> 
 #include <pthread.h>
 #include <stdio.h>
-#include <time.h>
 #include <unistd.h>
 
 struct datos{
@@ -62,7 +60,7 @@ int main(int argc,char* argv[]){
 		else{
 			aux->repartoN=reparto;
 			pthread_create(&th[i-1],NULL,(void *)sumaNumeros,(void *)aux);
-			sleep(1);	
+			usleep(1000);	
 		}	
 	}
 
@@ -91,4 +89,4 @@ void *sumaNumeros(void *aux){
 	printf("...\nSuma=%ld\n",suma);
 	auxiliar->hilo++;
 	pthread_exit((void*)suma);
-} 
+}
