@@ -4,6 +4,7 @@
 #include <unistd.h>
 
 #define N_PROVEEDORES 5  //NÚMERO DE PROVEEDORES/MODELOS DE CAMISETA DEL EJERCICIO
+#define CANTIDAD_INICIAL 500  //CANTIDAD INICIAL DE CAMISETAS PARA CADA MODELO
 
 int camisetas[N_PROVEEDORES];
 pthread_mutex_t mtx=PTHREAD_MUTEX_INITIALIZER;
@@ -27,8 +28,8 @@ int main(){
 	//crear el stock de cada modelo (cantidad inicial de camisetas: 500)
 	printf("Valores iniciales:\n");
 	for(i=0;i<N_PROVEEDORES;i++){
-		camisetas[i]=500;
-		printf("camisetas[%ld]=500\n",i);
+		camisetas[i]=CANTIDAD_INICIAL;
+		printf("camisetas[%ld]=%d\n",i,CANTIDAD_INICIAL);
 	}
 	printf("\nClientes: %d\n",n);
 	printf("Proveedores: %d\n\n",N_PROVEEDORES);
