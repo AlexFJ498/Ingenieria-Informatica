@@ -60,7 +60,7 @@ double ed::Vector3D::alfa(){
 	alfa=angulo(v);
 
 	#ifndef NDEBUG
-		assert(alfa=angulo(v);
+		assert(alfa=angulo(v));
 	#endif
 	return alfa;
 }
@@ -71,7 +71,7 @@ double ed::Vector3D::beta(){
 	#endif
 
 	double beta;
-	Vector v(0,1,0);
+	Vector3D v(0,1,0);
 	beta=angulo(v);
 
 	#ifndef NDEBUG
@@ -95,7 +95,7 @@ double ed::Vector3D::gamma(){
 	return gamma;
 }
 
-double ed::Vector3D::dotproduct(Vector3D v){
+double ed::Vector3D::dotProduct(Vector3D v){
 	double producto;
 	producto=v1_*v.get1()+v2_*get2()+v3_*get3();
 
@@ -105,9 +105,27 @@ double ed::Vector3D::dotproduct(Vector3D v){
 	return producto;
 }
 
-Vector3D ed::Vector3D::crossProduct(Vector3D v){
+ed::Vector3D ed::Vector3D::crossProduct(Vector3D v){
+	Vector3D w(0,0,0);
+	w.v1_=get2()*v.v3_-get3()*v.v2_;
+	w.v2_=get3()*v.v1_-get1()*v.v3_;
+	w.v3_=get1()*v.v2_-get2()*v.v1_;
+
+	#ifndef NDEBUG
+		assert((dotProduct(w)==0) and (v.dotProduct(w)==0) and 
+				(w.modulo()==modulo()*v.modulo()*sin(angulo(v))));
+	#endif
+	return w;
+}
+
+double ed::Vector3D::productoMixto(Vector3D v,Vector3D w){
 	double producto;
-	producto=
+	producto=dotProduct(v.crossProduct(w));
+
+	#ifndef NDEBUG
+		assert(dotProduct(v.crossProduct(w)));
+	#endif
+	return producto;
 }
 
 ////////////////////////////////////////////////////////////////
@@ -115,7 +133,89 @@ Vector3D ed::Vector3D::crossProduct(Vector3D v){
 // MODIFICADORES
 
 // COMPLETAR
+void ed::Vector3D::set1(double v){
+	v1_=v;
 
+	#ifndef NDEBUG
+		assert(get1()==v);
+	#endif
+}
+
+void ed::Vector3D::set2(double v){
+	v2_=v;
+
+	#ifndef NDEBUG
+		assert(get2()==v);
+	#endif
+}
+
+void ed::Vector3D::set3(double v){
+	v3_=v;
+
+	#ifndef NDEBUG
+		assert(get3()==v);
+	#endif
+}
+
+void ed::Vector3D::sumConst(double k){
+	Vector3D old(0,0,0);
+	old=*this;
+
+	v1_=old.v1_+k;
+	v2_=old.v2_+k;
+	v3_=old.v3_+k;
+
+	#ifndef NDEBUF
+		assert(get1()==old.get1()+k and
+			   get2()==old.get2()+k and
+			   get3()==old.get3()+k);
+	#endif
+}
+
+void ed::Vector3D::sumVect(Vector3D v){
+	Vector3D old(0,0,0);
+	old=*this;
+
+	v1_=old.v1_+v.v1_;
+	v2_=old.v2_+v.v2_;
+	v3_=old.v3_+v.v3_;
+
+	#ifndef NDEBUG
+		assert(get1()==old.get1()+v.get1() and
+			   get2()==old.get2()+v.get2() and
+			   get3()==old.get3()+v.get3());
+	#endif
+}
+
+void ed::Vector3D::multConst(double k){
+	Vector3D old(0,0,0);
+	old=*this;
+
+	v1_=old.v1_*k;
+	v2_=old.v2_*k;
+	v3_=old.v3_*k;
+
+	#ifndef NDEBUG
+		assert(get1()==old.get1()*k and
+			   get2()==old.get2()*k and
+			   get3()==old.get3()*k);
+	#endif
+}
+
+void ed::Vector3D::multVect(Vector3D v){
+	Vector3D old(0,0,0);
+	old=*this;
+
+	v1_=old.v1_*v.v1_;
+	v2_=old.v2_*v.v2_;
+	v3_=old.v3_*v.v3_;
+
+	#ifndef NDEBUG
+		assert(get1()==old.get1()*v.get1() and
+			   get2()==old.get2()*v.get2() and
+			   get3()==old.get3()*v.get3());
+	#endif
+}
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -123,15 +223,114 @@ Vector3D ed::Vector3D::crossProduct(Vector3D v){
 // OPERADORES
 
 // COMPLETAR
+Vector3D ed::Vector3D::&operator=(Vector3D const &objeto){
+	*this=objeto;
 
+	#ifndef NDEBUG
+		assert(get1()==objeto.get1() and
+			   get2()==objeto.get2() and
+			   get3()==objeto.get3());
+	#endif
+	return *this;
+}
 
+bool ed::Vector3D::operator == (Vector3D const &objeto) const{
+	if(get1()!=objeto.get1() || get2()!)=objeto.get2() || get3()!=objeto.get3()){
+		return false;
+	}
 
+	#ifndef NDEBUG
+		assert(get1()==v.get1() and
+			   get2()==v.get2() and
+			   get3()==v.get3());
+	#endif
+	return true;
+}
+
+Vector3D ed::Vector3D::operator+(Vector3D v){
+	Vector3D aux(0,0,0);
+	double v1,v2,v3;
+
+	v1=this->get1()+v.get1();
+	v2=this->get2()+v.get2();
+	v3=this->get3()+v.get3();
+
+	aux.set1(v1);
+	aux.set2(v2);
+	aux.set3(v3);
+
+	#ifndef NDEBUG
+		assert(aux.get1()==get1()+v.get1() and
+			   aux.get2()==get2()+v.get2() and
+			   aux.get3()==get3()+v.get3());
+	#endif
+	return aux;
+}
+
+Vector3D ed::Vector3D::operator+(Vector3D v){
+	Vector3D aux(0,0,0);
+	aux=*this;
+
+	#ifndef NDEBUG
+		assert(aux.get1()==get1() and
+			   aux.get2()==get2() and
+			   aux.get3()==get3());
+	#endif
+	return aux;
+}
+
+Vector3D ed::Vector3D::operator-(Vector3D v){
+	Vector3D aux(0,0,0);
+	double v1,v2,v3;
+
+	v1=this->get1()-v.get1();
+	v2=this->get2()-v.get2();
+	v3=this->get3()-v.get3();
+
+	aux.set1(v1);
+	aux.set2(v2);
+	aux.set3(v3);
+
+	#ifndef NDEBUG
+		assert(aux.get1()==get1()-v.get1() and
+			   aux.get2()==get2()-v.get2() and
+			   aux.get3()==get3()-v.get3());
+	#endif
+	return aux;
+}
+
+Vector3D ed::Vector3D::operator-(Vector3D v){
+	Vector3D aux(0,0,0);
+
+	aux.set1(-v1_);
+	aux.set2(-v2_);
+	aux.set2(-v3_);
+
+	#ifndef
+		assert(aux.get1()==-get1() and
+			   aux.get2()==-get2() and
+			   aux.get3()==-get3());
+	#endif
+}
+
+Vector3D ed::Vector3D::operator*(double k){
+	Vector3D aux(0,0,0);
+	double v1,v2,v3;
+
+	
+}
 ////////////////////////////////////////////////////////////////////////////////
 
 // FUNCIONES DE LECTURA Y ESCRITURA
 
 // COMPLETAR
+void ed::Vector3D::leerVector3D(){
+	std::cin>>v1_>>v2_>>v3_;
+}
 
+void ed::Vector3D::escribirVector3D(){
+	std::cout<<"("<<v1_<<","<<v2_<<","<<v3_<<")"<<std::endl;
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 
