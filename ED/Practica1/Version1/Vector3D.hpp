@@ -45,7 +45,7 @@ class Vector3D
 	//! \name Constructores de la clase Vector3D
 
 	// COMPLETAR
-	Vector3D(v1,v2,v3){
+	Vector3D(double v1,double v2,double v3){
 		v1_=v1;
 		v2_=v2;
 		v3_=v3;
@@ -73,7 +73,13 @@ class Vector3D
 	//! \name Modificadores: funciones de modificación de Vector3D
 
 	// COMPLETAR
-
+	void set1(double v);
+	void set2(double v);
+	void set3(double v);
+	void sumConst(double k);
+	void sumVect(Vector3D v);
+	void multConst(double k);
+	void multVect(Vector3D v);
 
     //! \name Operadores de la clase
    
@@ -84,12 +90,20 @@ class Vector3D
 	bool operator == (Vector3D const &objeto) const;
 
 	// COMPLETAR EL RESTO DE OPERADORES
-
+	Vector3D operator+(Vector3D const &v);
+	Vector3D operator+(Vector3D const &v);
+	Vector3D operator-(Vector3D const &v);
+	Vector3D operator-(Vector3D const &v);
+	Vector3D operator*(double k);
+	Vector3D operator*(double k);
+	Vector3D operator*(Vector3D const &v);
+	Vector3D operator^(Vector3D const &v);
 
 	//! \name Funciones lectura y escritura de la clase Vector3D
 
 	// COMPLETAR
-
+	void leerVector3D();
+	void escribirVector3D();
 }; // Fin de la definición de la clase Vector3D
 
 
