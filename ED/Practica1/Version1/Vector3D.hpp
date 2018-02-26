@@ -45,15 +45,41 @@ class Vector3D
 	//! \name Constructores de la clase Vector3D
 
 	// COMPLETAR
+	Vector3D(){
+		v1_=0;
+		v2_=0;
+		v3_=0;
+
+		#ifndef NDEBUG
+			assert(get1()==0 and
+				   get2()==0 and
+				   get3()==0);
+		#endif
+	}
+
 	Vector3D(double v1,double v2,double v3){
 		v1_=v1;
 		v2_=v2;
 		v3_=v3;
 
-	#ifndef NDEBUG
-		//Postcondición
-		assert((get1()==v1_) and (get2()==v2_) and (get3()==v3_));
-	#endif
+		#ifndef NDEBUG
+			//Postcondición
+			assert(get1()==v1_ and 
+				   get2()==v2_ and 
+				   get3()==v3_);
+		#endif
+	}
+
+	Vector3D(Vector3D const &v){
+		v1_=v.v1_;
+		v2_=v.v2_;
+		v3_=v.v3_;
+
+		#ifndef NDEBUG
+			assert(get1()==v.get1() and
+				   get2()==v.get2() and
+				   get3()==v.get3());
+		#endif
 	}
 	//! \name Observadores: funciones de consulta de Vector3D
 
@@ -61,14 +87,14 @@ class Vector3D
 	double get1()const;
 	double get2()const;
 	double get3()const;
-	double modulo();
-	double angulo(Vector3D v);
-	double alfa();
-	double beta();
-	double gamma();
-	double dotProduct(Vector3D v);
-	Vector3D crossProduct(Vector3D v);
-	double productoMixto(Vector3D v,Vector3D w);
+	double modulo()const;
+	double angulo(Vector3D const &v)const;
+	double alfa()const;
+	double beta()const;
+	double gamma()const;
+	double dotProduct(Vector3D const &v)const;
+	Vector3D crossProduct(Vector3D const &v)const;
+	double productoMixto(Vector3D const &v,Vector3D const &w)const;
 
 	//! \name Modificadores: funciones de modificación de Vector3D
 
@@ -77,9 +103,9 @@ class Vector3D
 	void set2(double v);
 	void set3(double v);
 	void sumConst(double k);
-	void sumVect(Vector3D v);
+	void sumVect(Vector3D const &v);
 	void multConst(double k);
-	void multVect(Vector3D v);
+	void multVect(Vector3D const &v);
 
     //! \name Operadores de la clase
    
@@ -90,20 +116,19 @@ class Vector3D
 	bool operator == (Vector3D const &objeto) const;
 
 	// COMPLETAR EL RESTO DE OPERADORES
-	Vector3D operator+(Vector3D const &v);
-	Vector3D operator+(Vector3D const &v);
-	Vector3D operator-(Vector3D const &v);
-	Vector3D operator-(Vector3D const &v);
-	Vector3D operator*(double k);
-	Vector3D operator*(double k);
-	Vector3D operator*(Vector3D const &v);
-	Vector3D operator^(Vector3D const &v);
+	Vector3D operator+(Vector3D const &v)const;
+	Vector3D operator+()const;
+	Vector3D operator-(Vector3D const &v)const;
+	Vector3D operator-()const;
+	Vector3D operator*(double const k)const;
+	Vector3D operator*(Vector3D const &v)const;
+	Vector3D operator^(Vector3D const &v)const;
 
 	//! \name Funciones lectura y escritura de la clase Vector3D
 
 	// COMPLETAR
 	void leerVector3D();
-	void escribirVector3D();
+	void escribirVector3D()const;
 }; // Fin de la definición de la clase Vector3D
 
 
@@ -113,7 +138,6 @@ class Vector3D
 
 	// COMPLETAR COMENTARIOS DE DOXYGEN
     Vector3D & operator* (double k, Vector3D const & objeto);
-
 
 	// COMPLETAR COMENTARIOS DE DOXYGEN
     istream &operator>>(istream &stream, Vector3D &objeto);
