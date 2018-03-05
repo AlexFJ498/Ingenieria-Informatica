@@ -35,17 +35,20 @@ double ed::Vector3D::modulo()const{
 	modulo=sqrt(v1_*v1_+v2_*v2_+v3_*v3_);
 
 	#ifndef NDEBUG
-		assert(modulo=sqrt(get1()*get1()+get2()*get2()+get3()*get3()));
+		assert((std::abs(modulo-sqrt(get1()*get1()+get2()*get2()+get3()*get3())))<COTA_ERROR);
 	#endif
 	return modulo;
 }
 
 double ed::Vector3D::angulo(Vector3D const &v)const{
+	#ifndef NDEBUG
+		assert(modulo()*v.modulo()>0);
+	#endif
 	double angulo;
 	angulo=acos(dotProduct(v)/(modulo()*v.modulo()));
 
 	#ifndef NDEBUG
-		assert(angulo=acos(dotProduct(v)/modulo()*v.modulo()));
+		assert(std::abs(angulo-acos(dotProduct(v)/(modulo()*v.modulo())))<COTA_ERROR);
 	#endif
 	return angulo;
 }
@@ -60,7 +63,7 @@ double ed::Vector3D::alfa()const{
 	alfa=angulo(v);
 
 	#ifndef NDEBUG
-		assert(alfa=angulo(v));
+		assert((std::abs(alfa-angulo(v)))<COTA_ERROR);
 	#endif
 	return alfa;
 }
@@ -75,7 +78,7 @@ double ed::Vector3D::beta()const{
 	beta=angulo(v);
 
 	#ifndef NDEBUG
-		assert(beta=angulo(v));
+		assert((std::abs(beta-angulo(v)))<COTA_ERROR);
 	#endif
 	return beta;
 }
@@ -97,10 +100,10 @@ double ed::Vector3D::gamma()const{
 
 double ed::Vector3D::dotProduct(Vector3D const &v)const{
 	double producto;
-	producto=v1_*v.get1()+v2_*get2()+v3_*get3();
+	producto=v1_*v.get1()+v2_*v.get2()+v3_*v.get3();
 
 	#ifndef NDEBUG
-		assert(producto=get1()*v.get1()+get2()*v.get2()+get3()*v.get3());
+		assert((std::abs(producto-(get1()*v.get1()+get2()*v.get2()+get3()*v.get3())))<COTA_ERROR);
 	#endif
 	return producto;
 }
@@ -113,7 +116,7 @@ ed::Vector3D ed::Vector3D::crossProduct(Vector3D const &v)const{
 
 	#ifndef NDEBUG
 		assert((dotProduct(w)==0) and (v.dotProduct(w)==0) and 
-				(w.modulo()==modulo()*v.modulo()*sin(angulo(v))));
+				(std::abs(w.modulo()-(modulo()*v.modulo()*sin(angulo(v))))<COTA_ERROR));
 	#endif
 	return w;
 }
@@ -123,7 +126,7 @@ double ed::Vector3D::productoMixto(Vector3D const &v,Vector3D const &w)const{
 	producto=dotProduct(v.crossProduct(w));
 
 	#ifndef NDEBUG
-		assert(dotProduct(v.crossProduct(w)));
+		assert(std::abs(producto-dotProduct(v.crossProduct(w)))<COTA_ERROR);
 	#endif
 	return producto;
 }
@@ -137,7 +140,7 @@ void ed::Vector3D::set1(double v){
 	v1_=v;
 
 	#ifndef NDEBUG
-		assert(get1()==v);
+		assert(std::abs(get1()-v)<COTA_ERROR);
 	#endif
 }
 
@@ -145,7 +148,7 @@ void ed::Vector3D::set2(double v){
 	v2_=v;
 
 	#ifndef NDEBUG
-		assert(get2()==v);
+		assert(std::abs(get2()-v)<COTA_ERROR);
 	#endif
 }
 
@@ -153,67 +156,63 @@ void ed::Vector3D::set3(double v){
 	v3_=v;
 
 	#ifndef NDEBUG
-		assert(get3()==v);
+		assert((std::abs(get3()-v))<COTA_ERROR);
 	#endif
 }
 
 void ed::Vector3D::sumConst(double k){
-	Vector3D old(0,0,0);
-	old=*this;
+	Vector3D old=*this;
 
 	v1_=old.v1_+k;
 	v2_=old.v2_+k;
 	v3_=old.v3_+k;
 
 	#ifndef NDEBUF
-		assert(get1()==old.get1()+k and
-			   get2()==old.get2()+k and
-			   get3()==old.get3()+k);
+		assert(((std::abs(get1()-(old.get1()+k)))<COTA_ERROR) and
+			   ((std::abs(get2()-(old.get2()+k)))<COTA_ERROR) and
+			   ((std::abs(get3()-(old.get3()+k)))<COTA_ERROR));
 	#endif
 }
 
 void ed::Vector3D::sumVect(Vector3D const &v){
-	Vector3D old(0,0,0);
-	old=*this;
+	Vector3D old=*this;
 
 	v1_=old.v1_+v.v1_;
 	v2_=old.v2_+v.v2_;
 	v3_=old.v3_+v.v3_;
 
 	#ifndef NDEBUG
-		assert(get1()==old.get1()+v.get1() and
-			   get2()==old.get2()+v.get2() and
-			   get3()==old.get3()+v.get3());
+		assert((std::abs(get1()-(old.get1()+v.get1()))<COTA_ERROR) and
+			   (std::abs(get2()-(old.get2()+v.get2()))<COTA_ERROR) and
+			   (std::abs(get3()-(old.get3()+v.get3()))<COTA_ERROR));
 	#endif
 }
 
 void ed::Vector3D::multConst(double k){
-	Vector3D old(0,0,0);
-	old=*this;
+	Vector3D old=*this;
 
 	v1_=old.v1_*k;
 	v2_=old.v2_*k;
 	v3_=old.v3_*k;
 
 	#ifndef NDEBUG
-		assert(get1()==old.get1()*k and
-			   get2()==old.get2()*k and
-			   get3()==old.get3()*k);
+		assert((std::abs(get1()-old.get1()*k)<COTA_ERROR) and
+			   (std::abs(get2()-old.get2()*k)<COTA_ERROR) and
+			   (std::abs(get3()-old.get3()*k)<COTA_ERROR));
 	#endif
 }
 
 void ed::Vector3D::multVect(Vector3D const &v){
-	Vector3D old(0,0,0);
-	old=*this;
+	Vector3D old=*this;
 
 	v1_=old.v1_*v.v1_;
 	v2_=old.v2_*v.v2_;
 	v3_=old.v3_*v.v3_;
 
 	#ifndef NDEBUG
-		assert(get1()==old.get1()*v.get1() and
-			   get2()==old.get2()*v.get2() and
-			   get3()==old.get3()*v.get3());
+		assert((std::abs(get1()-old.get1()*v.get1())<COTA_ERROR) and
+			   (std::abs(get2()-old.get2()*v.get2())<COTA_ERROR) and
+			   (std::abs(get3()-old.get3()*v.get3())<COTA_ERROR));
 	#endif
 }
 
@@ -224,12 +223,14 @@ void ed::Vector3D::multVect(Vector3D const &v){
 
 // COMPLETAR
 ed::Vector3D& ed::Vector3D::operator=(Vector3D const &objeto){
-	*this=objeto;
+	this->v1_=objeto.v1_;
+	this->v2_=objeto.v2_;
+	this->v3_=objeto.v3_;
 
 	#ifndef NDEBUG
-		assert(get1()==objeto.get1() and
-			   get2()==objeto.get2() and
-			   get3()==objeto.get3());
+		assert((std::abs(get1()-objeto.get1())<COTA_ERROR) and
+			   (std::abs(get2()-objeto.get2())<COTA_ERROR) and
+			   (std::abs(get3()-objeto.get3())<COTA_ERROR));
 	#endif
 	return *this;
 }
@@ -240,61 +241,50 @@ bool ed::Vector3D::operator == (Vector3D const &objeto) const{
 	}
 
 	#ifndef NDEBUG
-		assert(get1()==objeto.get1() and
-			   get2()==objeto.get2() and
-			   get3()==objeto.get3());
+		assert((std::abs(get1()-objeto.get1())<COTA_ERROR) and
+			   (std::abs(get2()-objeto.get2())<COTA_ERROR) and
+			   (std::abs(get3()-objeto.get3())<COTA_ERROR));
 	#endif
 	return true;
 }
 
 ed::Vector3D ed::Vector3D::operator+(Vector3D const &v)const{
 	Vector3D aux(0,0,0);
-	double v1,v2,v3;
 
-	v1=this->get1()+v.get1();
-	v2=this->get2()+v.get2();
-	v3=this->get3()+v.get3();
-
-	aux.set1(v1);
-	aux.set2(v2);
-	aux.set3(v3);
+	aux.v1_=this->v1_+v.v1_;
+	aux.v2_=this->v2_+v.v2_;
+	aux.v3_=this->v3_+v.v3_;
 
 	#ifndef NDEBUG
-		assert(aux.get1()==get1()+v.get1() and
-			   aux.get2()==get2()+v.get2() and
-			   aux.get3()==get3()+v.get3());
+		assert((std::abs(aux.get1()-(get1()+v.get1()))<COTA_ERROR) and
+			   (std::abs(aux.get2()-(get2()+v.get2()))<COTA_ERROR) and
+			   (std::abs(aux.get3()-(get3()+v.get3()))<COTA_ERROR));
 	#endif
 	return aux;
 }
 
 ed::Vector3D ed::Vector3D::operator+()const{
-	Vector3D aux(0,0,0);
-	aux=*this;
+	Vector3D aux=*this;
 
 	#ifndef NDEBUG
-		assert(aux.get1()==get1() and
-			   aux.get2()==get2() and
-			   aux.get3()==get3());
+		assert((std::abs(aux.get1()-get1())<COTA_ERROR) and
+			   (std::abs(aux.get2()-get2())<COTA_ERROR) and
+			   (std::abs(aux.get3()-get3())<COTA_ERROR));
 	#endif
 	return aux;
 }
 
 ed::Vector3D ed::Vector3D::operator-(Vector3D const &v)const{
 	Vector3D aux(0,0,0);
-	double v1,v2,v3;
 
-	v1=this->get1()-v.get1();
-	v2=this->get2()-v.get2();
-	v3=this->get3()-v.get3();
-
-	aux.set1(v1);
-	aux.set2(v2);
-	aux.set3(v3);
+	aux.v1_=this->v1_-v.v1_;
+	aux.v2_=this->v2_-v.v2_;
+	aux.v3_=this->v3_-v.v3_;
 
 	#ifndef NDEBUG
-		assert(aux.get1()==get1()-v.get1() and
-			   aux.get2()==get2()-v.get2() and
-			   aux.get3()==get3()-v.get3());
+		assert((std::abs(aux.get1()-(get1()-v.get1()))<COTA_ERROR) and
+			   (std::abs(aux.get2()-(get2()-v.get2()))<COTA_ERROR) and
+			   (std::abs(aux.get3()-(get3()-v.get3()))<COTA_ERROR));
 	#endif
 	return aux;
 }
@@ -302,14 +292,14 @@ ed::Vector3D ed::Vector3D::operator-(Vector3D const &v)const{
 ed::Vector3D ed::Vector3D::operator-()const{
 	Vector3D aux(0,0,0);
 
-	aux.set1(-v1_);
-	aux.set2(-v2_);
-	aux.set2(-v3_);
+	aux.v1_=-(this->v1_);
+	aux.v2_=-(this->v2_);
+	aux.v3_=-(this->v3_);
 
 	#ifndef NDEBUG
-		assert(aux.get1()==-get1() and
-			   aux.get2()==-get2() and
-			   aux.get3()==-get3());
+		assert((std::abs(aux.get1()-(-get1()))<COTA_ERROR) and
+			   (std::abs(aux.get2()-(-get2()))<COTA_ERROR) and
+			   (std::abs(aux.get3()-(-get3()))<COTA_ERROR));
 	#endif
 	return aux;
 }
@@ -327,26 +317,21 @@ ed::Vector3D ed::Vector3D::operator*(double const k)const{
 	aux.set3(v3);
 
 	#ifndef NDEBUG
-		assert(aux.get1()==get1()*k and
-			   aux.get2()==get2()*k and
-			   aux.get3()==get3()*k);
+		assert((std::abs(aux.get1()-get1()*k)<COTA_ERROR) and
+			   (std::abs(aux.get2()-get2()*k)<COTA_ERROR) and
+			   (std::abs(aux.get3()-get3()*k)<COTA_ERROR));
 	#endif	
 	return aux;
 }
 
-ed::Vector3D ed::Vector3D::operator*(Vector3D const &v)const{
-	Vector3D aux(0,0,0);
-
-	aux.v1_=this->v1_*v.v1_;
-	aux.v2_=this->v2_*v.v2_;
-	aux.v3_=this->v3_*v.v3_;
+double ed::Vector3D::operator*(Vector3D const &v)const{
+	double producto;
+	producto=v1_*v.v1_+v2_*v.v2_+v3_*v.v3_;
 
 	#ifndef NDEBUG
-		assert(aux.v1_==this->get1()*v.get1() and
-			   aux.v2_==this->get2()*v.get2() and
-			   aux.v3_==this->get3()*v.get3());
+		assert(std::abs(producto-(get1()*v.get1()+ get2()*v.get2()+ get3()*v.get3()))<COTA_ERROR);
 	#endif
-	return aux;
+	return producto;
 }
 
 ed::Vector3D ed::Vector3D::operator^(Vector3D const &v)const{
@@ -359,7 +344,7 @@ ed::Vector3D ed::Vector3D::operator^(Vector3D const &v)const{
 	#ifndef NDEBUG
 		assert((dotProduct(w)==0) and
 			  (v.dotProduct(w)==0) and
-			  (w.modulo()==modulo()*v.modulo()*sin(angulo(v))));
+			  (std::abs(w.modulo()-(modulo()*v.modulo()*sin(angulo(v))))<COTA_ERROR));
 	#endif
 	return w;
 }
@@ -369,6 +354,7 @@ ed::Vector3D ed::Vector3D::operator^(Vector3D const &v)const{
 
 // COMPLETAR
 void ed::Vector3D::leerVector3D(){
+	std::cout<<"Introduzca las componentes separadas por espacios"<<std::endl;
 	std::cin>>v1_>>v2_>>v3_;
 }
 
