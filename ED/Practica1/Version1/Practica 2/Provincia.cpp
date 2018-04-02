@@ -183,19 +183,18 @@ bool ed::Provincia::cargarFichero(std::string nFich){
 	if(f.is_open()){
 		Municipio aux;
 		char codigo[50],nombreP[50],cPostal[50],nombreM[50],hombres[50],mujeres[50];
-		if(f.getline(codigo,256," ")){
-			f.getline(nombreP,256,"\n");
-			setCodigo(codigo);
+		while(f.getline(codigo,256,' ')){
+			f.getline(nombreP,256,'\n');
+			setCodigo(atoi(codigo));
 			setNombre(nombreP);
-			while{
-				f.getline(cPostal,256,";");
-				f.getline(nombre,256,";");
-				f.getline(hombres,256,";");
-				f.getline(mujeres,256,";");
-				aux.setCodigoPostal(cPostal);
-				aux.setNombre(nombre);
-				aux.setHombres(hombres);
-				aux.setMujeres(mujeres);
+			while(f.getline(cPostal,256,';')){
+				f.getline(nombreM,256,';');
+				f.getline(hombres,256,';');
+				f.getline(mujeres,256,';');
+				aux.setCodigoPostal(atoi(cPostal));
+				aux.setNombre(nombreM);
+				aux.setHombres(atoi(hombres));
+				aux.setMujeres(atoi(mujeres));
 				listaMunicipios_.insert(aux);
 			}
 			listaMunicipios_.gotoNext();
@@ -208,13 +207,19 @@ bool ed::Provincia::cargarFichero(std::string nFich){
 }
 
 bool ed::Provincia::grabarFichero(std::string nombre){
-	if(ofstream f(nombre)){
+	std::ofstream f;
+	f.open(nombre.c_str());
+	if(f.is_open()){
+		Municipio aux;
 		listaMunicipios_.gotoHead();
-		f<<getCodigo()<<"\n";
-		while(listaMunicipios_.gotoNext()!=false){
-			f<<aux.getCodigoPostal<<";"<<aux.getHombres<<";"<<aux.getMujeres<<";"<<"\n";
+		f<<getCodigo()<<'\n';
+		while(listaMunicipios_.isLastItem()==false){
+			aux=listaMunicipios_.getCurrentItem();
+			f<<aux.getCodigoPostal()<<";"<<aux.getHombres()<<";"<<aux.getMujeres()<<";"<<'\n';
 			listaMunicipios_.gotoNext();
 		}
+		aux=listaMunicipios_.getCurrentItem();
+		f<<aux.getCodigoPostal()<<";"<<aux.getHombres()<<";"<<aux.getMujeres()<<";"<<'\n';
 		return true;
 	}
 	else{
