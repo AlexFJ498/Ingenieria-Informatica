@@ -16,65 +16,98 @@
 
 #include "Provincia.hpp"
 
-
 // DEBES CODIFICAR LAS FUNCIONES DE LA CLASE Provincia
 
 ///////////////////////////////////////////////////////////////////////////////
 
 // OSBSERVADORES
-bool Provincia::hayMunicipios(){
-	if(listaMunicipios_.empty()){
+bool ed::Provincia::hayMunicipios(){
+	if(listaMunicipios_.isEmpty()){
 		return true;
 	}
 	else return false;
 }
 
-bool Provincia::existeMunicipio(std::string n){
-	listaDoblementeEnlazada::iterator i;
-	for(i==listaMunicipios_.begin();i!=listaMunicipios_.end();i++){
-		if(i.getNombre()==n){
+bool ed::Provincia::existeMunicipio(std::string n){
+	listaMunicipios_.gotoHead();
+	Municipio aux=listaMunicipios_.getCurrentItem();
+	while(listaMunicipios_.isLastItem()==false){
+		if(aux.getNombre()==n){
 			return true;
 		}
+		listaMunicipios_.gotoNext();
+		aux=listaMunicipios_.getCurrentItem();
 	}
-	return false;
+	if(aux.getNombre()==n){
+		return true;
+	}
+	else return false;
 }
 
-listaDoblementeEnlazada Provincia::getMunicipio(std::string n){
+ed::Municipio ed::Provincia::getMunicipio(std::string n){
 	#ifndef NDEBUG
 		assert(existeMunicipio(n)==true);
 	#endif
 
-	listaDoblementeEnlazada::iterator i;
-	for(i==listaMunicipios_.begin();i!=lsitaMunicipios_.end();i++){
-		if(i.getNombre()==n){
-			return listaMunicipios_[i];
-		}
-	}
+	listaMunicipios_.find(n);
+	return listaMunicipios_.getCurrentItem();
 }
 
-int Provincia::getTotalHombres(){
-	
+int ed::Provincia::getTotalHombres(){
+	int nHombres=0;
+	listaMunicipios_.gotoHead();
+	Municipio aux=listaMunicipios_.getCurrentItem();
+	do{
+		nHombres+=aux.getHombres();
+		listaMunicipios_.gotoNext();
+		aux=listaMunicipios_.getCurrentItem();
+	}while(listaMunicipios_.isLastItem()==false);
+	nHombres+=aux.getHombres();
+	return nHombres;
 }
 
-int Provincia::getTotalMujeres(){
-
+int ed::Provincia::getTotalMujeres(){
+	int nMujeres=0;
+	listaMunicipios_.gotoHead();
+	Municipio aux=listaMunicipios_.getCurrentItem();
+	do{
+		nMujeres+=aux.getMujeres();
+		listaMunicipios_.gotoNext();
+		aux=listaMunicipios_.getCurrentItem();
+	}while(listaMunicipios_.isLastItem()==false);
+	nMujeres+=aux.getMujeres();
+	return nMujeres;
 }
 
-int getTotalHabitantes(){
+int ed::Provincia::getTotalHabitantes(){
+	int nHabitantes=0;
+	listaMunicipios_.gotoHead();
+	Municipio aux=listaMunicipios_.getCurrentItem();
+	do{
+		nHabitantes+=aux.getHabitantes();
+		listaMunicipios_.gotoNext();
+		aux=listaMunicipios_.getCurrentItem();
+	}while(listaMunicipios_.isLastItem()==false);
+	nHabitantes+=aux.getHabitantes();
 
+	#ifndef NDEBUG
+		assert(nHabitantes==this->getTotalHombres()+this->getTotalMujeres());
+	#endif
+
+	return nHabitantes;
 }
 /////////////////////////////////////////////////////////////////////////////////////////
 
 // MODIFICADORES
-void Provincia::setNombre(std::string n){
+void ed::Provincia::setNombre(std::string n){
 	nombre_=n;
 
 	#ifndef NDEBUG
-		assert(getNombre()==n)
+		assert(getNombre()==n);
 	#endif
 }
 
-void Provincia::setCodigo(int c){
+void ed::Provincia::setCodigo(int c){
 	codigo_=c;
 
 	#ifndef NDEBUG
@@ -82,14 +115,109 @@ void Provincia::setCodigo(int c){
 	#endif
 }
 
+void ed::Provincia::insertarMunicipio(Municipio m){
+	#ifndef NDEBUG
+		assert(existeMunicipio(m.getNombre())==false);
+	#endif
+	int old=getNumeroMunicipios();
+	listaMunicipios_.insert(m);
+
+	#ifndef NDEBUG
+		assert(existeMunicipio(m.getNombre())==true
+			   and getNumeroMunicipios()==old+1);
+	#endif
+}
+
+void ed::Provincia::borrarMunicipio(std::string n){
+	#ifndef NDEBUG
+		assert(existeMunicipio(n)==true);
+	#endif
+	
+	int old=getNumeroMunicipios();
+	Municipio aux=getMunicipio(n);
+	listaMunicipios_.find(aux);
+	listaMunicipios_.remove();
+
+	#ifndef NDEBUG
+		assert(existeMunicipio(aux.getNombre())==false
+			   and getNumeroMunicipios()==old-1);
+	#endif
+}
+
+void ed::Provincia::borrarTodosLosMunicipios(){
+	listaMunicipios_.gotoHead();
+	do{
+		listaMunicipios_.remove();
+	}while(listaMunicipios_.isLastItem()==false);
+
+	#ifndef NDEBUG
+		assert(hayMunicipios()==false);
+	#endif
+}
 ///////////////////////////////////////////////////////////////////////////////////
 
 // FUNCIÓN DE ESCRITURA
-
-
+void ed::Provincia::escribirMunicipios(){
+	std::cout<<"PROVINCIA "<<getNombre()<<std::endl;
+	std::cout<<"Codigo: "<<getCodigo()<<std::endl;
+	std::cout<<"Nº municipios: "<<getNumeroMunicipios()<<std::endl;
+	
+	std::cout<<"\nLISTA DE MUNICIPIOS"<<std::endl;
+	std::cout<<"--------------------"<<std::endl;
+	listaMunicipios_.gotoHead();
+	do{
+		Municipio aux=listaMunicipios_.getCurrentItem();
+		std::cout<<aux.getNombre()<<":"<<std::endl;
+		std::cout<<"\t-Codigo Postal: "<<aux.getCodigoPostal()<<std::endl;
+		std::cout<<"\t-Nº mujeres: "<<aux.getMujeres()<<std::endl;	
+		std::cout<<"\t-Nº hombres: "<<aux.getHombres()<<std::endl;
+	}while(listaMunicipios_.isLastItem()==false);
+}
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 // OPERACIONES CON FICHEROS
+bool ed::Provincia::cargarFichero(std::string nFich){
+	std::ifstream f;
+	f.open(nFich.c_str());
+	if(f.is_open()){
+		Municipio aux;
+		char codigo[50],nombreP[50],cPostal[50],nombreM[50],hombres[50],mujeres[50];
+		if(f.getline(codigo,256," ")){
+			f.getline(nombreP,256,"\n");
+			setCodigo(codigo);
+			setNombre(nombreP);
+			while{
+				f.getline(cPostal,256,";");
+				f.getline(nombre,256,";");
+				f.getline(hombres,256,";");
+				f.getline(mujeres,256,";");
+				aux.setCodigoPostal(cPostal);
+				aux.setNombre(nombre);
+				aux.setHombres(hombres);
+				aux.setMujeres(mujeres);
+				listaMunicipios_.insert(aux);
+			}
+			listaMunicipios_.gotoNext();
+		}
+		return true;
+	}
+	else{
+		return false;
+	}
+}
 
-
+bool ed::Provincia::grabarFichero(std::string nombre){
+	if(ofstream f(nombre)){
+		listaMunicipios_.gotoHead();
+		f<<getCodigo()<<"\n";
+		while(listaMunicipios_.gotoNext()!=false){
+			f<<aux.getCodigoPostal<<";"<<aux.getHombres<<";"<<aux.getMujeres<<";"<<"\n";
+			listaMunicipios_.gotoNext();
+		}
+		return true;
+	}
+	else{
+		return false;
+	}
+}
