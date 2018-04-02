@@ -91,6 +91,7 @@ namespace ed {
 	inline ListaDoblementeEnlazadaOrdenadaMunicipios()
     {
 		  // DEBES CODIFICAR ESTA FUNCIÓN	
+		
 	}
 	
   
@@ -107,7 +108,9 @@ namespace ed {
      }
 
 
-	//! \name Observadores públicos 
+	//! \name Observadores públicos 	
+
+	// COMPLETAR EL RESTO DE OBSERVADORES PÚBLICOS
 
 	/*!
 		\brief  Comprueba si la lista está vacía
@@ -115,19 +118,25 @@ namespace ed {
 		\note   Función de tipo "const": no puede modificar al objeto actual
         \return true, si la lista está vacía; false, en caso contrario
     */
-	inline bool isEmpty() const
-	{
-  		// DEBES CODIFICAR ESTA FUNCIÓN
- 		// SE DEVUELVE UN VALOR ARBITRARIO PARA QUE EL CÓDIGO SE PUEDA COMPILAR
-		return true;
-	}
-
-	// COMPLETAR EL RESTO DE OBSERVADORES PÚBLICOS
+	bool isEmpty() const;
+	int nItems();
+	bool isFirstItem();
+	bool isLastItem();
+	Municipio getCurrentItem();
+	Municipio getPreviousItem();
+	Municipio getNextItem();
 
     //! \name Modificadores públicos
 
 	// COMPLETAR EL RESTO DE MODIFICADORES PÚBLICOS
-
+	void gotoHead();
+	void gotoLast();
+	void gotoPrevious();
+	void gotoNext();
+	bool find(Municipio m);
+	void insert(Municipio m);
+	void remove();
+	void removeAll();
 	
 
 }; // Fin de la clase ListaDoblementeEnlazadaOrdenadaMunicipios
