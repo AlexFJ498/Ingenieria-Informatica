@@ -118,13 +118,13 @@ namespace ed {
 		\note   Función de tipo "const": no puede modificar al objeto actual
         \return true, si la lista está vacía; false, en caso contrario
     */
-	bool isEmpty() const;
-	int nItems();
-	bool isFirstItem();
-	bool isLastItem();
-	Municipio getCurrentItem();
-	Municipio getPreviousItem();
-	Municipio getNextItem();
+	bool isEmpty()const;
+	int nItems()const;
+	bool isFirstItem()const;
+	bool isLastItem()const;
+	Municipio const & getCurrentItem()const;
+	Municipio const & getPreviousItem()const;
+	Municipio const & getNextItem()const;
 
     //! \name Modificadores públicos
 
