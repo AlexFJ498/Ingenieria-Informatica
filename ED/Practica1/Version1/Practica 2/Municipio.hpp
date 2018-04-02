@@ -8,6 +8,7 @@
 
 // Entrada y salida 
 #include <iostream>
+#include <cassert>
 
 // 
 #include <string>
