@@ -12,9 +12,8 @@
 
 // Para comprobar las pre y post condiciones
 #include <cassert>
-
+#include "Municipio.hpp"
 #include <string>
-#include "municipio.h"
 
 #include "ListaDoblementeEnlazadaOrdenadaMunicipios.hpp"
 
@@ -40,15 +39,14 @@ namespace ed{
   \brief Definición de la clase Provincia
 
 */
-class Provincia
-{
+class Provincia{
 	//!	\name Métodos públicos de la clase Provincia
 
 	private:
 		std::string      nombre_;     //!<  \brief Nombre de la Provincia
 		int              codigo_;	  //!<  \brief Código de la Provincia
 
-	  	ed::listaDoblementeEnlazada listaMunicipios_; //!<  \brief Lista de municipios de la Provincia
+	  	ed::ListaDoblementeEnlazadaOrdenadaMunicipios listaMunicipios_; //!<  \brief Lista de municipios de la Provincia
 
 
 	/////////////////////////////////////////////////////////////////////
@@ -59,24 +57,24 @@ class Provincia
 
 	//!	\name Constructor
 		Provincia(std::string n,int c){
-			nombre_=n;
-			codigo_=c;
+			setNombre(n);
+			setCodigo(c);
 
 		#ifndef NDEBUG
-			assert(getNombre()==nombre_ and
-				   getCodigo()==codigo_ and
-				   hayMunicipios()==false);
+			assert((getNombre()==nombre_) and
+				   (getCodigo()==codigo_) and
+				   (hayMunicipios()==false));
 		#endif
 		}
 	/////////////////////////////////////////////////////////////////////
 
 	//!	\name Observadores
 		inline std::string getNombre(){return nombre_;}
-		inline std::string getCodigo(){return codigo_;}
+		inline int getCodigo(){return codigo_;}
 		bool hayMunicipios();
 		inline int getNumeroMunicipios(){return sizeof(listaMunicipios_);}
 		bool existeMunicipio(std::string n);
-		listaDoblementeEnlazada getMunicipio(std::string n);
+		Municipio getMunicipio(std::string n);
 		int getTotalHombres();
 		int getTotalMujeres();
 		int getTotalHabitantes();
@@ -85,18 +83,19 @@ class Provincia
 	//!	\name Modificadores
 		void setNombre(std::string n);
 		void setCodigo(int c);
-		void insertarMunicipio(Municipio)
+		void insertarMunicipio(Municipio m);
+		void borrarMunicipio(std::string n);
+		void borrarTodosLosMunicipios();
 
 	/////////////////////////////////////////////////////////////////////
 
 	//! \name Función de escritura de la clase Provincia
-
-
-
+	void escribirMunicipios();
 	/////////////////////////////////////////////////////////////////////
 
 	//! Operaciones con ficheros
-
+	bool cargarFichero(std::string n);
+	bool grabarFichero(std::string n);
 
 }; //Fin de la clase  Provincia
 
