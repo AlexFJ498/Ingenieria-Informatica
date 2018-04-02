@@ -34,7 +34,7 @@
 */
 int main(){
 
-	ed::Provincia provincia;
+	ed::Provincia provincia("nombre",10);
 
 	int opcion;
 
@@ -145,5 +145,4 @@ int main(){
 
 	return 0;
 }
-
 
