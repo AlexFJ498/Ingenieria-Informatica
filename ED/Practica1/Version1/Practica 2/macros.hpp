@@ -101,4 +101,3 @@
 
 
 #endif  // _MACROS_HPP_
-
