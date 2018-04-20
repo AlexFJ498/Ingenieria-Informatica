@@ -1,19 +1,17 @@
 /*! 
    \file  Medicion.cpp
    \brief Fichero que contiene el código de las funciones de la clase Medicion
+   \author Alejandro Fuerte Jurado
+   \date
 */
-
 
 // Ficheros de cabecera
 #include <iostream>
 
 // atoi, atof
 #include <stdlib.h>
-
 #include "Medicion.hpp"
 
-
-// COMPLETAR
 //Modificadores públicos
 void ed::Medicion::setFecha(Fecha f){
 	this->fecha_=f;
@@ -70,9 +68,8 @@ void ed::Medicion::leerMedicion(){
 void ed::Medicion::escribirMedicion(){
 	std::cout<<*this;
 }
+
 ////////////////////////////////////////////////////////////////////////////////
-
-
 // Se incluyen los operadores sobrecargados dentro del espacio de nombres de ed
 
 namespace ed{
@@ -90,16 +87,16 @@ istream &operator>>(istream &stream, ed::Medicion &medicion){
 	std::string size;
 
 	std::getline(stream,size,'-');
-	(medicion.fecha).setDia(atoi(size.c_str));
+	(medicion.getFecha()).setDia(atoi(size.c_str()));
 
 	std::getline(stream,size,'-');
-	(medicion.fecha).setMes(atoi(size.c_str));
+	(medicion.getFecha()).setMes(atoi(size.c_str()));
 
 	std::getline(stream,size,' ');
-	(medicion.fecha).setAgno(atoi(size.c_str));
+	(medicion.getFecha()).setAgno(atoi(size.c_str()));
 
 	std::getline(stream,size,'\n');
-	medicion.precipitacion(atoi(size.c_str));
+	medicion.setPrecipitacion(atoi(size.c_str()));
 
 	return stream;
 } 
