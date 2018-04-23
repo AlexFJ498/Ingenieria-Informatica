@@ -62,6 +62,89 @@ class MonticuloMediciones : public MonticuloMedicionesInterfaz{
 				assert(this->getElement(i)==m);
 			#endif
 		}
+		int getLeftChild(int i){
+			#ifndef NDEBUG
+				assert(i>=0);
+			#endif
+
+			int indice=2*i+1;
+			return indice;
+		}
+		int getRightChild(int i){
+			#ifndef NDEBUG
+				assert(i>=0);
+			#endif
+
+			int indice=2*i+2;
+			return indice;
+		}
+		int getParent(int i){
+			#ifndef NDEBUG
+				assert(i>=1);
+			#endif
+
+			int indice=(i-1)/2;
+		}
+		void shiftUp(int i){
+			#ifndef NDEBUG
+				assert(i>=0 and i<size());
+			#endif
+
+			//Si no es la cima y el elemento actual es mayor que el padre
+			if(i>0 && getElement(i)>getElement(getParent(i))){
+				Medicion aux=getElement(i);
+				setElement(i,getElement(getParent(i)));
+				setElement(getElement(getParent(i)),aux);
+				shiftUp(getParent(i));
+			}
+
+			#ifndef NDEBUG
+				assert(if(i>0{getElement(i)<=getElement(getParent(i))
+					      if(getLeftChild(i)!=i){
+ 						     getElement(i)>=getElement(getLeftChild(i));
+						  }
+						  if(getRightChild(i)!=i){
+							 getElement(i)>=getElement(getLeftChild(i));
+						  }
+					   }	   
+			    );
+			#endif
+		}
+		void shiftDown(int i){
+			#ifndef NDEBUG
+				assert(i>=0 and i<size());
+			#endif
+
+			int n=i;
+			int lC=getLeftChild(i);
+			int rC=getRightChild(i);
+			std::vector<Medicion>::iterator it;
+
+			//Si el hijo izquierdo tiene menor íncice que el último y su elemento es mayor que el actual
+			if(lC<it.vector_.end() && getElement(lC)>getElement(n){
+				n=lC;
+			}
+			if(rC<it.vector_.end() && getElement(rC)>getElement(n){
+				n=rC;
+			}
+			if(i<>n){
+				Medicion aux=getElement(i);
+				setElement(i,getElement(n));
+				setElement(getElement(n),aux);
+			}
+
+			#ifndef NDEBUG
+				assert(if(i>0{getElement(i)<=getElement(getParent(i))
+					      if(getLeftChild(i)!=i){
+ 						     getElement(i)>=getElement(getLeftChild(i));
+						  }
+						  if(getRightChild(i)!=i){
+							 getElement(i)>=getElement(getLeftChild(i));
+						  }
+					   }	   
+			    );
+			#endif
+		}
 
 	  /////////////////////////////////////////////////////////////////////////////////////
 
@@ -71,6 +154,10 @@ class MonticuloMediciones : public MonticuloMedicionesInterfaz{
 		//! \name Constructor
 
 		// COMPLETAR EL CÓDIGO E INCLUIR LOS COMENTARIOS DE DOXYGEN
+		MonticuloMediciones(){
+			std::vector<Medicion> constructor;
+			
+		}
 
 
 		//! \name Observadores
