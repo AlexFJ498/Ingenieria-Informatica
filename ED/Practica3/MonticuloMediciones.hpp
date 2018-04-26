@@ -87,7 +87,7 @@ class MonticuloMediciones : public MonticuloMedicionesInterfaz{
 		}
 		void shiftUp(int i){
 			#ifndef NDEBUG
-				assert(i>=0 and i<size());
+				assert(i>0 and i<size());
 			#endif
 
 			//Si no es la cima y el elemento actual es mayor que el padre
@@ -145,6 +145,15 @@ class MonticuloMediciones : public MonticuloMedicionesInterfaz{
 			    );
 			#endif
 		}
+		bool has(Medicion m){
+			std::vector::<Medicion>::iterator it;
+			for(it=vector_.begin();it!=vector_.end();it++){
+				if(it==i){
+					return true;
+				}
+			}
+			return false;
+		}
 
 	  /////////////////////////////////////////////////////////////////////////////////////
 
@@ -159,10 +168,12 @@ class MonticuloMediciones : public MonticuloMedicionesInterfaz{
 			
 		}
 
-
 		//! \name Observadores
 
 		// COMPLETAR EL CÓDIGO E INCLUIR LOS COMENTARIOS DE DOXYGEN
+		bool isEmpty();
+		int size();
+		Medicion top();
 
 		////////////////////////////////////////////////////////////
 
