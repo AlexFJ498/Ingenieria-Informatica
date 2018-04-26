@@ -13,17 +13,20 @@
 
 #include "MonticuloMediciones.hpp"
 
-////////////////////////////////////////////////////////////////////
-
-// Métodos privados de la clase MonticuloMediciones
-		// COMPLETAR
-
-////////////////////////////////////////////////////////////////////////////////////7
+////////////////////////////////////////////////////////////////////////////////////
 
 // Métodos públicos de la clase MonticuloMediciones
 
 		// COMPLETAR
+		bool ed::MonticuloMediciones::isEmpty(){
+			if(size()==0){
+				return true;
+			}
+			return false;
+		}
 
-
+		int ed::MonticuloMediciones::size(){
+			
+		}
 
 
