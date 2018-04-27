@@ -33,127 +33,14 @@ class MonticuloMediciones : public MonticuloMedicionesInterfaz{
 
 		//! \name Métodos privados de la clase MonticuloMediciones
 		// COMPLETAR EL CÓDIGO E INCLUIR LOS COMENTARIOS DE DOXYGEN
-		Medicion getElement(int i)const{
-			#ifndef NDEBUG
-				assert(i>=0 and i<size());
-			#endif
-
-			std::vector::<Medicion>::iterator it;
-			for(it=vector_.begin();it!=vector_.end();it++){
-				if(it==i){
-					return it;
-				}
-			}
-		}
-		void setElement(int i,Medicion m){
-			#ifndef NDEBUG
-				assert(i>=0 and i<size());
-			#endif
-
-			std::vector::<Medicion>::iterator it;
-			for(it=vector_.begin();it!=vector_.end();it++){
-				if(it==i){
-					it.setFecha(m.getFecha());
-					it.setPrecipitacion(m.getPrecipitacion());
-				}
-			}
-
-			#ifndef NDEBUG
-				assert(this->getElement(i)==m);
-			#endif
-		}
-		int getLeftChild(int i){
-			#ifndef NDEBUG
-				assert(i>=0);
-			#endif
-
-			int indice=2*i+1;
-			return indice;
-		}
-		int getRightChild(int i){
-			#ifndef NDEBUG
-				assert(i>=0);
-			#endif
-
-			int indice=2*i+2;
-			return indice;
-		}
-		int getParent(int i){
-			#ifndef NDEBUG
-				assert(i>=1);
-			#endif
-
-			int indice=(i-1)/2;
-		}
-		void shiftUp(int i){
-			#ifndef NDEBUG
-				assert(i>0 and i<size());
-			#endif
-
-			//Si no es la cima y el elemento actual es mayor que el padre
-			if(i>0 && getElement(i)>getElement(getParent(i))){
-				Medicion aux=getElement(i);
-				setElement(i,getElement(getParent(i)));
-				setElement(getElement(getParent(i)),aux);
-				shiftUp(getParent(i));
-			}
-
-			#ifndef NDEBUG
-				assert(if(i>0{getElement(i)<=getElement(getParent(i))
-					      if(getLeftChild(i)!=i){
- 						     getElement(i)>=getElement(getLeftChild(i));
-						  }
-						  if(getRightChild(i)!=i){
-							 getElement(i)>=getElement(getLeftChild(i));
-						  }
-					   }	   
-			    );
-			#endif
-		}
-		void shiftDown(int i){
-			#ifndef NDEBUG
-				assert(i>=0 and i<size());
-			#endif
-
-			int n=i;
-			int lC=getLeftChild(i);
-			int rC=getRightChild(i);
-			std::vector<Medicion>::iterator it;
-
-			//Si el hijo izquierdo tiene menor íncice que el último y su elemento es mayor que el actual
-			if(lC<it.vector_.end() && getElement(lC)>getElement(n){
-				n=lC;
-			}
-			if(rC<it.vector_.end() && getElement(rC)>getElement(n){
-				n=rC;
-			}
-			if(i<>n){
-				Medicion aux=getElement(i);
-				setElement(i,getElement(n));
-				setElement(getElement(n),aux);
-			}
-
-			#ifndef NDEBUG
-				assert(if(i>0{getElement(i)<=getElement(getParent(i))
-					      if(getLeftChild(i)!=i){
- 						     getElement(i)>=getElement(getLeftChild(i));
-						  }
-						  if(getRightChild(i)!=i){
-							 getElement(i)>=getElement(getLeftChild(i));
-						  }
-					   }	   
-			    );
-			#endif
-		}
-		bool has(Medicion m){
-			std::vector::<Medicion>::iterator it;
-			for(it=vector_.begin();it!=vector_.end();it++){
-				if(it==i){
-					return true;
-				}
-			}
-			return false;
-		}
+		Medicion getElement(int i)const;
+		void setElement(int i,Medicion m);
+		int getLeftChild(int i)const;
+		int getRightChild(int i)const;
+		int getParent(int i)const;
+		void shiftUp(int i);
+		void shiftDown(int i);
+		bool has(Medicion m);
 
 	  /////////////////////////////////////////////////////////////////////////////////////
 
@@ -169,33 +56,50 @@ class MonticuloMediciones : public MonticuloMedicionesInterfaz{
 		}
 
 		//! \name Observadores
-
 		// COMPLETAR EL CÓDIGO E INCLUIR LOS COMENTARIOS DE DOXYGEN
 		bool isEmpty();
 		int size();
 		Medicion top();
-
 		////////////////////////////////////////////////////////////
 
 		//! \name Operaciones de modificación
-
 		// COMPLETAR EL CÓDIGO E INCLUIR LOS COMENTARIOS DE DOXYGEN
-
+		void insert(Medicion m);
+		void remove();
+		void removeAll();
+		void modify();
 
 		//! \name Operadores
-   
 		// COMPLETAR
- 
+ 		MonticuloMediciones operator=(MonticuloMediciones m){
+			/*#ifndef NDEBUG
+				assert(*this!=m);
+			#endif*/
+
+			int i=0;
+			while(i<this->size()){
+				this->setElement(i,getElement(i));
+			}
+
+			return *this;
+		}
 
 		////////////////////////////////////////////////////////////////////
 
 		//! \name Función de escritura
-
 		// COMPLETAR
+		void print(){
+			std::cout<<"LISTA DE MEDICIONES"<<std::endl;
+			std::cout<<"-------------------"<<std::endl;
+
+			int i=0;
+			while(i!=size()-1){
+				std::cout<<i<<": "<<getElement(i)<<std::endl;
+			}
+		}
 
 	}; // Clase MonticuloMediciones
 
 } // Espacio de nombres ed
-
 
 #endif // _MONTICULO_MEDICIONES_HPP
