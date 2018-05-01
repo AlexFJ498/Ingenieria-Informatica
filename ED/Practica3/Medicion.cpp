@@ -34,7 +34,7 @@ void ed::Medicion::setPrecipitacion(float p){
 }
 
 //Operadores públicos
-bool ed::Medicion::operator==(Medicion const & m){
+bool ed::Medicion::operator==(Medicion const & m)const{
 	if(this->getFecha()==m.getFecha()){
 		
 	}else{

@@ -81,7 +81,7 @@ class Medicion{
 	//! \name Operadores
    
 		//INCLUIR LOS COMENTARIOS DE DOXYGEN
-		bool operator==(Medicion const & m);
+		bool operator==(Medicion const & m)const;
 		Medicion operator=(Medicion const & m);
 
 	//! \name Funciones de lectura y escritura de la clase Medicion

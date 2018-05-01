@@ -18,15 +18,14 @@
 //Métodos privados de la clase MonticuloMediciones
 
 	//COMPLETAR
-Medicion ed::MonticuloMediciones::getElement(int i)const{
+ed::Medicion ed::MonticuloMediciones::getElement(int i)const{
 	#ifndef NDEBUG
 		assert(i>=0 and i<size());
 	#endif
 
-	std::vector::<Medicion>::iterator it;
-	for(it=vector_.begin();it!=vector_.end();it++){
-		if(it==i){
-			return it;
+	for(unsigned j=0;j<vector_.size();j++){
+	 	if(vector_[j]==vector_[i]){
+			return vector_[j];
 		}
 	}
 }
@@ -36,11 +35,10 @@ void ed::MonticuloMediciones::setElement(int i,Medicion m){
 		assert(i>=0 and i<size());
 	#endif
 
-	std::vector::<Medicion>::iterator it;
-	for(it=vector_.begin();it!=vector_.end();it++){
-		if(it==i){
-			it.setFecha(m.getFecha());
-			it.setPrecipitacion(m.getPrecipitacion());
+	for(unsigned j=0;j<vector_.size();j++){
+		if(vector_[j]==vector_[i]){
+			vector_[j].setFecha(m.getFecha());
+			vector_[j].setPrecipitacion(m.getPrecipitacion());
 		}
 	}
 
@@ -73,6 +71,7 @@ int ed::MonticuloMediciones::getParent(int i)const{
 	#endif
 
 	int indice=(i-1)/2;
+	return indice;
 }
 
 void ed::MonticuloMediciones::shiftUp(int i){
@@ -81,7 +80,7 @@ void ed::MonticuloMediciones::shiftUp(int i){
 	#endif
 
 	//Si no es la cima y el elemento actual es mayor que el padre
-	if(i>0 && getElement(i)>getElement(getParent(i))){
+	if(i>0 && getElement(i).getPrecipitacion()>getElement(getParent(i)).getPrecipitacion()){
 		Medicion aux=getElement(i);
 		setElement(i,getElement(getParent(i)));
 		setElement(getElement(getParent(i)),aux);
@@ -89,12 +88,12 @@ void ed::MonticuloMediciones::shiftUp(int i){
 	}
 
 	#ifndef NDEBUG
-		assert(if(i>0{getElement(i)<=getElement(getParent(i))
+		assert(if(i>0){getElement(i).getPrecipitacion()<=getElement(getParent(i)).getPrecipitacion();
 			   		if(getLeftChild(i)!=i){
- 						getElement(i)>=getElement(getLeftChild(i));
+ 						getElement(i).getPrecipitacion()>=getElement(getLeftChild(i)).getPrecipitacion();
 					}
 					if(getRightChild(i)!=i){
-						getElement(i)>=getElement(getLeftChild(i));
+						getElement(i).getPrecipitacion()>=getElement(getLeftChild(i)).getPrecipitacion();
 					}
 			   }
 		);
@@ -147,23 +146,24 @@ bool ed::MonticuloMediciones::has(Medicion m){
 }
 ////////////////////////////////////////////////////////////////////////////////////
 
-// Métodos públicos de la clase MonticuloMediciones
+//Métodos públicos de la clase MonticuloMediciones
 
+//Observadores 
 	//COMPLETAR
-bool ed::MonticuloMediciones::isEmpty(){
+bool ed::MonticuloMediciones::isEmpty()const{
 	if(size()==0){
 		return true;
 	}
 	return false;
 }
 
-int ed::MonticuloMediciones::size(){
+int ed::MonticuloMediciones::size()const{
 	int size;
 	size=vector_.size();
 	return size;
 }
 
-Medicion ed::MonticuloMediciones::top(){
+Medicion ed::MonticuloMediciones::top()const{
 	#ifndef NDEBUG
 		assert(isEmpty()==false);
 	#endif
@@ -176,6 +176,8 @@ Medicion ed::MonticuloMediciones::top(){
 	return aux;
 }
 
+//Modificadores
+	//COMPLETAR
 void ed::MonticuloMediciones::insert(Medicion m){
 	int i;
 	vector_.push_back(m);

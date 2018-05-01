@@ -57,9 +57,9 @@ class MonticuloMediciones : public MonticuloMedicionesInterfaz{
 
 		//! \name Observadores
 		// COMPLETAR EL CÓDIGO E INCLUIR LOS COMENTARIOS DE DOXYGEN
-		bool isEmpty();
-		int size();
-		Medicion top();
+		bool isEmpty()const;
+		int size()const;
+		Medicion top()const;
 		////////////////////////////////////////////////////////////
 
 		//! \name Operaciones de modificación
@@ -77,11 +77,12 @@ class MonticuloMediciones : public MonticuloMedicionesInterfaz{
 			#endif*/
 
 			int i=0;
-			while(i<this->size()){
-				this->setElement(i,getElement(i));
+			MonticuloMediciones aux=*this;
+			while(i<aux.size()){
+				aux.setElement(i,getElement(i));
 			}
 
-			return *this;
+			return aux;
 		}
 
 		////////////////////////////////////////////////////////////////////
