@@ -23,11 +23,13 @@ ed::Medicion ed::MonticuloMediciones::getElement(int i)const{
 		assert(i>=0 and i<size());
 	#endif
 
+	Medicion aux;
 	for(unsigned j=0;j<vector_.size();j++){
 	 	if(vector_[j]==vector_[i]){
-			return vector_[j];
+			aux=vector_[j];
 		}
 	}
+	return aux;
 }
 
 void ed::MonticuloMediciones::setElement(int i,Medicion m){
@@ -110,35 +112,34 @@ void ed::MonticuloMediciones::shiftDown(int i){
 	int rC=getRightChild(i);
 
 	//Si el hijo izquierdo tiene menor íncice que el último y su elemento es mayor que el actual
-	if(lC<size()-1 && getElement(lC).getPrecipitacion()>getElement(n)){
+	if(lC<size()-1 && getElement(lC).getPrecipitacion()>getElement(n).getPrecipitacion()){
 		n=lC;
 	}
-	if(rC<size()-1 && getElement(rC).getPrecipitacion()>getElement(n)){
+	if(rC<size()-1 && getElement(rC).getPrecipitacion()>getElement(n).getPrecipitacion()){
 		n=rC;
 	}
-	if(i<>n){
+	if(i<n){
 		Medicion aux=getElement(i);
 		setElement(i,getElement(n));
-		setElement(getElement(n),aux);
+		setElement(n,aux);
 	}
 
 	#ifndef NDEBUG
 		if(i>0){
-			assert(getElement(i)<=getElement(getParent(i)));
+			assert(getElement(i).getPrecipitacion()<=getElement(getParent(i)).getPrecipitacion());
 		}
 		if(i>0 && getLeftChild(i)!=i){
- 			assert(getElement(i)>=getElement(getLeftChild(i)));
+ 			assert(getElement(i).getPrecipitacion()>=getElement(getLeftChild(i)).getPrecipitacion());
 		}
 		if(i>0 && getRightChild(i)!=i){
-			getElement(i)>=getElement(getLeftChild(i));
+			assert(getElement(i).getPrecipitacion()>=getElement(getLeftChild(i)).getPrecipitacion());
 		}
 	#endif
 }
 
 bool ed::MonticuloMediciones::has(Medicion m){
-	std::vector::<Medicion>::iterator it;
-	for(it=vector_.begin();it!=vector_.end();it++){
-		if(it==i){
+	for(unsigned j=0;j<vector_.size();j++){
+	 	if(vector_[j]==m){
 			return true;
 		}
 	}
@@ -163,7 +164,7 @@ int ed::MonticuloMediciones::size()const{
 	return size;
 }
 
-Medicion ed::MonticuloMediciones::top()const{
+ed::Medicion ed::MonticuloMediciones::top()const{
 	#ifndef NDEBUG
 		assert(isEmpty()==false);
 	#endif
@@ -210,7 +211,7 @@ void ed::MonticuloMediciones::removeAll(){
 	#endif
 }
 
-void modify(Medicion m){
+void ed::MonticuloMediciones::modify(Medicion m){
 	#ifndef NDEBUG
 		assert(isEmpty()==false);
 	#endif
