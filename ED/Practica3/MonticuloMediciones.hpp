@@ -67,7 +67,7 @@ class MonticuloMediciones : public MonticuloMedicionesInterfaz{
 		void insert(Medicion m);
 		void remove();
 		void removeAll();
-		void modify();
+		void modify(Medicion m);
 
 		//! \name Operadores
 		// COMPLETAR
