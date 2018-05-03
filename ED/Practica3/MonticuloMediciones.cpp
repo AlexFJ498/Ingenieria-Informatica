@@ -82,21 +82,22 @@ void ed::MonticuloMediciones::shiftUp(int i){
 	//Si no es la cima y el elemento actual es mayor que el padre
 	if(i>0 && getElement(i).getPrecipitacion()>getElement(getParent(i)).getPrecipitacion()){
 		Medicion aux=getElement(i);
+		int aux2=getParent(i);
 		setElement(i,getElement(getParent(i)));
-		setElement(getElement(getParent(i)),aux);
+		setElement(aux2,aux);
 		shiftUp(getParent(i));
 	}
 
 	#ifndef NDEBUG
-		assert(if(i>0){getElement(i).getPrecipitacion()<=getElement(getParent(i)).getPrecipitacion();
-			   		if(getLeftChild(i)!=i){
- 						getElement(i).getPrecipitacion()>=getElement(getLeftChild(i)).getPrecipitacion();
-					}
-					if(getRightChild(i)!=i){
-						getElement(i).getPrecipitacion()>=getElement(getLeftChild(i)).getPrecipitacion();
-					}
-			   }
-		);
+		if(i>0){
+			assert(getElement(i).getPrecipitacion()<=getElement(getParent(i)).getPrecipitacion());
+		}
+		if(i>0 && getLeftChild(i)!=i){
+ 			assert(getElement(i).getPrecipitacion()>=getElement(getLeftChild(i)).getPrecipitacion());
+		}
+		if(i>0 && getRightChild(i)!=i){
+			assert(getElement(i).getPrecipitacion()>=getElement(getLeftChild(i)).getPrecipitacion());
+		}
 	#endif
 }
 void ed::MonticuloMediciones::shiftDown(int i){
@@ -107,13 +108,12 @@ void ed::MonticuloMediciones::shiftDown(int i){
 	int n=i;
 	int lC=getLeftChild(i);
 	int rC=getRightChild(i);
-	std::vector<Medicion>::iterator it;
 
 	//Si el hijo izquierdo tiene menor íncice que el último y su elemento es mayor que el actual
-	if(lC<it.vector_.end() && getElement(lC)>getElement(n){
+	if(lC<size()-1 && getElement(lC).getPrecipitacion()>getElement(n)){
 		n=lC;
 	}
-	if(rC<it.vector_.end() && getElement(rC)>getElement(n){
+	if(rC<size()-1 && getElement(rC).getPrecipitacion()>getElement(n)){
 		n=rC;
 	}
 	if(i<>n){
@@ -123,15 +123,15 @@ void ed::MonticuloMediciones::shiftDown(int i){
 	}
 
 	#ifndef NDEBUG
-		assert(if(i>0{getElement(i)<=getElement(getParent(i))
-			   		if(getLeftChild(i)!=i){
- 						getElement(i)>=getElement(getLeftChild(i));
-					}
-				    if(getRightChild(i)!=i){
-						getElement(i)>=getElement(getLeftChild(i));
-				    }
-			   }
-		);
+		if(i>0){
+			assert(getElement(i)<=getElement(getParent(i)));
+		}
+		if(i>0 && getLeftChild(i)!=i){
+ 			assert(getElement(i)>=getElement(getLeftChild(i)));
+		}
+		if(i>0 && getRightChild(i)!=i){
+			getElement(i)>=getElement(getLeftChild(i));
+		}
 	#endif
 }
 
