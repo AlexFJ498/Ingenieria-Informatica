@@ -1,7 +1,7 @@
 /*!
 	\file MonticuloMedicionesInterfaz.hpp
 	\brief Se define la interfaz del TAD MonticuloMediciones.
-	\author 
+	\author Alejandro Fuerte Jurado
 	\date  
 */
 
@@ -12,19 +12,19 @@
 
 // COMPLETAR EL CÓDIGO E INCLUIR LOS COMENTARIOS DE DOXYGEN
 
-namespace ed
-{
-
+namespace ed{
 	// COMPLETAR EL CÓDIGO E INCLUIR LOS COMENTARIOS DE DOXYGEN
-	class MonticuloMedicionesInterfaz
-	{
+	class MonticuloMedicionesInterfaz{
 		public:
-
 			// COMPLETAR EL CÓDIGO E INCLUIR LOS COMENTARIOS DE DOXYGEN
+			//Observadores
+			virtual bool isEmpty()const=0;
+			virtual ed::Medicion top()const=0;
 
-
-	}; // Clase MonticuloMedicionesInterfaz
-
+			//Modificadores
+			virtual void insert(Medicion const & m)=0;
+			virtual void remove()=0;
+	};
 } // Espacio de nombres ed
 
-#endif //  _MONTICULO_MEDICIONES_INTERFAZ_HPP
+#endif //  _MONTICULO_MEDICIONES_INTERFAZ_HPPs

@@ -17,7 +17,6 @@
 
 //Métodos privados de la clase MonticuloMediciones
 
-	//COMPLETAR
 ed::Medicion ed::MonticuloMediciones::getElement(int i)const{
 	#ifndef NDEBUG
 		assert(i>=0 and i<size());
@@ -137,7 +136,7 @@ void ed::MonticuloMediciones::shiftDown(int i){
 	#endif
 }
 
-bool ed::MonticuloMediciones::has(Medicion m){
+bool ed::MonticuloMediciones::has(Medicion const & m){
 	for(unsigned j=0;j<vector_.size();j++){
 	 	if(vector_[j]==m){
 			return true;
@@ -150,7 +149,6 @@ bool ed::MonticuloMediciones::has(Medicion m){
 //Métodos públicos de la clase MonticuloMediciones
 
 //Observadores 
-	//COMPLETAR
 bool ed::MonticuloMediciones::isEmpty()const{
 	if(size()==0){
 		return true;
@@ -179,7 +177,7 @@ ed::Medicion ed::MonticuloMediciones::top()const{
 
 //Modificadores
 	//COMPLETAR
-void ed::MonticuloMediciones::insert(Medicion m){
+void ed::MonticuloMediciones::insert(Medicion const & m){
 	int i;
 	vector_.push_back(m);
 
@@ -211,7 +209,7 @@ void ed::MonticuloMediciones::removeAll(){
 	#endif
 }
 
-void ed::MonticuloMediciones::modify(Medicion m){
+void ed::MonticuloMediciones::modify(Medicion const & m){
 	#ifndef NDEBUG
 		assert(isEmpty()==false);
 	#endif
@@ -223,3 +221,4 @@ void ed::MonticuloMediciones::modify(Medicion m){
 		assert(has(m)==true);
 	#endif
 }
+
