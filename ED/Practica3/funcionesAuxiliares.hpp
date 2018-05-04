@@ -1,7 +1,7 @@
 /*!
   \file   funcionesAuxiliares.hpp
   \brief  Funciones auxiliares para el programa principal de la práctica 3
-  \author 
+  \author Alejandro Fuerte Jurado
   \date  
 */
 
@@ -12,11 +12,9 @@
 
 // SE DEBEN INCLUIR LOS COMENTARIOS DE DOXYGEN
 
-namespace ed
-{
+namespace ed{
 
 	void cargarMonticuloDeFichero(std::string const & nombreFichero, ed::MonticuloMediciones & monticulo); 
-
 
 	void grabarMonticuloEnFichero (std::string const & nombreFichero, ed::MonticuloMediciones const & monticulo); 
 
