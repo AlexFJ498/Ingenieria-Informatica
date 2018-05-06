@@ -1,6 +1,6 @@
 /*!
   \file   macros.hpp
-  \brief  Macros for the screen
+  \brief  Macros para la pantalla
   \author 
   \date   
   \note  http://isthe.com/chongo/tech/comp/ansi_escapes.html
@@ -9,10 +9,6 @@
 
 #ifndef _MACROS_HPP_
 #define _MACROS_HPP_ //!< Macros for the screen
-
-
-#ifndef DOXYGEN_SHOULD_SKIP_THIS 
-#define DOXYGEN_SHOULD_SKIP_THIS //!< Prevent doxygen from processing this file several times
 
 #include <stdio.h>
 
@@ -104,8 +100,4 @@
 #define ONIWHITE	"\e[0;107m"	//!< White
 
 
-#endif /* DOXYGEN_SHOULD_SKIP_THIS */
-
-
 #endif  // _MACROS_HPP_
-

@@ -89,12 +89,17 @@ class MonticuloMediciones : public MonticuloMedicionesInterfaz{
 		//! \name Función de escritura
 		// COMPLETAR
 		void print(){
+			if(size()==0){
+				std::cout<<"Monticulo vacio"<<std::endl;
+				return;
+			}
 			std::cout<<"LISTA DE MEDICIONES"<<std::endl;
 			std::cout<<"-------------------"<<std::endl;
 
 			int i=0;
-			while(i!=size()-1){
-				std::cout<<i<<": "<<getElement(i)<<std::endl;
+			while(i<=size()-1){
+				std::cout<<i+1<<": "<<getElement(i);
+				i++;
 			}
 		}
 

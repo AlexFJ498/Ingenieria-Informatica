@@ -162,12 +162,15 @@ std::cout<<"hola2\n";
 	int rC=getRightChild(i);
 	int n=i;
 	
-	if(lC<size()-1 && getElement(lC).getPrecipitacion()>getElement(n).getPrecipitacion()){
-		n=lC;
+	if(lC<size()-1 && rC<size()-1){
+		if(getElement(lC).getPrecipitacion()>getElement(rC).getPrecipitacion()){
+			n=lC;
+		}
+		else{
+			n=rC;
+		}
 	}
-	if(rC<size()-1 && getElement(rC).getPrecipitacion()>getElement(n).getPrecipitacion()){
-		n=rC;
-	}
+
 	if(getElement(i).getPrecipitacion()<getElement(n).getPrecipitacion()){
 		Medicion aux(vector_[i]);
 		vector_[i]=vector_[n];
@@ -202,7 +205,6 @@ bool ed::MonticuloMediciones::has(Medicion m){
 //Métodos públicos de la clase MonticuloMediciones
 
 //Observadores 
-	//COMPLETAR
 bool ed::MonticuloMediciones::isEmpty()const{
 	if(size()==0){
 		return true;
@@ -278,7 +280,7 @@ void ed::MonticuloMediciones::modify(Medicion m){
 		assert(isEmpty()==false);
 	#endif
 
-	vector_.front()==m;
+	vector_[0]=m;
 	shiftDown(0);
 
 	#ifndef NDEBUG
