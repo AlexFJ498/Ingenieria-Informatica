@@ -27,11 +27,12 @@ class MonticuloMediciones : public MonticuloMedicionesInterfaz{
 	private:
 
 		//! \name Atributos privados de la clase MonticuloMediciones
-		//INCLUIR LOS COMENTARIOS DE DOXYGEN
+		// COMPLETAR EL CÓDIGO E INCLUIR LOS COMENTARIOS DE DOXYGEN
 		std::vector<Medicion> vector_;
 
+
 		//! \name Métodos privados de la clase MonticuloMediciones
-		//INCLUIR LOS COMENTARIOS DE DOXYGEN
+		// COMPLETAR EL CÓDIGO E INCLUIR LOS COMENTARIOS DE DOXYGEN
 		Medicion getElement(int i)const;
 		void setElement(int i,Medicion m);
 		int getLeftChild(int i)const;
@@ -39,7 +40,7 @@ class MonticuloMediciones : public MonticuloMedicionesInterfaz{
 		int getParent(int i)const;
 		void shiftUp(int i);
 		void shiftDown(int i);
-		bool has(Medicion const & m);
+		bool has(Medicion m);
 
 	  /////////////////////////////////////////////////////////////////////////////////////
 
@@ -48,24 +49,24 @@ class MonticuloMediciones : public MonticuloMedicionesInterfaz{
 
 		//! \name Constructor
 
-		//INCLUIR LOS COMENTARIOS DE DOXYGEN
+		// COMPLETAR EL CÓDIGO E INCLUIR LOS COMENTARIOS DE DOXYGEN
 		MonticuloMediciones(){
-			std::vector<Medicion> constructor;	
+			removeAll();			
 		}
 
 		//! \name Observadores
-		//INCLUIR LOS COMENTARIOS DE DOXYGEN
+		// COMPLETAR EL CÓDIGO E INCLUIR LOS COMENTARIOS DE DOXYGEN
 		bool isEmpty()const;
 		int size()const;
 		Medicion top()const;
 		////////////////////////////////////////////////////////////
 
 		//! \name Operaciones de modificación
-		//INCLUIR LOS COMENTARIOS DE DOXYGEN
-		void insert(Medicion const & m);
+		// COMPLETAR EL CÓDIGO E INCLUIR LOS COMENTARIOS DE DOXYGEN
+		void insert(Medicion m);
 		void remove();
 		void removeAll();
-		void modify(Medicion const & m);
+		void modify(Medicion m);
 
 		//! \name Operadores
 		// COMPLETAR

@@ -17,6 +17,7 @@
 
 //Métodos privados de la clase MonticuloMediciones
 
+	//COMPLETAR
 ed::Medicion ed::MonticuloMediciones::getElement(int i)const{
 	#ifndef NDEBUG
 		assert(i>=0 and i<size());
@@ -53,7 +54,7 @@ int ed::MonticuloMediciones::getLeftChild(int i)const{
 		assert(i>=0);
 	#endif
 
-	int indice=2*i+1;
+	int indice=((2*i)+1);
 	return indice;
 }
 
@@ -62,7 +63,7 @@ int ed::MonticuloMediciones::getRightChild(int i)const{
 		assert(i>=0);
 	#endif
 
-	int indice=2*i+2;
+	int indice=((2*i)+2);
 	return indice;
 }
 
@@ -76,28 +77,41 @@ int ed::MonticuloMediciones::getParent(int i)const{
 }
 
 void ed::MonticuloMediciones::shiftUp(int i){
+
 	#ifndef NDEBUG
 		assert(i>0 and i<size());
 	#endif
 
+/*	int iParent;
+	iParent=getParent(i);
+
+	if(getElement(iParent).getPrecipitacion()<getElement(i).getPrecipitacion()){
+	std::cout<<i<<"\n";
+		std::swap(getElement(iParent),getElement(i));
+		shiftUp(i);
+	}
+*/
+
 	//Si no es la cima y el elemento actual es mayor que el padre
 	if(i>0 && getElement(i).getPrecipitacion()>getElement(getParent(i)).getPrecipitacion()){
-		Medicion aux=getElement(i);
-		int aux2=getParent(i);
-		setElement(i,getElement(getParent(i)));
-		setElement(aux2,aux);
-		shiftUp(getParent(i));
+
+		Medicion aux(vector_[i]);
+		vector_[i]=vector_[getParent(i)];
+		vector_[getParent(i)]=aux;
+		
+		shiftUp(i);
 	}
+
 
 	#ifndef NDEBUG
 		if(i>0){
 			assert(getElement(i).getPrecipitacion()<=getElement(getParent(i)).getPrecipitacion());
 		}
-		if(i>0 && getLeftChild(i)!=i){
+		if(i>0 && getLeftChild(i)!=i && getLeftChild(i)<=size()){
  			assert(getElement(i).getPrecipitacion()>=getElement(getLeftChild(i)).getPrecipitacion());
 		}
-		if(i>0 && getRightChild(i)!=i){
-			assert(getElement(i).getPrecipitacion()>=getElement(getLeftChild(i)).getPrecipitacion());
+		if(i>0 && getRightChild(i)!=i && getRightChild(i)<=size()){
+			assert(getElement(i).getPrecipitacion()>=getElement(getRightChild(i)).getPrecipitacion());
 		}
 	#endif
 }
@@ -105,38 +119,77 @@ void ed::MonticuloMediciones::shiftDown(int i){
 	#ifndef NDEBUG
 		assert(i>=0 and i<size());
 	#endif
+//	int state=0;
+/*while(state==0){
+	lC=getLeftChild(i);
+	rC=getRightChild(i);
+	
+	if((rC>size()-1)){
+		if(lC>size()-1){
+			state=-1;
+		}
+		else{
+			if(getElement(i).getPrecipitacion()<getElement(lC).getPrecipitacion()){
+				Medicion aux(vector_[i]);
+				vector_[i]=vector_[lC];
+				vector_[lC]=aux;
+			}
+			else{
+				state=-1;
+			}
+		}
+	}
+	else{
+		if(getElement(rC).getPrecipitacion()>getElement(lC).getPrecipitacion()){
+			Medicion aux(vector_[i]);
+			vector_[i]=vector_[lC];
+			vector_[lC]=aux;
 
-	int n=i;
+			i=lC;
+		}
+		else{
+std::cout<<"hola2\n";
+			Medicion aux(vector_[i]);
+			vector_[i]=vector_[rC];
+			vector_[rC]=aux;
+
+			i=rC;
+		}
+	}
+}*/
+
 	int lC=getLeftChild(i);
 	int rC=getRightChild(i);
-
-	//Si el hijo izquierdo tiene menor íncice que el último y su elemento es mayor que el actual
+	int n=i;
+	
 	if(lC<size()-1 && getElement(lC).getPrecipitacion()>getElement(n).getPrecipitacion()){
 		n=lC;
 	}
 	if(rC<size()-1 && getElement(rC).getPrecipitacion()>getElement(n).getPrecipitacion()){
 		n=rC;
 	}
-	if(i<n){
-		Medicion aux=getElement(i);
-		setElement(i,getElement(n));
-		setElement(n,aux);
+	if(getElement(i).getPrecipitacion()<getElement(n).getPrecipitacion()){
+		Medicion aux(vector_[i]);
+		vector_[i]=vector_[n];
+		vector_[n]=aux;
+
+		shiftDown(n);
 	}
 
 	#ifndef NDEBUG
 		if(i>0){
 			assert(getElement(i).getPrecipitacion()<=getElement(getParent(i)).getPrecipitacion());
 		}
-		if(i>0 && getLeftChild(i)!=i){
+		if(i>0 && getLeftChild(i)!=i && getLeftChild(i)<=size()){
  			assert(getElement(i).getPrecipitacion()>=getElement(getLeftChild(i)).getPrecipitacion());
 		}
-		if(i>0 && getRightChild(i)!=i){
-			assert(getElement(i).getPrecipitacion()>=getElement(getLeftChild(i)).getPrecipitacion());
+		if(i>0 && getRightChild(i)!=i && getRightChild(i)<=size()){
+			assert(getElement(i).getPrecipitacion()>=getElement(getRightChild(i)).getPrecipitacion());
 		}
 	#endif
 }
 
-bool ed::MonticuloMediciones::has(Medicion const & m){
+bool ed::MonticuloMediciones::has(Medicion m){
 	for(unsigned j=0;j<vector_.size();j++){
 	 	if(vector_[j]==m){
 			return true;
@@ -149,6 +202,7 @@ bool ed::MonticuloMediciones::has(Medicion const & m){
 //Métodos públicos de la clase MonticuloMediciones
 
 //Observadores 
+	//COMPLETAR
 bool ed::MonticuloMediciones::isEmpty()const{
 	if(size()==0){
 		return true;
@@ -159,6 +213,7 @@ bool ed::MonticuloMediciones::isEmpty()const{
 int ed::MonticuloMediciones::size()const{
 	int size;
 	size=vector_.size();
+		//std::cout<<size<<"\n";
 	return size;
 }
 
@@ -177,12 +232,14 @@ ed::Medicion ed::MonticuloMediciones::top()const{
 
 //Modificadores
 	//COMPLETAR
-void ed::MonticuloMediciones::insert(Medicion const & m){
+void ed::MonticuloMediciones::insert(Medicion m){
 	int i;
 	vector_.push_back(m);
 
 	i=size()-1; //posición que ocupa el último elemento
-	shiftUp(i);
+	if(i>0){
+		shiftUp(i);
+	}
 
 	#ifndef NDEBUG
 		assert(isEmpty()==false
@@ -195,8 +252,15 @@ void ed::MonticuloMediciones::remove(){
 		assert(isEmpty()==false);
 	#endif
 
-	vector_.front()==vector_.back();
-	shiftDown(0);
+	Medicion aux(vector_[0]);
+	vector_[0]=vector_[size()-1];
+	vector_[size()-1]=aux;
+
+	vector_.erase(vector_.end());
+//	vector_.front()==vector_.back();
+	if(size()>1){
+		shiftDown(0);
+	}
 }
 
 void ed::MonticuloMediciones::removeAll(){
@@ -209,7 +273,7 @@ void ed::MonticuloMediciones::removeAll(){
 	#endif
 }
 
-void ed::MonticuloMediciones::modify(Medicion const & m){
+void ed::MonticuloMediciones::modify(Medicion m){
 	#ifndef NDEBUG
 		assert(isEmpty()==false);
 	#endif
