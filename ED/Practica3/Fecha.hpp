@@ -1,6 +1,8 @@
 /*! 
    \file Fecha.hpp
    \brief Fichero de la clase Fecha
+   \author Alejandro Fuerte Jurado
+   \date  07-05-2018
 */
 
 #ifndef _FECHA_HPP_

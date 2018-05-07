@@ -2,7 +2,7 @@
    \file  Medicion.cpp
    \brief Fichero que contiene el código de las funciones de la clase Medicion
    \author Alejandro Fuerte Jurado
-   \date
+   \date 07-05-2018
 */
 
 // Ficheros de cabecera

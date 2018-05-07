@@ -5,8 +5,6 @@
 	\date
 */
 
-//#include <vector>
-
 #include <cassert>
 
 #include "Medicion.hpp"
@@ -16,11 +14,9 @@
 ////////////////////////////////////////////////////////////////////////////////////
 
 //Métodos privados de la clase MonticuloMediciones
-
-	//COMPLETAR
 ed::Medicion ed::MonticuloMediciones::getElement(int i)const{
 	#ifndef NDEBUG
-		assert(i>=0 and i<size());
+		assert(i>=0 and i<=size());
 	#endif
 
 	Medicion aux;
@@ -82,27 +78,16 @@ void ed::MonticuloMediciones::shiftUp(int i){
 		assert(i>0 and i<size());
 	#endif
 
-/*	int iParent;
-	iParent=getParent(i);
-
-	if(getElement(iParent).getPrecipitacion()<getElement(i).getPrecipitacion()){
-	std::cout<<i<<"\n";
-		std::swap(getElement(iParent),getElement(i));
-		shiftUp(i);
-	}
-*/
-
-	//Si no es la cima y el elemento actual es mayor que el padre
-	if(i>0 && getElement(i).getPrecipitacion()>getElement(getParent(i)).getPrecipitacion()){
-
+	if(getElement(i).getPrecipitacion()>getElement(getParent(i)).getPrecipitacion()){
 		Medicion aux(vector_[i]);
 		vector_[i]=vector_[getParent(i)];
 		vector_[getParent(i)]=aux;
-		
-		shiftUp(i);
+	
+		if(getParent(i)>0 && getParent(i)<size() && i>0 && i<=size()){
+			shiftUp(getParent(i));
+		}
 	}
-
-
+	
 	#ifndef NDEBUG
 		if(i>0){
 			assert(getElement(i).getPrecipitacion()<=getElement(getParent(i)).getPrecipitacion());
@@ -119,44 +104,6 @@ void ed::MonticuloMediciones::shiftDown(int i){
 	#ifndef NDEBUG
 		assert(i>=0 and i<size());
 	#endif
-//	int state=0;
-/*while(state==0){
-	lC=getLeftChild(i);
-	rC=getRightChild(i);
-	
-	if((rC>size()-1)){
-		if(lC>size()-1){
-			state=-1;
-		}
-		else{
-			if(getElement(i).getPrecipitacion()<getElement(lC).getPrecipitacion()){
-				Medicion aux(vector_[i]);
-				vector_[i]=vector_[lC];
-				vector_[lC]=aux;
-			}
-			else{
-				state=-1;
-			}
-		}
-	}
-	else{
-		if(getElement(rC).getPrecipitacion()>getElement(lC).getPrecipitacion()){
-			Medicion aux(vector_[i]);
-			vector_[i]=vector_[lC];
-			vector_[lC]=aux;
-
-			i=lC;
-		}
-		else{
-std::cout<<"hola2\n";
-			Medicion aux(vector_[i]);
-			vector_[i]=vector_[rC];
-			vector_[rC]=aux;
-
-			i=rC;
-		}
-	}
-}*/
 
 	int lC=getLeftChild(i);
 	int rC=getRightChild(i);
@@ -215,7 +162,6 @@ bool ed::MonticuloMediciones::isEmpty()const{
 int ed::MonticuloMediciones::size()const{
 	int size;
 	size=vector_.size();
-		//std::cout<<size<<"\n";
 	return size;
 }
 
@@ -233,7 +179,6 @@ ed::Medicion ed::MonticuloMediciones::top()const{
 }
 
 //Modificadores
-	//COMPLETAR
 void ed::MonticuloMediciones::insert(Medicion m){
 	int i;
 	vector_.push_back(m);
@@ -259,7 +204,6 @@ void ed::MonticuloMediciones::remove(){
 	vector_[size()-1]=aux;
 
 	vector_.erase(vector_.end());
-//	vector_.front()==vector_.back();
 	if(size()>1){
 		shiftDown(0);
 	}

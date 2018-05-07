@@ -1,6 +1,8 @@
 /*! 
    \file  Fecha.cpp
    \brief Fichero que contiene el código de las funciones de la clase Fecha
+   \author Alejandro Fuerte Jurado
+   \date  07-05-2018
 */
 
 

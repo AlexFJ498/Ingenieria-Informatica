@@ -6,7 +6,6 @@
 */
 
 /*!
-
 	\file principalMediciones.cpp
 	\brief Programa principal de la practica 3 de Estructuras de Datos
 */
@@ -23,19 +22,12 @@
 		\brief   Programa principal de la práctica 2: montículo de mediciones
 		\return  int
 */
-int main(int argc, char *argv[]){
-	if (argc != 3){
-		std::cout << "Modo de ejecución" << std::endl;
-		std::cout << argv[0] << "<fichero-de-mediciones>  <fichero-ordenado> "  << std::endl;
-		return -1;
-	}
-
-	
+int main(){
 	ed::MonticuloMediciones monticulo;
-	std::string nombreFicheroEntrada(argv[1]);
-	std::string nombreFicheroSalida(argv[2]);
 
 	int opcion;
+	std::string nombreFicheroEntrada;
+	std::string nombreFicheroSalida;
 
 	do{
 		opcion=ed::menu();
@@ -58,11 +50,15 @@ int main(int argc, char *argv[]){
 
 			case 2:
 				std::cout<<"[2] Cargar el monticulo desde un fichero"<<std::endl;
+				std::cout<<"Introduce el nombre del fichero que contiene las mediciones" <<std::endl;
+				std::cin>>nombreFicheroEntrada;
 				ed::cargarMonticuloDeFichero(nombreFicheroEntrada,monticulo);
 			break;
 
 			case 3:
 				std::cout<<"[3] Grabar el monticulo en un fichero"<<std::endl;
+				std::cout<<"Introduce el fichero donde grabar el monticulo"<<std::endl;
+				std::cin>>nombreFicheroSalida;
 				ed::grabarMonticuloEnFichero(nombreFicheroSalida,monticulo);
 			break;
 
@@ -93,7 +89,7 @@ int main(int argc, char *argv[]){
 
 			case 9:
 				std::cout<<"[9] Borrar la cima del monticulo"<<std::endl;
-				ed::borrarMunicipioDeMonticulo(monticulo);
+				ed::borrarMedicionDeMonticulo(monticulo);
 			break;
 
 			default:

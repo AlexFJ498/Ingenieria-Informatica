@@ -2,7 +2,7 @@
   \file   funcionesAuxiliares.cpp
   \brief  Código de las funciones auxiliares para el programa principal de la práctica 1
   \author Alejandro Fuerte Jurado
-  \date   
+  \date   07-05-2018
 */
 
 #include <iostream>
@@ -104,50 +104,55 @@ void ed::cargarMonticuloDeFichero(std::string const & nombreFichero,ed::Monticul
 	f.open(nombreFichero.c_str());
 	if(!f.is_open()){
 		std::cout<<"ERROR al abrir el fichero de mediciones\n"<<std::endl;
-		return;
+			std::cin.ignore();
 	}
+	else{
+		Medicion aux;
+		Fecha aux2;
+		char dia[10],mes[10],anio[10],precipitacion[10];
+	
+		while(f.getline(dia,256,'-')){
+			f.getline(mes,256,'-');
+			f.getline(anio,256,' ');
+			f.getline(precipitacion,256,'\n');
+	
+			aux2.setDia(atoi(dia));
+			aux2.setMes(atoi(mes));
+			aux2.setAgno(atoi(anio));
+			aux.setFecha(aux2);
+			aux.setPrecipitacion(atoi(precipitacion));
+	
+			monticulo.insert(aux);
+		}
+		f.close();
 
-	Medicion aux;
-	Fecha aux2;
-	char dia[10],mes[10],anio[10],precipitacion[10];
-
-	while(f.getline(dia,256,'-')){
-		f.getline(mes,256,'-');
-		f.getline(anio,256,' ');
-		f.getline(precipitacion,256,'\n');
-
-		aux2.setDia(atoi(dia));
-		aux2.setMes(atoi(mes));
-		aux2.setAgno(atoi(anio));
-		aux.setFecha(aux2);
-		aux.setPrecipitacion(atoi(precipitacion));
-
-		monticulo.insert(aux);
+		std::cout<<"Monticulo cargado"<<std::endl;
+		std::cin.ignore();
 	}
-	f.close();
-
-	std::cout<<"Monticulo cargado"<<std::endl;
-	return;
 }
 
 void ed::grabarMonticuloEnFichero(std::string const & nombreFichero,ed::MonticuloMediciones const & monticulo){
 	if(monticulo.size()==0){
 		std::cout<<"El monticulo esta vacio."<<std::endl;
-		return;
+		std::cin.ignore();
 	}
-	std::ofstream f;
-	f.open(nombreFichero.c_str());
-	if(!f.is_open()){
-		std::cout<<"ERROR al abrir el fichero para ordenar las mediciones\n"<<std::endl;
-		return;
+	else{
+		std::ofstream f;
+		f.open(nombreFichero.c_str());
+		if(!f.is_open()){
+			std::cout<<"ERROR al abrir el fichero\n"<<std::endl;
+		}
+		else{
+			ed::MonticuloMediciones aux=monticulo;
+			for(;!(aux.isEmpty());aux.remove()){
+				f<<aux.top().getFecha()<<" "<<aux.top().getPrecipitacion()<<"\n";
+			}
+			f.close();
+		
+			std::cout<<"Se han grabado las mediciones en el fichero "<<nombreFichero<<std::endl;
+			std::cin.ignore();
+		}
 	}
-
-	ed::MonticuloMediciones aux=monticulo;
-	for(;!(aux.isEmpty());aux.remove()){
-		f<<aux.top().getFecha()<<" "<<aux.top().getPrecipitacion()<<"\n";
-	}
-	f.close();
-	return;
 }
 
 void ed::mostrarMedicionesDeMonticulo(ed::MonticuloMediciones &monticulo){
@@ -167,34 +172,35 @@ void ed::borrarTodasLasMedicionesDeMonticulo(ed::MonticuloMediciones &monticulo)
 void ed::modificarMedicionDeMonticulo(ed::MonticuloMediciones &monticulo){
 	if(monticulo.size()==0){
 		std::cout<<"El monticulo esta vacio."<<std::endl;
-		return;
 	}
-	Medicion aux;
-	Fecha aux2;
-	int dia,mes,agno,precipitacion;
+	else{
+		Medicion aux;
+		Fecha aux2;
+		int dia,mes,agno,precipitacion;
+	
+		std::cout<<"Nueva fecha:\n";
+		std::cout<<"Dia: ";
+		std::cin>>dia;
+		aux2.setDia(dia);
+	
+		std::cout<<"Mes: ";
+		std::cin>>mes;
+		aux2.setMes(mes);
+	
+		std::cout<<"agno: ";
+		std::cin>>agno;
+		aux2.setAgno(agno);
+		aux.setFecha(aux2);
+	
+		std::cout<<"\n";
+		std::cout<<"Nueva precipitacion: ";
+		std::cin>>precipitacion;
+		aux.setPrecipitacion(precipitacion);
+	
+		monticulo.modify(aux);
 
-	std::cout<<"Nueva fecha:\n";
-	std::cout<<"Dia: ";
-	std::cin>>dia;
-	aux2.setDia(dia);
-
-	std::cout<<"Mes: ";
-	std::cin>>mes;
-	aux2.setMes(mes);
-
-	std::cout<<"agno: ";
-	std::cin>>agno;
-	aux2.setAgno(agno);
-	aux.setFecha(aux2);
-
-	std::cout<<"\n";
-	std::cout<<"Nueva precipitacion: ";
-	std::cin>>precipitacion;
-	aux.setPrecipitacion(precipitacion);
-
-	monticulo.modify(aux);
-
-	std::cout<<"Arbol actualizado."<<std::endl;
+		std::cout<<"Arbol actualizado."<<std::endl;
+	}
 }
 
 void ed::insertarMedicionDeMonticulo(ed::MonticuloMediciones &monticulo){
@@ -226,14 +232,12 @@ void ed::insertarMedicionDeMonticulo(ed::MonticuloMediciones &monticulo){
 	std::cout<<"Medicion insertada."<<std::endl;
 }
 
-void ed::borrarMunicipioDeMonticulo(ed::MonticuloMediciones &monticulo){
+void ed::borrarMedicionDeMonticulo(ed::MonticuloMediciones &monticulo){
 	if(monticulo.size()!=0){
 		monticulo.remove();
+		std::cout<<"Medicion borrada."<<std::endl;
 	}
 	else{
 		std::cout<<"El monticulo esta vacio."<<std::endl;
-		return;
 	}
-
-	std::cout<<"Medicion borrada."<<std::endl;
 }

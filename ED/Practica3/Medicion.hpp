@@ -2,7 +2,7 @@
    \file Medicion.hpp
    \brief Fichero de la clase Medicion: medición de una estación meteorológica
    \author Alejandro Fuerte Jurado
-   \date
+   \date 07-05-2018
 */
 
 #ifndef _MEDICION_HPP_
@@ -30,8 +30,14 @@ namespace ed{
 class Medicion{
   //! \name Atributos privados de la clase Medicion
    private: 
-		//INCLUIR LOS COMENTARIOS DE DOXYGEN
+		/*
+		\brief Atributo de clase fecha
+		*/ 
 		Fecha fecha_;
+
+		/*
+		\brief Atributo de tipo flotante
+		*/
 		float precipitacion_;
 
    //! \name Funciones o métodos públicos de la clase Medicion
@@ -39,8 +45,15 @@ class Medicion{
 
 	//! \name Constructor de la clase Medicion
 
-		//INCLUIR LOS COMENTARIOS DE DOXYGEN
-		//Constructor parametrizado
+		/*
+		\brief Constructor parametrizado
+		\note Funcion inline
+		\warning Parámetros con valores por defecto
+		\param fecha: fecha de la medición (tipo Fecha)
+		\param precipitacion: valor de la precipitación de la medición (tipo float)
+		\pre precipitacion>=0.0
+		\post getFecha()==fecha and getPrecipitacion()==precipitacion
+		*/
 		Medicion(Fecha fecha=Fecha(1,1,1),float precipitacion=0.0){
 			#ifndef NDEBUG
 				assert(precipitacion>=0.0);
@@ -55,7 +68,14 @@ class Medicion{
 			#endif
 		}
 
-		//Constructor de copia
+		/*
+		\brief Constructor de copia
+		\note Funcion inline
+		\note Parámetro constante
+		\param m: la medición que se desea copiar (tipo Medicion)
+		\pre Ninguna
+		\post this->getFecha()==m.getFecha() and this->getPrecipitacion()==m.getPrecipitacion()
+		*/
 		Medicion(const Medicion &m){
 			this->setFecha(m.getFecha());
 			this->setPrecipitacion(m.getPrecipitacion());
@@ -68,34 +88,96 @@ class Medicion{
 
 	//! \name Observadores: funciones de consulta de la clase Medicion
 
-		//INCLUIR LOS COMENTARIOS DE DOXYGEN
+		/*
+		\brief Observador de la fecha de la medición
+		\note Funcion inline
+		\return fecha_: fecha de la medición
+		\pre Ninguna
+		\post Ninguna
+		*/
 		inline Fecha getFecha()const{return fecha_;}
+
+		/*
+		\brief Observador de la precipitación de la medición
+		\note Funcion inline
+		\return precipitacion_: precipitación de la medición
+		\pre Ninguna
+		\post Ninguna
+		*/
 		inline float getPrecipitacion()const{return precipitacion_;}
 
 	//! \name Funciones de modificación de la clase Medicion
 
-		//INCLUIR LOS COMENTARIOS DE DOXYGEN
+		/*
+		\brief Modificador de la fecha de la medición
+		\pre Ninguna
+		\post this->getFecha()==f
+		*/
 		void setFecha(Fecha f);
+
+		/*
+		\brief Modificador de la precipitación de la medición
+		\pre p>=0.0
+		\post this->getPrecipitacion()==p
+		*/
 		void setPrecipitacion(float p);
 
 	//! \name Operadores
    
-		//INCLUIR LOS COMENTARIOS DE DOXYGEN
+		/*!
+		\brief Operador comparador de igualdad
+		\param Medicion objeto pasado por referencia
+		\note Medición constante
+		\pre Ninguna
+		\post this->getFecha()==m.getFecha()
+		*/
 		bool operator==(Medicion const & m)const;
+
+		/*!
+		\brief Operador de asignación
+		\param Medicion objeto pasado por referencia
+		\note Medición constante
+		\pre Ninguna
+		\post this->getFecha()==m.getFecha() and this->getPrecipitacion()==m.getPrecipitacion()
+		*/
 		Medicion operator=(Medicion const & m);
 
 	//! \name Funciones de lectura y escritura de la clase Medicion
 
-		//INCLUIR LOS COMENTARIOS DE DOXYGEN
+		/*
+		\brief Función de lectura por pantalla de una medición
+		\pre Ninguna
+		\post Ninguna
+		*/
 		void leerMedicion();
+
+		/*
+		\brief Función de escritura por pantalla de una medición
+		\pre Ninguna
+		\post Ninguna
+		*/
 		void escribirMedicion();
 
 }; //Fin de la definición de la clase Medicion
 
    //! \name Funciones externas de la clase Medicion: sobrecarga de los operadores de flujo
 
-		//INCLUIR LOS COMENTARIOS DE DOXYGEN
+		/*
+		\brief Sobrecarga del operador de salida <<
+		\param stream: Flujo de salida
+		\param medicion: Medición objeto
+		\pre Ninguna
+		\post Ninguna
+		*/
 		istream &operator>>(istream &stream,Medicion &medicion);
+
+		/*
+		\brief Sobrecarga del operador de entrada >>
+		\param stream: Flujo de entrada
+		\param medicion: Medición objeto
+		\pre Ninguna
+		\post Ninguna
+		*/
 		ostream &operator<<(ostream &stream,Medicion const &medicion);
 
 } // \brief Fin de namespace ed.
