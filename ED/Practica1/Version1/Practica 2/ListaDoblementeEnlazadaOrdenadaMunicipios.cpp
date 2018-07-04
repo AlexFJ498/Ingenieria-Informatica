@@ -13,192 +13,243 @@
 #include "NodoMunicipioInterfaz.hpp"
 #include "Municipio.hpp"
 
-// DEBES CODIFICAR LAS FUNCIONES DE LA CLASE ListaDoblementeEnlazadaOrdenadaMunicipios
-
-//OBSERVADORES
-
-bool ed::ListaDoblementeEnlazadaOrdenadaMunicipios::isEmpty()const{
-		if(this->nItems()==0){
-			return true;
-		}
-		else return false;
-}
-
-int ed::ListaDoblementeEnlazadaOrdenadaMunicipios::nItems()const{
-	int num=0;
-	ListaDoblementeEnlazadaOrdenadaMunicipios aux=*this;
-	aux.gotoHead();
-	while(aux.isLastItem()==true){
-		num++;
-		aux.gotoNext();
-	}
-	num++;
-	return num;
-}
-
-bool ed::ListaDoblementeEnlazadaOrdenadaMunicipios::isFirstItem()const{
-	#ifndef NDEBUG
-		assert(isEmpty()==false);
-	#endif
-
-	if(getHead()==getCurrent()){
-		return true;
-	}
-	else return false;
-}
-
-bool ed::ListaDoblementeEnlazadaOrdenadaMunicipios::isLastItem()const{
-	#ifndef NDEBUG
-		assert(isEmpty()==false);
-	#endif
-	ListaDoblementeEnlazadaOrdenadaMunicipios aux=*this;
-	aux.gotoLast();
-	if(aux.getCurrent()==this->getCurrent()){
-		return true;
-	}
-	else return false;
-}
-
-ed::Municipio const & ed::ListaDoblementeEnlazadaOrdenadaMunicipios::getCurrentItem()const{
-	#ifndef NDEBUG
-		assert(isEmpty()==false);
-	#endif
-
-	NodoDoblementeEnlazadoMunicipio *aux=this->getCurrent();
-	return aux->getItem();
-}
-
-ed::Municipio const & ed::ListaDoblementeEnlazadaOrdenadaMunicipios::getPreviousItem()const{
-	#ifndef NDEBUG
-		assert(isEmpty()==false 
-			   and isFirstItem()==false);
-	#endif
-
-	NodoDoblementeEnlazadoMunicipio *aux=this->getCurrent();
-	NodoDoblementeEnlazadoMunicipio *aux2=aux->getPrevious();
-	return aux2->getItem();
-}
-
-ed::Municipio const & ed::ListaDoblementeEnlazadaOrdenadaMunicipios::getNextItem()const{
-	#ifndef NDEBUG
-		assert(isEmpty()==false
-			   and isLastItem()==false);
-	#endif
-
-	NodoDoblementeEnlazadoMunicipio *aux=this->getCurrent();
-	NodoDoblementeEnlazadoMunicipio *aux2=aux->getNext();
-	return aux2->getItem();
-}
-
-////////////////////////////////////////////////////////////////////
-//MODIFICADORES
-
 void ed::ListaDoblementeEnlazadaOrdenadaMunicipios::gotoHead(){
 	#ifndef NDEBUG
-		assert(isEmpty()==false);
+		assert(this->isEmpty()==false);
 	#endif
 
-	NodoDoblementeEnlazadoMunicipio *aux=this->getHead();	
-	setCurrent(aux);
+	this->setCurrent(this->getHead());
 
 	#ifndef NDEBUG
-		assert(isFirstItem()==true);
+		assert(this->isFirstItem());
 	#endif
 }
 
 void ed::ListaDoblementeEnlazadaOrdenadaMunicipios::gotoLast(){
 	#ifndef NDEBUG
-		assert(isEmpty()==false);
+		assert(this->isEmpty()==false);
 	#endif
 
-	while(isLastItem()==false){
-		gotoNext();
+	this->gotoHead();
+	for(int i=0;i<this->nItems() && !(this->isLastItem());i++){
+		this->gotoNext();
 	}
 
 	#ifndef NDEBUG
-		assert(isLastItem()==true);
+		assert(this->isLastItem());
 	#endif
 }
 
 void ed::ListaDoblementeEnlazadaOrdenadaMunicipios::gotoPrevious(){
 	#ifndef NDEBUG
-		assert(isEmpty()==false
-			   and isFirstItem()==false);
+		assert(this->isEmpty()==false);
+		assert(this->isFirstItem()==false);
 	#endif
 
-	NodoDoblementeEnlazadoMunicipio *aux=this->getCurrent();
-	setCurrent(aux->getPrevious());
+	this->setCurrent(this->getCurrent()->getPrevious());
 }
+
 void ed::ListaDoblementeEnlazadaOrdenadaMunicipios::gotoNext(){
 	#ifndef NDEBUG
-		assert(isEmpty()==false
-			   and isLastItem()==false);
+		assert(this->isEmpty()==false);
+		assert(this->isLastItem()==false);
 	#endif
 
-	NodoDoblementeEnlazadoMunicipio *aux=this->getCurrent();
-	setCurrent(aux->getNext());
+	this->setCurrent(this->getCurrent()->getNext());
 }
 
-bool ed::ListaDoblementeEnlazadaOrdenadaMunicipios::find(Municipio m){
-	int state;	
-	gotoHead();
-	NodoDoblementeEnlazadoMunicipio *aux;
-	while(isLastItem()==false){
-		aux=getCurrent();
-		if(m==aux->getItem()){
-			state=0;
-		}
-		gotoNext();
+bool ed::ListaDoblementeEnlazadaOrdenadaMunicipios::find(const Municipio &m){
+	//Se busca por nombre
+	bool state=false;
+
+	if(this->nItems()==0){
+		return false;
 	}
-	state=-1;
+
+	this->gotoHead();
+	for(int i=0;i<this->nItems();i++){
+		if(this->getCurrentItem()==m){
+			//Si existe se coloca el cursor en el nodo que contiene el item
+			state=true;
+			break;
+		}
+		if(this->isLastItem()){break;}
+		this->gotoNext();
+	}
+
+	if(state==false){
+		for(int j=0;j<this->nItems();j++){
+			if(m<this->getCurrentItem()){
+				//Si no existe, se coloca en el elemento que es mayor que el item buscado...
+				break;
+			}
+			if(this->isLastItem()){break;}
+			this->gotoNext();
+			//...o en el último elemento, si todos los elementos son menores que el elemento buscado
+		}
+	}
 
 	#ifndef NDEBUG
-		assert(if(state==0){getCurrentItem()==m}
-			   and if(state==-1){(getCurrentItem()>m) || (isLastItem()==true)});
+		if(state==true){
+			assert(this->getCurrentItem()==m);
+		}
+		if(state==false){
+			assert(m<this->getCurrentItem() || this->isLastItem());
+		}
 	#endif
 
-	if(state==0) return true;
-	else return false;
+	return state;
 }
 
-void ed::ListaDoblementeEnlazadaOrdenadaMunicipios::insert(Municipio m){
+void ed::ListaDoblementeEnlazadaOrdenadaMunicipios::insert(const Municipio &m){
 	#ifndef NDEBUG
-		assert(find(m)==false);
+		assert(this->find(m)==false);
 	#endif
 
 	int old=nItems();
-	if(find(m)==false){
-		NodoDoblementeEnlazadoMunicipio *aux=this->getCurrent();
-		NodoDoblementeEnlazadoMunicipio *aux2=aux.getNext();
-		aux2->setNext(m);
+	NodoDoblementeEnlazadoMunicipio *aux=new NodoDoblementeEnlazadoMunicipio(m,NULL,NULL);
+
+	//Si la lista está vacía
+	if(this->nItems()==0){
+		this->setHead(aux);
+		this->getHead()->setItem(m);
+		this->getHead()->setPrevious(NULL);
+		this->getHead()->setNext(NULL);
+
+		this->gotoHead(); //para situar el cursor en el nuevo nodo
+
+	}
+	else{
+
+		gotoHead();//Situamos el cursor en la cabeza
+
+		//Si insertamos al comienzo de la lista
+		if(m<this->getCurrentItem()){
+
+			aux->setNext(this->getCurrent()); //Creamos un nodo que tenga un puntero anterior a null, y un puntero siguiente al que era la cabeza de la lista
+			this->getCurrent()->setPrevious(aux); //Conectamos el puntero anterior de la antigua cabeza a la nueva
+			this->setHead(aux);
+
+			this->gotoHead(); //para situar el cursor en el nuevo nodo
+		}
+		else{
+
+			this->gotoLast(); //Situamos el cursor al final de la lista
+
+			//Si insertamos al final de la lista
+			if(this->getCurrentItem()<m){
+
+				aux->setPrevious(this->getCurrent()); //Creamos un nodo al revés que en el caso anterior
+				this->getCurrent()->setNext(aux);
+
+				this->gotoLast(); //para situar el cursor en el nuevo nodo
+			}
+			else{
+
+				this->gotoHead();
+
+				//Insertamos el item en cualquier otro sitio de la lista
+				for(int i=0;i<this->nItems();i++){
+
+					if(m<this->getCurrentItem()){
+						this->gotoPrevious();
+
+						aux->setPrevious(this->getCurrent());
+						aux->setNext(this->getCurrent()->getNext()); //Creamos un nodo que tenga un puntero anterior al item actual, y un puntero siguiente al item siguiente del actual
+
+						this->gotoNext();
+						this->getCurrent()->setPrevious(aux); //Conectamos el puntero anterior del item siguiente del actual al nuevo nodo
+
+						this->gotoPrevious();
+						this->gotoPrevious();
+						this->getCurrent()->setNext(aux); //Conectamos el puntero siguiente del item actual al nuevo nodo
+
+						this->gotoNext(); //para situar el cursor en el nuevo nodo
+						break;
+					}
+					else{
+
+						if(this->isLastItem()){break;}
+						this->gotoNext();
+					}
+
+				}
+			}
+		}
 	}
 
 	#ifndef NDEBUG
-		assert(getCurrentItem()==m
-			   and nItems()=old+1);
+		assert(this->getCurrentItem()==m);
+		assert(this->nItems()==old+1);
 	#endif
 }
 
 void ed::ListaDoblementeEnlazadaOrdenadaMunicipios::remove(){
 	#ifndef NDEBUG
-		assert(isEmpty()==false);
+		assert(this->isEmpty()==false);
 	#endif
 
-	if(isFirstItem()==false && isLastItem()==false){
-		setNextItem(getCurrentItem());
+	//Si la lista está vacía no se puede borrar nada
+	if(this->getCurrent()==NULL){
+		return;
 	}
-	if(isLastItem()==true && isEmpty()==false){
-		setPreviousItem(getCurrentItem());
-	}
-	if(isFirstItem()==true && isEmpty()==false){
-		setNextItem(getCurrentItem());
+	else{
+
+		//Si borramos el único elemento que hay en la lista
+		if(this->isFirstItem() && this->isLastItem()){
+
+			this->getCurrent()->setPrevious(NULL);
+			this->getCurrent()->setNext(NULL);
+			_head=NULL;
+			_current=NULL;
+
+		}
+		else{
+
+			//Si borramos el primer elemento
+			if(this->isFirstItem()){
+	
+				this->getCurrent()->getNext()->setPrevious(NULL);
+				this->setHead(this->getCurrent()->getNext()); //Actualizamos la cabeza
+				this->getCurrent()->setNext(NULL); //Desconectamos el nodo de la lista
+	
+				this->gotoHead(); //Situamos el cursor
+	
+			}
+			else{
+	
+				//Si borramos el último elemento
+				if(this->isLastItem()){
+	
+					this->getCurrent()->getPrevious()->setNext(NULL);
+					this->getCurrent()->setPrevious(NULL);
+	
+					this->gotoLast();
+	
+				}
+				else{
+	
+					//Borramos cualquier otro elemento
+					this->getCurrent()->getPrevious()->setNext(this->getCurrent()->getNext());
+					this->getCurrent()->getNext()->setPrevious(this->getCurrent()->getPrevious());
+	
+					this->setCurrent(this->getCurrent()->getNext());
+	
+				}
+			}
+		}
 	}
 }
 
 void ed::ListaDoblementeEnlazadaOrdenadaMunicipios::removeAll(){
-	gotoHead();
-	while(isLastItem()==false){
-		remove();
-		gotoNext();
+	while(this->nItems()!=0){
+		this->gotoHead();
+		this->remove();
 	}
+
+	/*Como estamos situados en la cabeza, siempre borraremos desde arriba, ya que el cursor se mantiene siempre ahí*/
+
+	#ifndef NDEBUG
+		assert(this->isEmpty());
+	#endif
 }

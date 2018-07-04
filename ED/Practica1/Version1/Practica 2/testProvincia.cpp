@@ -28,7 +28,6 @@ int main()
 {
 
 // SE DEBEN QUITAR LOS COMENTARIOS CUANDO SE HAYAN CODIFICADO LAS FUNCIONES DE LA CLASE Provincia
-
 	ed::Provincia provincia;
 	ed::Municipio municipio;
 
@@ -36,55 +35,57 @@ int main()
 
     std::cout << "Insertar Cabra" << std::endl;
 	municipio.setNombre("Cabra");
-//	provincia.insertarMunicipio(municipio);
+	provincia.insertarMunicipio(municipio);
+
     std::cout << std::endl;
 
-//	provincia.escribirMunicipios();
+	provincia.escribirMunicipios();
 
     std::cout << "Insertar Baena" << std::endl;
 	municipio.setNombre("Baena");
-//	provincia.insertarMunicipio(municipio);
+	provincia.insertarMunicipio(municipio);
+
     std::cout << std::endl;
 
-//	provincia.escribirMunicipios();
+	provincia.escribirMunicipios();
 
 	std::cout << "Se borra un municipio para controlar otro caso: Baena" << std::endl;
-//	provincia.borrarMunicipio("Baena");
+	provincia.borrarMunicipio("Baena");
     std::cout << std::endl;
 
-//	provincia.escribirMunicipios();
+	provincia.escribirMunicipios();
 
     std::cout << "Insertar Luque" << std::endl;
 	municipio.setNombre("Luque");
-//	provincia.insertarMunicipio(municipio);
+	provincia.insertarMunicipio(municipio);
     std::cout << std::endl;
 
-//	provincia.escribirMunicipios();
+	provincia.escribirMunicipios();
 
     std::cout << "Insertar Bujalance" << std::endl;
 	municipio.setNombre("Bujalance");
-//	provincia.insertarMunicipio(municipio);
+	provincia.insertarMunicipio(municipio);
     std::cout << std::endl;
 
-//	provincia.escribirMunicipios();
+	provincia.escribirMunicipios();
 
     std::cout << "Insertar Zuheros" << std::endl;
 	municipio.setNombre("Zuheros");
-//	provincia.insertarMunicipio(municipio);
+	provincia.insertarMunicipio(municipio);
     std::cout << std::endl;
 
-//	provincia.escribirMunicipios();
+	provincia.escribirMunicipios();
 
     std::cout << "Insertar Santa Eufemia" << std::endl;
 	municipio.setNombre("Santa Eufemia");
-//	provincia.insertarMunicipio(municipio);
+	provincia.insertarMunicipio(municipio);
     std::cout << std::endl;
 
-//	provincia.escribirMunicipios();
+	provincia.escribirMunicipios();
 
     std::cout << "Insertar Montilla" << std::endl;
 	municipio.setNombre("Montilla");
-//	provincia.insertarMunicipio(municipio);
+	provincia.insertarMunicipio(municipio);
     std::cout << std::endl;
 
 	std::cout << "##############################" << std::endl << std::endl<< std::endl;
@@ -92,40 +93,40 @@ int main()
 	std::cout << "Se borran los municipios" << std::endl<< std::endl;
 
     std::cout << "Borrar Luque" << std::endl;
-//	provincia.borrarMunicipio("Luque");
+	provincia.borrarMunicipio("Luque");
     std::cout << std::endl;
 
-//	provincia.escribirMunicipios();
+	provincia.escribirMunicipios();
 
     std::cout << "Borrar Zuheros" << std::endl;
-//	provincia.borrarMunicipio("Zuheros");
+	provincia.borrarMunicipio("Zuheros");
     std::cout << std::endl;
 
-//	provincia.escribirMunicipios();
+	provincia.escribirMunicipios();
 
     std::cout << "Borrar Bujalance" << std::endl;
-//	provincia.borrarMunicipio("Bujalance");
+	provincia.borrarMunicipio("Bujalance");
     std::cout << std::endl;
 
-//	provincia.escribirMunicipios();
+	provincia.escribirMunicipios();
 
     std::cout << "Borrar Montilla" << std::endl;
-//	provincia.borrarMunicipio("Montilla");
+	provincia.borrarMunicipio("Montilla");
     std::cout << std::endl;
 
-//	provincia.escribirMunicipios();
+	provincia.escribirMunicipios();
 
     std::cout << "Borrar Santa Eufemia" << std::endl;
-//	provincia.borrarMunicipio("Santa Eufemia");
+	provincia.borrarMunicipio("Santa Eufemia");
     std::cout << std::endl;
 
-//	provincia.escribirMunicipios();
+	provincia.escribirMunicipios();
 
     std::cout << "Borrar Cabra" << std::endl;
-//	provincia.borrarMunicipio("Cabra");
+	provincia.borrarMunicipio("Cabra");
     std::cout << std::endl;
 
-//	provincia.escribirMunicipios();
+	provincia.escribirMunicipios();
 
 	return 0;
 }

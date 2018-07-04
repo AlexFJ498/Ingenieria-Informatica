@@ -44,20 +44,25 @@ namespace ed {
 
     // \name Observadores privados 
 
-    inline ed::NodoDoblementeEnlazadoMunicipio * getHead() const
-	{
+    inline ed::NodoDoblementeEnlazadoMunicipio * getHead() const{
+		#ifndef NDEBUG
+			assert(this->isEmpty()==false);
+		#endif
+
 		return this->_head;
 	}
 
-	inline ed::NodoDoblementeEnlazadoMunicipio * getCurrent() const
-	{
+	inline ed::NodoDoblementeEnlazadoMunicipio * getCurrent() const{
+		#ifndef NDEBUG
+			assert(this->isEmpty()==false);
+		#endif
+
 		return this->_current;
 	}
 
     //! \name Modificadores privados 
 
-	inline void setHead(ed::NodoDoblementeEnlazadoMunicipio *head) 
-	{
+	inline void setHead(ed::NodoDoblementeEnlazadoMunicipio *head){
 		this->_head = head;
 
 		#ifndef NDEBUG
@@ -66,8 +71,7 @@ namespace ed {
 		#endif //NDEBUG		
 	}
 
-    inline void setCurrent(ed::NodoDoblementeEnlazadoMunicipio *current) 
-	{
+    inline void setCurrent(ed::NodoDoblementeEnlazadoMunicipio *current){
 		this->_current = current;
 
 		#ifndef NDEBUG
@@ -88,10 +92,13 @@ namespace ed {
 		\note  Función inline
 		\post  isEmpty() == true
 	*/
-	inline ListaDoblementeEnlazadaOrdenadaMunicipios()
-    {
-		  // DEBES CODIFICAR ESTA FUNCIÓN	
-		
+	inline ListaDoblementeEnlazadaOrdenadaMunicipios(){
+		_head=NULL;
+		_current=NULL;
+		/*
+		#ifndef NDEBUG
+			assert(this->isEmpty());
+		#endif*/
 	}
 	
   
@@ -102,15 +109,15 @@ namespace ed {
 		\note Función codificada en el fichero cpp
 		\post isEmpty() == true
 	*/
-	~ListaDoblementeEnlazadaOrdenadaMunicipios ()
-     {
-		  // DEBES CODIFICAR ESTA FUNCIÓN
+	~ListaDoblementeEnlazadaOrdenadaMunicipios (){
+		this->removeAll();
+
+		#ifndef NDEBUG
+			assert(this->isEmpty());
+		#endif
      }
 
-
-	//! \name Observadores públicos 	
-
-	// COMPLETAR EL RESTO DE OBSERVADORES PÚBLICOS
+	//! \name Observadores públicos 
 
 	/*!
 		\brief  Comprueba si la lista está vacía
@@ -118,25 +125,85 @@ namespace ed {
 		\note   Función de tipo "const": no puede modificar al objeto actual
         \return true, si la lista está vacía; false, en caso contrario
     */
-	bool isEmpty()const;
-	int nItems()const;
-	bool isFirstItem()const;
-	bool isLastItem()const;
-	Municipio const & getCurrentItem()const;
-	Municipio const & getPreviousItem()const;
-	Municipio const & getNextItem()const;
+	inline bool isEmpty() const{
+  		if(_head==NULL){
+			return true;
+		}
+
+		return false;
+	}
+	inline int nItems()const{
+		if(isEmpty()){return 0;}
+
+		int num=0;
+		ListaDoblementeEnlazadaOrdenadaMunicipios *aux=new ListaDoblementeEnlazadaOrdenadaMunicipios(*this);
+
+		aux->gotoHead();
+
+		while(!(aux->isLastItem())){
+			num++;
+			aux->gotoNext();
+		}
+		num++;
+
+		return num;
+	}
+	inline bool isFirstItem()const{
+		#ifndef NDEBUG
+			assert(this->isEmpty()==false);
+		#endif
+
+		if(this->getCurrent()->getPrevious()==NULL){
+			return true;
+		}
+		return false;
+	}
+	inline bool isLastItem()const{
+		#ifndef NDEBUG
+			assert(this->isEmpty()==false);
+		#endif
+
+		if(this->getCurrent()->getNext()==NULL){
+			return true;
+		}
+		return false;
+
+	}
+	inline Municipio const & getCurrentItem()const{
+		#ifndef NDEBUG
+			assert(this->isEmpty()==false);
+		#endif
+
+		return this->getCurrent()->getItem();
+	}
+	inline Municipio const & getPreviousItem()const{
+		#ifndef NDEBUG
+			assert(this->isEmpty()==false);
+			assert(this->isFirstItem()==false);
+		#endif
+
+		return this->getCurrent()->getPrevious()->getItem();
+	}
+	inline Municipio const & getNextItem()const{
+		#ifndef NDEBUG
+			assert(this->isEmpty()==false);
+			assert(this->isLastItem()==false);
+		#endif
+
+		return this->getCurrent()->getNext()->getItem();
+	}
 
     //! \name Modificadores públicos
 
-	// COMPLETAR EL RESTO DE MODIFICADORES PÚBLICOS
 	void gotoHead();
 	void gotoLast();
 	void gotoPrevious();
 	void gotoNext();
-	bool find(Municipio m);
-	void insert(Municipio m);
+	bool find(const Municipio &m);
+	void insert(const Municipio &m);
 	void remove();
 	void removeAll();
+
 	
 
 }; // Fin de la clase ListaDoblementeEnlazadaOrdenadaMunicipios

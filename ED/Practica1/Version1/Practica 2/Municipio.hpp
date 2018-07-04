@@ -8,7 +8,6 @@
 
 // Entrada y salida 
 #include <iostream>
-#include <cassert>
 
 // 
 #include <string>
@@ -29,10 +28,10 @@ class Municipio
 
   //! \name Atributos privados de la clase Municipio
    private: 
-      	int codigoPostal_;   //!< código postal del Municipio 
-		std::string nombre_; //!< nombre del Municipio
-      	int hombres_;        //!< número de hombres del Municipio 
-      	int mujeres_;        //!< número de mujeres del Municipio  
+      	int _codigoPostal;   //!< código postal del Municipio 
+		std::string _nombre; //!< nombre del Municipio
+      	int _hombres;        //!< número de hombres del Municipio 
+      	int _mujeres;        //!< número de mujeres del Municipio  
 
 
    //! \name Funciones o métodos públicos de la clase Municipio
@@ -50,20 +49,14 @@ class Municipio
 		\pre       Ninguna
 		\post      Ninguna
 		\sa        setNombre(), setCodigoPostal(),setHombres(), setMujeres()
-	*/	
-	inline Municipio(std::string nombre = "",int codigoPostal = 0,int hombres = 0,int mujeres = 0){
+	*/
+	inline Municipio(std::string nombre = "", int codigoPostal = 0,
+                     int hombres = 0, int mujeres = 0)
+	{
 		this->setCodigoPostal(codigoPostal);
 		this->setNombre(nombre);
 		this->setHombres(hombres);
 		this->setMujeres(mujeres);
-
-		#ifndef NDEBUG
-			assert(getNombre()==nombre
-				   and getCodigoPostal()==codigoPostal 
-				   and getHombres()==hombres           
-				   and getMujeres()==mujeres);
-		#endif
-		
 	}
 
 	/*! 
@@ -77,18 +70,12 @@ class Municipio
 		\sa        setNombre(), setCodigoPostal(), setHombres(), setMujeres(), 
 		\n		   getNombre(), getCodigoPostal(), getHombres(), getMujeres()
 	*/
-	inline Municipio(Municipio const &objeto){	
+	inline Municipio(Municipio const &objeto)
+	{
 		this->setCodigoPostal(objeto.getCodigoPostal());
-		this->setNombre(objeto.getNombre());		
+		this->setNombre(objeto.getNombre());
 		this->setHombres(objeto.getHombres());
 		this->setMujeres(objeto.getMujeres());
-
-		#ifndef NDEBUG
-			assert(getNombre()==objeto.getNombre()
-				   and getCodigoPostal()==objeto.getCodigoPostal()
-				   and getHombres()==objeto.getHombres()
-				   and getMujeres()==objeto.getMujeres());
-		#endif
 	}
 
 	//! \name Observadores: funciones de consulta de Municipio
@@ -102,8 +89,9 @@ class Municipio
 		\post    Ninguna
 		\sa      getCodigoPostal(), getHombres(), getMujeres(), getHabitantes()
 	*/
-	inline std::string getNombre()const{
-		return this->nombre_;
+	inline std::string getNombre()const
+	{
+		return this->_nombre;
 	}
 
 	/*! 
@@ -115,8 +103,9 @@ class Municipio
 		\post    Ninguna
 		\sa      getNombre(), getHombres(), getMujeres(), getHabitantes() 
 	*/
-	inline int getCodigoPostal()const{
-		return this->codigoPostal_;
+	inline int getCodigoPostal()const
+	{
+		return this->_codigoPostal;
 	}
 
 	/*! 
@@ -128,8 +117,9 @@ class Municipio
 		\post    Ninguna
 		\sa      getCodigoPostal(), getNombre(), getMujeres(), getHabitantes()
 	*/
-	inline int getHombres() const{
-		return this->hombres_;
+	inline int getHombres() const
+	{
+		return this->_hombres;
 	}
 
 
@@ -142,8 +132,9 @@ class Municipio
 		\post    Ninguna
 		\sa      getCodigoPostal(), getNombre(), getHombres(), getHabitantes()
 	*/
-	inline int getMujeres() const{
-		return this->mujeres_;
+	inline int getMujeres() const
+	{
+		return this->_mujeres;
 	}
 
 	/*! 
@@ -156,7 +147,8 @@ class Municipio
 		\post    valorDevuelto == getHombres() + getMujeres()
 		\sa      getCodigoPostal(), getNombre(), getHombres(), getMujeres()
 	*/
-	inline int getHabitantes() const{
+	inline int getHabitantes() const
+	{
 		return this->getHombres() + this->getMujeres();
 	}
 
@@ -171,13 +163,11 @@ class Municipio
 		\post  El valor del código postal debe ser "v"
 		\sa    setNombre, setHombres, setMujeres
 	*/
-	inline void setCodigoPostal(int v){
-		this->codigoPostal_ = v;
-
-	#ifndef NDEBUG
-		assert(getCodigoPostal()==v);
-	#endif
+	inline void setCodigoPostal(int v) 
+	{
+		this->_codigoPostal = v;
 	}
+
 
 	/*! 
 		\brief Función que asigna un nuevo valor al nombre 
@@ -187,12 +177,9 @@ class Municipio
 		\post  El valor del nombre debe ser "v"
 		\sa    setCodigoPostal
 	*/
-	inline void setNombre(std::string const &v){
-		this->nombre_ = v;
-
-	#ifndef NDEBUG
-		assert(getNombre()==v);
-	#endif
+	inline void setNombre(std::string const &v) 
+	{
+		this->_nombre = v;
 	}
 
 	/*! 
@@ -203,12 +190,9 @@ class Municipio
 		\post  El valor del número total de hombres debe ser "v"
 		\sa    setNombre, setCodigoPostal, setMujeres
 	*/
-	inline void setHombres(int v){
-		this->hombres_ = v;
-	
-	#ifndef NDEBUG
-		assert(getHombres()==v);
-	#endif
+	inline void setHombres(int v) 
+	{
+		this->_hombres = v;
 	}
 
 	/*! 
@@ -219,13 +203,11 @@ class Municipio
 		\post  El valor del número total de mujeres debe ser "v"
 		\sa    setNombre, setCodigoPostal, setHombres
 	*/
-	inline void setMujeres(int v){
-		this->mujeres_ = v;
-
-	#ifndef NDEBUG
-		assert(getMujeres()==v);
-	#endif
+	inline void setMujeres(int v)
+	{
+		this->_mujeres = v;
 	}
+
 
     //! \name Operadores
    

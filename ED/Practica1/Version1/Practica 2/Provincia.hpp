@@ -1,9 +1,9 @@
 /*!	
 	\file  Provincia.hpp
 	\brief Definición de la clase Provincia
-	\author Alejandro Fuerte Jurado
+	\author  
 	\date  
-	\version 1.0
+	\version 
 
 */
 
@@ -12,9 +12,8 @@
 
 // Para comprobar las pre y post condiciones
 #include <cassert>
-#include "Municipio.hpp"
-#include <string>
-#include <cstdlib>
+#include <iostream>
+#include <cstring>
 
 #include "ListaDoblementeEnlazadaOrdenadaMunicipios.hpp"
 
@@ -40,14 +39,15 @@ namespace ed{
   \brief Definición de la clase Provincia
 
 */
-class Provincia{
+class Provincia
+{
 	//!	\name Métodos públicos de la clase Provincia
 
 	private:
-		std::string      nombre_;     //!<  \brief Nombre de la Provincia
-		int              codigo_;	  //!<  \brief Código de la Provincia
+		std::string      _nombre;     //!<  \brief Nombre de la Provincia
+		int              _codigo;	  //!<  \brief Código de la Provincia
 
-	  	ed::ListaDoblementeEnlazadaOrdenadaMunicipios listaMunicipios_; //!<  \brief Lista de municipios de la Provincia
+	  	ed::ListaDoblementeEnlazadaOrdenadaMunicipios _listaMunicipios; //!<  \brief Lista de municipios de la Provincia
 
 
 	/////////////////////////////////////////////////////////////////////
@@ -57,41 +57,56 @@ class Provincia{
   public: 
 
 	//!	\name Constructor
-		Provincia(std::string n,int c){
-			setNombre(n);
-			setCodigo(c);
-
+Provincia(std::string n="", int c=0)
+: _nombre(n), _codigo(c) {};
+	/*Provincia(std::string n="",int c=0){
+		_nombre=n;
+		_codigo=c;
 		#ifndef NDEBUG
-			assert((getNombre()==nombre_) and
-				   (getCodigo()==codigo_) and
-				   (hayMunicipios()==false));
+			assert(this->getNombre()==n and
+				   this->getCodigo()==c and
+				   this->hayMunicipios()==false);
 		#endif
-		}
+	}*/
+
 	/////////////////////////////////////////////////////////////////////
 
 	//!	\name Observadores
-		inline std::string getNombre(){return nombre_;}
-		inline int getCodigo(){return codigo_;}
-		bool hayMunicipios();
-		inline int getNumeroMunicipios(){return sizeof(listaMunicipios_);}
-		bool existeMunicipio(std::string n);
-		Municipio getMunicipio(std::string n);
-		int getTotalHombres();
-		int getTotalMujeres();
-		int getTotalHabitantes();
+	inline std::string getNombre()const{return _nombre;}
+	inline int getCodigo()const{return _codigo;}
+	bool hayMunicipios()const;
+	int getNumeroMunicipios()const{return _listaMunicipios.nItems();}
+	bool existeMunicipio(std::string n);
+	Municipio getMunicipio(std::string n);
+	int getTotalHombres();
+	int getTotalMujeres();
+
 	/////////////////////////////////////////////////////////////////////
 
 	//!	\name Modificadores
-		void setNombre(std::string n);
-		void setCodigo(int c);
-		void insertarMunicipio(Municipio m);
-		void borrarMunicipio(std::string n);
-		void borrarTodosLosMunicipios();
+	inline void setNombre(std::string n){
+		_nombre=n;
+		#ifndef NDEBUG
+			assert(this->getNombre()==n);
+		#endif	
+	}
+	inline void setCodigo(int c){
+		_codigo=c;
+		#ifndef NDEBUG
+			assert(this->getCodigo()==c);
+		#endif
+	}
+	void insertarMunicipio(const Municipio &m);
+	void borrarMunicipio(std::string n);
+	void borrarTodosLosMunicipios();
+
 
 	/////////////////////////////////////////////////////////////////////
 
 	//! \name Función de escritura de la clase Provincia
 	void escribirMunicipios();
+
+
 	/////////////////////////////////////////////////////////////////////
 
 	//! Operaciones con ficheros
