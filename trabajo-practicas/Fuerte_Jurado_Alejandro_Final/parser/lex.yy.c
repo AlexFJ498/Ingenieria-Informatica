@@ -890,8 +890,8 @@ YY_RULE_SETUP
 						  yylval.identifier =  strdup(yytext);
 
 						/* No diferenciar entre mayúsculas y minúsculas */
-						for(int i=0; yytext[i] != '\0'; i++){
-							yytext[i] = toupper(yytext[i]);
+						for(int i=0; yylval.identifier[i] != '\0'; i++){
+							yylval.identifier[i] = tolower(yytext[i]);
 						}
 
 						/* If the identifier is not in the table of symbols then it is inserted */	

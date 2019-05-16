@@ -59,8 +59,8 @@ static struct {
           std::string name ;
 	      bool value;
 	      } logicalConstant[] = { 
-	                    "TRUE", true,
-	                    "FALSE", false,
+	                    "true", true,
+	                    "false", false,
 	                    "",      0
 	                   };
 
@@ -73,23 +73,23 @@ static struct {
           std::string name ;
 	      int token;
 	      } keyword[] = {
-	                    "LEER",             LEER,
-						"LEER_CADENA",      LEER_CADENA,
-						"ESCRIBIR",         ESCRIBIR,
-						"ESCRIBIR_CADENA",  ESCRIBIR_CADENA,
-						"SI",               SI,
-						"ENTONCES",         ENTONCES,
-						"SI_NO",            SI_NO,
-						"FIN_SI",           FIN_SI,
-						"MIENTRAS",         MIENTRAS,
-						"HACER",            HACER,
-						"FIN_MIENTRAS",     FIN_MIENTRAS,
-						"REPETIR",          REPETIR,
-						"HASTA",            HASTA,
-						"PARA",             PARA,
-						"FIN_PARA",         FIN_PARA,
-						"DESDE",            DESDE,
-						"PASO",             PASO,	
+	                    "leer",             LEER,
+						"leer_cadena",      LEER_CADENA,
+						"escribir",         ESCRIBIR,
+						"escribir_cadena",  ESCRIBIR_CADENA,
+						"si",               SI,
+						"entonces",         ENTONCES,
+						"si_no",            SI_NO,
+						"fin_si",           FIN_SI,
+						"mientras",         MIENTRAS,
+						"hacer",            HACER,
+						"fin_mientras",     FIN_MIENTRAS,
+						"repetir",          REPETIR,
+						"hasta",            HASTA,
+						"para",             PARA,
+						"fin_para",         FIN_PARA,
+						"desde",            DESDE,
+						"paso",             PASO,	
 	                    "",      0
 	                   };
 
@@ -100,15 +100,15 @@ static struct {    /* Predefined functions names */
                 std::string name ;
 				lp::TypePointerDoubleFunction_1 function;
               } function_1 [] = {
-									"SIN",     sin,
-		    						"COS",     cos,
-		    						"ATAN",    atan,
-		    						"LOG",     Log,
-		    						"LOG10",   Log10,
-		    						"EXP",     Exp,
-		    						"SQRT",    Sqrt,
-		    						"INTEGER", integer,
-		    						"ABS",     fabs,   
+									"sin",     sin,
+		    						"cos",     cos,
+		    						"atan",    atan,
+		    						"log",     Log,
+		    						"log10",   Log10,
+		    						"exp",     Exp,
+		    						"sqrt",    Sqrt,
+		    						"integer", integer,
+		    						"abs",     fabs,   
 		    						"",       0
 		              };
 
@@ -117,7 +117,7 @@ static struct {
                 std::string name ;
 				lp::TypePointerDoubleFunction_0 function;
               } function_0 [] = {
-						"RANDOM", Random,
+						"random", Random,
 		                "",       0
 		              };
 
@@ -127,7 +127,7 @@ static struct {    /* Nombres predefinidos de funciones con 2 argumentos */
                 std::string name ;
 				lp::TypePointerDoubleFunction_2 function;
               } function_2 [] = {
-	                   "ATAN2",   Atan2,
+	                   "atan2",   Atan2,
 		                "",       0
 		              };
 
