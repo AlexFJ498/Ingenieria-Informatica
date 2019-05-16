@@ -1693,10 +1693,10 @@ class DoStmt : public Statement
 class ForStmt : public Statement 
 {
  private:
-  ExpNode *_exp1; //!< Number of the condition
-  ExpNode *_exp2; //!< Begining of the condition
-  ExpNode *_exp3; //!< End of the condition
-  ExpNode *_exp4; //!< Condition
+  VariableNode *_var; //!< Name of the VariableNode
+  ExpNode *_exp1; //!< Begining of the condition
+  ExpNode *_exp2; //!< End of the condition
+  ExpNode *_exp3; //!< Condition
   Statement *_stmt; //!< Statement of the body of the do loop
 
   public:
@@ -1706,12 +1706,12 @@ class ForStmt : public Statement
 	\param statement: Statement of the body of the loop 
 	\post  A new ForStmt is created with the parameters
 */
-  ForStmt(ExpNode *condition1, ExpNode *condition2, ExpNode *condition3, ExpNode *condition4, Statement *statement)
+  ForStmt(VariableNode *id, ExpNode *condition2, ExpNode *condition3, ExpNode *condition4, Statement *statement)
 	{
-		this->_exp1 = condition1;
-		this->_exp2 = condition2;
-		this->_exp3 = condition3;
-		this->_exp4 = condition4;
+		this-> _var = id;
+		this->_exp1 = condition2;
+		this->_exp2 = condition3;
+		this->_exp3 = condition4;
 		this->_stmt = statement;
 	}
 

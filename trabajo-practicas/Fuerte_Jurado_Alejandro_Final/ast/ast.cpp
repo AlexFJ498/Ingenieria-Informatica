@@ -1311,10 +1311,10 @@ void lp::ForStmt::print()
 {
   std::cout << "ForStmt: "  << std::endl;
   // Conditions 
+  this->_var->print();
   this->_exp1->print();
   this->_exp2->print();
   this->_exp3->print();
-  this->_exp4->print();
 
   // Statement of the for loop
   this->_stmt->print();
@@ -1326,10 +1326,7 @@ void lp::ForStmt::print()
 void lp::ForStmt::evaluate() 
 {
   // While the condition is false. the body is run 
-  for(this->_exp1;this->_exp2;this->_exp3)
-  {
-  	this->_stmt->evaluate();
-  }
+  
 
 }
 

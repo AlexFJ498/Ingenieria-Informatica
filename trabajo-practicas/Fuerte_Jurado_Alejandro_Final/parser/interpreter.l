@@ -64,6 +64,7 @@ IDENTIFIER  {LETTER}({LETTER}|{DIGIT}|{SUBRAYADO}({LETTER}|{DIGIT}))*
 /* NEW in example 3 */
 /* STATE  */
 %x ERROR
+%x ESTADO_CADENA
 
 /*! \name REGULAR EXPRESSIONS  */
 %%
@@ -97,6 +98,25 @@ IDENTIFIER  {LETTER}({LETTER}|{DIGIT}|{SUBRAYADO}({LETTER}|{DIGIT}))*
 
                        return NUMBER; 
                       }
+
+"'"			   {
+			    /* Se activa el reconocimiento de la cadena */
+			    BEGIN ESTADO_CADENA; 
+			    //numero_cadenas++; 
+			    lineNumber=1;
+			  }
+
+
+<ESTADO_CADENA>"'"  { /* Fin de la cadena: se vuelve al estado por defecto */
+			         BEGIN 0; 
+			        // yytext[yyleng-1]='\0';
+					}      
+
+<ESTADO_CADENA>"\\\'"     {yymore();}
+
+<ESTADO_CADENA>\t	  { yymore(); }
+
+<ESTADO_CADENA>\n         {lineNumber++; yymore();}
 
 
 {IDENTIFIER}   		 {

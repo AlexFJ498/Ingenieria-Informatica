@@ -65,34 +65,38 @@ extern int yydebug;
     LEER_CADENA = 275,
     ESCRIBIR = 276,
     ESCRIBIR_CADENA = 277,
-    LETFCURLYBRACKET = 278,
-    RIGHTCURLYBRACKET = 279,
-    ASSIGNMENT = 280,
-    COMMA = 281,
-    NUMBER = 282,
-    BOOL = 283,
-    VARIABLE = 284,
-    UNDEFINED = 285,
-    CONSTANT = 286,
-    BUILTIN = 287,
-    OR = 288,
-    AND = 289,
-    GREATER_OR_EQUAL = 290,
-    LESS_OR_EQUAL = 291,
-    GREATER_THAN = 292,
-    LESS_THAN = 293,
-    EQUAL = 294,
-    NOT_EQUAL = 295,
-    NOT = 296,
-    PLUS = 297,
-    MINUS = 298,
-    MULTIPLICATION = 299,
-    DIVISION = 300,
-    MODULO = 301,
-    LPAREN = 302,
-    RPAREN = 303,
-    UNARY = 304,
-    POWER = 305
+    DIVISION_ENTERA = 278,
+    BORRAR = 279,
+    LUGAR = 280,
+    CONCATENACION = 281,
+    LETFCURLYBRACKET = 282,
+    RIGHTCURLYBRACKET = 283,
+    ASSIGNMENT = 284,
+    COMMA = 285,
+    NUMBER = 286,
+    BOOL = 287,
+    VARIABLE = 288,
+    UNDEFINED = 289,
+    CONSTANT = 290,
+    BUILTIN = 291,
+    OR = 292,
+    AND = 293,
+    GREATER_OR_EQUAL = 294,
+    LESS_OR_EQUAL = 295,
+    GREATER_THAN = 296,
+    LESS_THAN = 297,
+    EQUAL = 298,
+    NOT_EQUAL = 299,
+    NOT = 300,
+    PLUS = 301,
+    MINUS = 302,
+    MULTIPLICATION = 303,
+    DIVISION = 304,
+    MODULO = 305,
+    LPAREN = 306,
+    RPAREN = 307,
+    UNARY = 308,
+    POWER = 309
   };
 #endif
 
@@ -112,7 +116,7 @@ union YYSTYPE
   lp::Statement *st;				 /* NEW in example 16 */
   lp::AST *prog;					 /* NEW in example 16 */
 
-#line 116 "interpreter.tab.h" /* yacc.c:1909  */
+#line 120 "interpreter.tab.h" /* yacc.c:1909  */
 };
 # define YYSTYPE_IS_TRIVIAL 1
 # define YYSTYPE_IS_DECLARED 1

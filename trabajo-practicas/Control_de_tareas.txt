@@ -88,7 +88,7 @@ CADENA:					[ ]								CHECK
 	CARACTERES DELIMITADOS POR COMILLAS SIMPLES 		[ ]
 	INCLUYE COMILLA SIMPLE CON \ \'						[ ]
 
-	COMILLAS EXTERIORES NO SON PARTE DE LA CADENA 		[ ]
+	COMILLAS EXTERIORES NO SON PARTE DE LA CADENA 		[x]
 
 -----------------------------------------------------------------
 OPERADORES:				[ ]								CHECK

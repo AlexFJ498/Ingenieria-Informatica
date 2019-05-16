@@ -171,8 +171,10 @@ extern lp::AST *root; //!< External root of the abstract syntax tree AST
 
 %token LEER LEER_CADENA ESCRIBIR ESCRIBIR_CADENA
 
+%token DIVISION_ENTERA BORRAR LUGAR CONCATENACION
+
 // NEW in example 17
-%token LETFCURLYBRACKET RIGHTCURLYBRACKET
+%token LETFCURLYBRACKET RIGHTCURLYBRACKET 
 
 /* NEW in example 7 */
 %right ASSIGNMENT
@@ -306,6 +308,16 @@ stmt: SEMICOLON  /* Empty statement: ";" */
 		// Default action
 		// $$ = $1;
 	 }
+	| do
+	 {
+		//Default action
+		//$$ = $1;
+     }
+	| for
+	 {
+		//Default action
+		//$$ = $1;
+	 }
 ;
 
 
@@ -349,7 +361,7 @@ do:     REPETIR stmt HASTA cond
 ;
 
 
-for:    PARA exp DESDE exp HASTA exp PASO exp HACER stmt FIN_PARA
+for:    PARA VARIABLE DESDE exp HASTA exp PASO exp HACER stmt FIN_PARA
 		{
 			//Create a new for statement node
 			$$ = new lp::ForStmt($2, $4, $6, $8, $10);
