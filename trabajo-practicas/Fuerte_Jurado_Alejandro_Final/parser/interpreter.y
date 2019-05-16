@@ -163,7 +163,7 @@ extern lp::AST *root; //!< External root of the abstract syntax tree AST
 /*******************************************/
 
 // NEW in example 17: IF, ELSE, WHILE 
-%token PRINT READ SI ENTONCES SI_NO FIN_SI
+%token SI ENTONCES SI_NO FIN_SI
 
 %token MIENTRAS HACER FIN_MIENTRAS
 
@@ -401,7 +401,7 @@ asgn:   VARIABLE ASSIGNMENT exp
 ;
 
 
-print:  PRINT exp 
+print:  ESCRIBIR exp 
 		{
 			// Create a new print node
 			 $$ = new lp::PrintStmt($2);
@@ -451,6 +451,12 @@ exp:	NUMBER
 		  // Create a new division node	
 		  $$ = new lp::DivisionNode($1, $3);
 	   }
+
+	|	exp DIVISION_ENTERA exp
+		{
+		  // Create a new divisionEntera node
+		  $$ = new lp::DivisionEnteraNode($1, $3);
+		}
 
 	| 	LPAREN exp RPAREN
        	{ 

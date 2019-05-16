@@ -724,6 +724,44 @@ class DivisionNode : public NumericOperatorNode
 ///////////////////////////////////////////////////////////////////////////////////////////////
 
 /*!	
+  \class   DivisionEnteraNode
+  \brief   Definition of atributes and methods of DivisionEnteraNode class
+  \note    DivisionEnteraNode Class publicly inherits from NumericOperatorNode class 
+		   and adds its own print and evaluate functions
+*/
+class DivisionEnteraNode : public NumericOperatorNode 
+{
+  public:
+/*!		
+	\brief Constructor of DivisionEnteraNode uses NumericOperatorNode's constructor as members initializer
+	\param L: pointer to ExpNode
+	\param R: pointer to ExpNode
+	\post  A new DivisionEnteraNode is created with the parameter
+*/
+  DivisionEnteraNode(ExpNode *L, ExpNode *R): NumericOperatorNode(L,R) 
+  {
+		// Empty
+  }
+/*!
+	\brief   Print the DivisionEnteraNode
+	\return  void
+	\sa		 evaluate()
+*/
+  void print();
+
+/*!	
+	\brief   Evaluate the DivisionEnteraNode
+	\return  double
+	\sa		 print
+*/
+  double evaluateNumber();
+};
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////
+
+/*!	
   \class   ModuloNode
   \brief   Definition of atributes and methods of ModuloNode class
   \note    ModuloNode Class publicly inherits from NumericOperatorNode class 
@@ -1693,7 +1731,7 @@ class DoStmt : public Statement
 class ForStmt : public Statement 
 {
  private:
-  VariableNode *_var; //!< Name of the VariableNode
+  std::string _var; //!< Name of the VariableNode
   ExpNode *_exp1; //!< Begining of the condition
   ExpNode *_exp2; //!< End of the condition
   ExpNode *_exp3; //!< Condition
@@ -1706,7 +1744,7 @@ class ForStmt : public Statement
 	\param statement: Statement of the body of the loop 
 	\post  A new ForStmt is created with the parameters
 */
-  ForStmt(VariableNode *id, ExpNode *condition2, ExpNode *condition3, ExpNode *condition4, Statement *statement)
+  ForStmt(std::string id, ExpNode *condition2, ExpNode *condition3, ExpNode *condition4, Statement *statement)
 	{
 		this-> _var = id;
 		this->_exp1 = condition2;

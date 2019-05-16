@@ -85,57 +85,57 @@ NÚMERO:					[ ]								CHECK
 -----------------------------------------------------------------
 CADENA:					[ ]								CHECK
 -----------------------------------------------------------------
-	CARACTERES DELIMITADOS POR COMILLAS SIMPLES 		[ ]
-	INCLUYE COMILLA SIMPLE CON \ \'						[ ]
+	CARACTERES DELIMITADOS POR COMILLAS SIMPLES 		[x]
+	INCLUYE COMILLA SIMPLE CON \ \'						[x]
 
 	COMILLAS EXTERIORES NO SON PARTE DE LA CADENA 		[x]
 
 -----------------------------------------------------------------
 OPERADORES:				[ ]								CHECK
 -----------------------------------------------------------------
-	NUMERICOS											[ ]
-		ASIGNACION :=									[ ]
-		SUMA +											[ ]
-			UNARIO +2									[ ]
-			BINARIO 2+3									[ ]
-		RESTA -											[ ]
-			UNARIO -2									[ ]
-			BINARIO 2-3									[ ]
-		PRODUCTO *										[ ]
-		DIVISION /										[ ]
-		DIVISION_ENTERA _div							[ ]
-		MODULO _mod										[ ]
-		POTENCIA **										[ ]
+	NUMERICOS											[x]
+		ASIGNACION :=									[x]
+		SUMA +											[x]
+			UNARIO +2									[x]
+			BINARIO 2+3									[x]
+		RESTA -											[x]
+			UNARIO -2									[x]
+			BINARIO 2-3									[x]
+		PRODUCTO *										[x]
+		DIVISION /										[x]
+		DIVISION_ENTERA _div							[x]
+		MODULO _mod										[x]
+		POTENCIA **										[x]
 
 	ALFANUMERICOS										[ ]
 		CONCATENACION ||								[ ]
 
-	RELACIONALES NÚMEROS Y CADENAS						[ ]
-		MENOR QUE <										[ ]
-		MENOR O IGUAL QUE <=							[ ]
-		MAYOR QUE >										[ ]
-		MAYOR O IGUAL QUE >=							[ ]
-		DISTINTO DE <>									[ ]
+	RELACIONALES NÚMEROS Y CADENAS						[x]
+		MENOR QUE <										[x]
+		MENOR O IGUAL QUE <=							[x]
+		MAYOR QUE >										[x]
+		MAYOR O IGUAL QUE >=							[x]
+		DISTINTO DE <>									[x]
 
-	LOGICOS												[ ]
-		DISYUNCIÓN _o									[ ]
-		CONJUNCIÓN _y									[ ]
-		NEGACIÓN   _no									[ ]
+	LOGICOS												[x]
+		DISYUNCIÓN _o									[x]
+		CONJUNCIÓN _y									[x]
+		NEGACIÓN   _no									[x]
 
 -----------------------------------------------------------------
 OTROS:					[ ]								CHECK
 -----------------------------------------------------------------
-	COMENTARIOS											[ ]
-		VARIAS LINEAS: DELIMITADORES #	.... #			[ ]
-		UNA LÍNEA: DELIMITADOR @						[ ]
+	COMENTARIOS											[x]
+		VARIAS LINEAS: DELIMITADORES #	.... #			[x]
+		UNA LÍNEA: DELIMITADOR @						[x]
 
-	FIN DE LINEA ;										[ ]
+	FIN DE LINEA ;										[x]
 
 -----------------------------------------------------------------
 SENTENCIAS DE CONTROL:	[ ]								CHECK
 -----------------------------------------------------------------
 	ASIGNACION											[ ]
-		IDENTIFICADOR := EXPR NUMÉRICA					[ ]
+		IDENTIFICADOR := EXPR NUMÉRICA					[x]
 		IDENTIFICADOR := EXPR ALFANUMÉRICA				[ ]
 
 	LECTURA												[ ]

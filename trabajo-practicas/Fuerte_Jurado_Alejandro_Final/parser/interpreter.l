@@ -65,6 +65,8 @@ IDENTIFIER  {LETTER}({LETTER}|{DIGIT}|{SUBRAYADO}({LETTER}|{DIGIT}))*
 /* STATE  */
 %x ERROR
 %x ESTADO_CADENA
+%x ESTADO_COMENTARIO
+%x ESTADO_COMENTARIO2
 
 /*! \name REGULAR EXPRESSIONS  */
 %%
@@ -117,6 +119,25 @@ IDENTIFIER  {LETTER}({LETTER}|{DIGIT}|{SUBRAYADO}({LETTER}|{DIGIT}))*
 <ESTADO_CADENA>\t	  { yymore(); }
 
 <ESTADO_CADENA>\n         {lineNumber++; yymore();}
+
+"#"	      	{
+			  		/* Se activa el reconocimiento de un comentario */
+			  		BEGIN ESTADO_COMENTARIO; 
+			  	}
+
+<ESTADO_COMENTARIO>"#"          { /* Fin del comentario: se vuelve al estado por defecto */
+				  BEGIN 0; 
+				  }      
+
+<ESTADO_COMENTARIO>.        {;}
+
+<ESTADO_COMENTARIO>\n       {;}
+
+"@"				{
+					BEGIN ESTADO_COMENTARIO2;
+				}
+
+<ESTADO_COMENTARIO2>\n {BEGIN 0;}
 
 
 {IDENTIFIER}   		 {
@@ -210,7 +231,7 @@ IDENTIFIER  {LETTER}({LETTER}|{DIGIT}|{SUBRAYADO}({LETTER}|{DIGIT}))*
 
 
 
-^# { /* The interpreter finishes when the symbol # is written at the beginning of the line */
+^~ { /* The interpreter finishes when the symbol # is written at the beginning of the line */
 	// std::cout << CLEAR_SCREEN; 
 	//  PLACE(24,10);
   	  std::cout <<  BIYELLOW;

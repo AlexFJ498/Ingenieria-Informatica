@@ -483,6 +483,49 @@ double lp::DivisionNode::evaluateNumber()
 ///////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////
 
+void lp::DivisionEnteraNode::print()
+{
+  std::cout << "DivisionEnteraNode: " << std::endl;
+  this->_left->print();
+  std::cout << " / ";
+  this->_right->print();
+}
+
+double lp::DivisionEnteraNode::evaluateNumber() 
+{
+	int result = 0;
+
+	// Ckeck the types of the expressions
+	if (this->getType() == NUMBER)
+	{
+		int leftNumber, rightNumber;
+
+		leftNumber = this->_left->evaluateNumber();
+		rightNumber = this->_right->evaluateNumber();
+	
+		// The divisor is not zero
+    	if(std::abs(rightNumber) > ERROR_BOUND)
+		{
+				result = leftNumber / rightNumber;
+		}
+		else
+		{
+			warning("Runtime error", "Division by zero");
+		}
+	}
+	else
+	{
+		warning("Runtime error: the expressions are not numeric for", "Division");
+	}
+
+  return result;
+}
+
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////
+
 void lp::ModuloNode::print()
 {
   std::cout << "ModuloNode: " << std::endl;
@@ -1311,7 +1354,7 @@ void lp::ForStmt::print()
 {
   std::cout << "ForStmt: "  << std::endl;
   // Conditions 
-  this->_var->print();
+  std::cout << "VariableNode: " << this->_var << std::endl;
   this->_exp1->print();
   this->_exp2->print();
   this->_exp3->print();
