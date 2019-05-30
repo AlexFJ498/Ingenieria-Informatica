@@ -17,7 +17,7 @@ OBJECTS= $(NAME).o
 
 # Includes
 INCLUDES = $(NAME).hpp \
-			../parser/interpreter.tab.h \
+			../parser/ipe.tab.h \
 			../includes/macros.hpp ../error/error.hpp \
 			../table/table.hpp  ../table/numericConstant.hpp \
 			../table/builtinParameter0.hpp ../table/builtinParameter1.hpp ../table/builtinParameter2.hpp

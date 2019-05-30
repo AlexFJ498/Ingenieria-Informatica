@@ -1,5 +1,5 @@
 /*! 
-  \file interpreter.y
+  \file ipe.y
   \brief Grammar file
 */
 
@@ -9,13 +9,11 @@
 #include <string>
 
 /*******************************************/
-/* NEW in example 5 */
 /* pow */
 #include <math.h>
 /*******************************************/
 
 /*******************************************/
-/* NEW in example 6 */
 /* Use for recovery of runtime errors */
 #include <setjmp.h>
 #include <signal.h>
@@ -30,7 +28,6 @@
 
 /*******************************************/
 /* 
-  NEW in example 16
   AST class
   IMPORTANT: this file must be before init.hpp
 */
@@ -38,42 +35,36 @@
 
 
 /*******************************************/
-/* NEW in example 7 */
 /* Table of symbol */
 #include "../table/table.hpp"
 /*******************************************/
 
 /*******************************************/
 #include "../table/numericVariable.hpp"
+#include "../table/cadenaVariable.hpp"
 /*******************************************/
 
-/* NEW in example 15 */
 #include "../table/logicalVariable.hpp"
 
 /*******************************************/
-/* NEW in example 11 */
 #include "../table/numericConstant.hpp"
 /*******************************************/
 
 /*******************************************/
-/* NEW in example 15 */
 #include "../table/logicalConstant.hpp"
 /*******************************************/
 
 /*******************************************/
-/* NEW in example 13 */
 #include "../table/builtinParameter1.hpp"
 /*******************************************/
 
 /*******************************************/
-/* NEW in example 14 */
 #include "../table/builtinParameter0.hpp"
 #include "../table/builtinParameter2.hpp"
 /*******************************************/
 
 
 /*******************************************/
-/* NEW in example 10 */
 #include "../table/init.hpp"
 /*******************************************/
 
@@ -87,17 +78,14 @@ int yylex();
 
 extern int lineNumber; //!< External line counter
 
-/* NEW in example 15 */
 extern bool interactiveMode; //!< Control the interactive mode of execution of the interpreter
 
 
 /***********************************************************/
-/* NEW in example 2 */
 extern std::string progname; //!<  Program name
 /***********************************************************/
 
 /*******************************************/
-/* NEW in example 6 */
 /*
  jhmp_buf
     This is an array type capable of storing the information of a calling environment to be restored later.
@@ -108,11 +96,9 @@ jmp_buf begin; //!<  It enables recovery of runtime errors
 
 
 /*******************************************/
-/* NEW in example 7 */
 extern lp::Table table; //!< Extern Table of Symbols
 
 /*******************************************/
-/* NEW in example 16 */
 extern lp::AST *root; //!< External root of the abstract syntax tree AST
 
 %}
@@ -127,29 +113,26 @@ extern lp::AST *root; //!< External root of the abstract syntax tree AST
 
 /*******************************************/
 /* Data type YYSTYPE  */
-/* NEW in example 4 */
 %union {
-  char * identifier; 				 /* NEW in example 7 */
+  char * identifier; 				 
   double number;  
-  bool logic;						 /* NEW in example 15 */
-  lp::ExpNode *expNode;  			 /* NEW in example 16 */
-  std::list<lp::ExpNode *>  *parameters;    // New in example 16; NOTE: #include<list> must be in interpreter.l, init.cpp, interpreter.cpp
-  std::list<lp::Statement *> *stmts; /* NEW in example 16 */
-  lp::Statement *st;				 /* NEW in example 16 */
-  lp::AST *prog;					 /* NEW in example 16 */
+  bool logic;						 
+  lp::ExpNode *expNode;  			 
+  std::list<lp::ExpNode *>  *parameters;    // NOTE: #include<list> must be in interpreter.l, init.cpp, interpreter.cpp
+  std::list<lp::Statement *> *stmts; 
+  lp::Statement *st;				 
+  lp::AST *prog;					 
+  char * cadena;
 }
 
 /* Type of the non-terminal symbols */
-// New in example 17: cond
 %type <expNode> exp cond 
 
-/* New in example 14 */
 %type <parameters> listOfExp  restOfListOfExp
 
 %type <stmts> stmtlist
 
-// New in example 17: if, while, block
-%type <st> stmt asgn print read if while do for block
+%type <st> stmt asgn print printC read readC clear place if while do for
 
 %type <prog> program
 
@@ -158,11 +141,9 @@ extern lp::AST *root; //!< External root of the abstract syntax tree AST
 /* Minimum precedence */
 
 /*******************************************/
-/* NEW in example 5 */
 %token SEMICOLON
 /*******************************************/
 
-// NEW in example 17: IF, ELSE, WHILE 
 %token SI ENTONCES SI_NO FIN_SI
 
 %token MIENTRAS HACER FIN_MIENTRAS
@@ -171,34 +152,28 @@ extern lp::AST *root; //!< External root of the abstract syntax tree AST
 
 %token LEER LEER_CADENA ESCRIBIR ESCRIBIR_CADENA
 
-%token DIVISION_ENTERA BORRAR LUGAR CONCATENACION
+%token  BORRAR LUGAR 
 
-// NEW in example 17
 %token LETFCURLYBRACKET RIGHTCURLYBRACKET 
 
-/* NEW in example 7 */
 %right ASSIGNMENT
 
-/* NEW in example 14 */
 %token COMMA
 
 /*******************************************/
-/* MODIFIED in example 4 */
 %token <number> NUMBER
+%token <cadena> CADENA
 /*******************************************/
 
 /*******************************************/
-/* NEW in example 15 */
 %token <logic> BOOL
 /*******************************************/
 
-/* MODIFIED in examples 11, 13 */
 %token <identifier> VARIABLE UNDEFINED CONSTANT BUILTIN
 
 /* Left associativity */
 
 /*******************************************************/
-/* NEW in example 15 */
 %left OR
 
 %left AND
@@ -208,25 +183,21 @@ extern lp::AST *root; //!< External root of the abstract syntax tree AST
 %left NOT
 /*******************************************************/
 
-/* MODIFIED in example 3 */
 %left PLUS MINUS 
 
-/* MODIFIED in example 5 */
-%left MULTIPLICATION DIVISION MODULO
+%left MULTIPLICATION DIVISION MODULO DIVISION_ENTERA CONCATENACION
 
 %left LPAREN RPAREN
 
 %nonassoc  UNARY
 
 // Maximum precedence 
-/* MODIFIED in example 5 */
 %right POWER
 
 
 %%
 //! \name Grammar rules
 
-/* MODIFIED  Grammar in example 16 */
 
 program : stmtlist
 		  { 
@@ -285,25 +256,37 @@ stmt: SEMICOLON  /* Empty statement: ";" */
 		// Default action
 		// $$ = $1;
 	  }
+	| printC SEMICOLON
+	  {
+		// Default action
+		// $$ = $1;
+  	  }
 	| read SEMICOLON
 	  {
 		// Default action
 		// $$ = $1;
 	  }
-	/*  NEW in example 17 */
+	| readC SEMICOLON
+	  {
+		// Default action
+		// $$ = $1;
+	  }
+	| clear SEMICOLON
+	  {
+		// Default action
+		// $$ = $1;
+	  }
+	| place SEMICOLON
+	  {
+		// Default action
+		// $$ = $1;
+	  }
 	| if 
 	 {
 		// Default action
 		// $$ = $1;
 	 }
-	/*  NEW in example 17 */
 	| while 
-	 {
-		// Default action
-		// $$ = $1;
-	 }
-	/*  NEW in example 17 */
-	| block 
 	 {
 		// Default action
 		// $$ = $1;
@@ -319,33 +302,23 @@ stmt: SEMICOLON  /* Empty statement: ";" */
 		//$$ = $1;
 	 }
 ;
-
-
-block: LETFCURLYBRACKET stmtlist RIGHTCURLYBRACKET  
-		{
-			// Create a new block of statements node
-			$$ = new lp::BlockStmt($2); 
-		}
-;
  
-	/*  NEW in example 17 */
 if:	/* Simple conditional statement */
-	SI cond ENTONCES stmt FIN_SI
+	SI cond ENTONCES stmtlist FIN_SI
     {
 		// Create a new if statement node
 		$$ = new lp::IfStmt($2, $4);
 	}
 
 	/* Compound conditional statement */
-	| SI cond ENTONCES stmt  SI_NO stmt FIN_SI
+	| SI cond ENTONCES stmtlist  SI_NO stmtlist FIN_SI
 	 {
 		// Create a new if statement node
 		$$ = new lp::IfStmt($2, $4, $6);
 	 }
 ; 
 
-	/*  NEW in example 17 */
-while:  MIENTRAS cond HACER stmt FIN_MIENTRAS
+while:  MIENTRAS cond HACER stmtlist FIN_MIENTRAS
 		{
 			// Create a new while statement node
 			$$ = new lp::WhileStmt($2, $4);
@@ -353,22 +326,27 @@ while:  MIENTRAS cond HACER stmt FIN_MIENTRAS
 ;
 
 
-do:     REPETIR stmt HASTA cond
+do:     REPETIR stmtlist HASTA cond
 		{
-			//Create a new do statement node
+			// Create a new do statement node
 			$$ = new lp::DoStmt($2, $4);
 		}
 ;
 
 
-for:    PARA VARIABLE DESDE exp HASTA exp PASO exp HACER stmt FIN_PARA
+for:    PARA VARIABLE DESDE exp HASTA exp PASO exp HACER stmtlist FIN_PARA
 		{
-			//Create a new for statement node
+			// Create a new for statement node
 			$$ = new lp::ForStmt($2, $4, $6, $8, $10);
+		}
+
+	|  PARA VARIABLE DESDE exp HASTA exp HACER stmtlist FIN_PARA
+		{
+			// Create a new for statement node
+			$$ = new lp::ForStmt($2, $4, $6, $8);
 		}
 ;
 
-	/*  NEW in example 17 */
 cond: 	LPAREN exp RPAREN
 		{ 
 			$$ = $2;
@@ -388,12 +366,10 @@ asgn:   VARIABLE ASSIGNMENT exp
 			$$ = new lp::AssignmentStmt($1, (lp::AssignmentStmt *) $3);
 		}
 
-	   /* NEW in example 11 */ 
 	| CONSTANT ASSIGNMENT exp 
 		{   
  			execerror("Semantic error in assignment: it is not allowed to modify a constant ", $1);
 		}
-	   /* NEW in example 11 */ 
 	| CONSTANT ASSIGNMENT asgn 
 		{   
  			execerror("Semantic error in multiple assignment: it is not allowed to modify a constant ",$1);
@@ -408,18 +384,49 @@ print:  ESCRIBIR exp
 		}
 ;	
 
-read:  READ LPAREN VARIABLE RPAREN  
+printC:  ESCRIBIR_CADENA exp
+		{
+			// Create a new printCadena node
+			 $$ = new lp::PrintCadenaStmt($2);
+		}
+;
+
+read:  LEER LPAREN VARIABLE RPAREN  
 		{
 			// Create a new read node
 			 $$ = new lp::ReadStmt($3);
 		}
 
-  	  /* NEW rule in example 11 */
-	| READ LPAREN CONSTANT RPAREN  
+	| LEER LPAREN CONSTANT RPAREN  
 		{   
  			execerror("Semantic error in \"read statement\": it is not allowed to modify a constant ",$3);
 		}
 ;
+
+readC: LEER_CADENA LPAREN VARIABLE RPAREN
+		{
+			// Create a new readCadena node
+			$$ = new lp::ReadCadenaStmt($3);
+		}
+	| LEER_CADENA LPAREN CONSTANT RPAREN
+		{
+			execerror("Semantic error in \"read statement\": it is not allowed to modify a constant ",$3);
+		}
+;
+
+
+clear:  BORRAR
+		{
+			// Create a new clear Node
+			$$ = new lp::ClearStmt();
+		}
+;
+
+place:  LUGAR LPAREN NUMBER COMMA NUMBER RPAREN
+		{
+			// Create a new place node
+			$$ = new lp::PlaceStmt($3,$5);
+		}
 
 
 exp:	NUMBER 
@@ -435,7 +442,7 @@ exp:	NUMBER
 		 }
 
 	| 	exp MINUS exp
-      	{
+      		{
 			// Create a new minus node
 			$$ = new lp::MinusNode($1, $3);
 		}
@@ -450,7 +457,7 @@ exp:	NUMBER
 		{
 		  // Create a new division node	
 		  $$ = new lp::DivisionNode($1, $3);
-	   }
+	   	}
 
 	|	exp DIVISION_ENTERA exp
 		{
@@ -458,11 +465,17 @@ exp:	NUMBER
 		  $$ = new lp::DivisionEnteraNode($1, $3);
 		}
 
+	|	exp CONCATENACION exp
+		{
+		  // Create a new concatenacion node
+		  $$ = new lp::ConcatenacionNode($1, $3);
+		}
+
 	| 	LPAREN exp RPAREN
-       	{ 
+       		{ 
 		    // just copy up the expression node 
 			$$ = $2;
-		 }
+		}
 
   	| 	PLUS exp %prec UNARY
 		{ 
@@ -481,10 +494,10 @@ exp:	NUMBER
 		  // Create a new modulo node	
 
 		  $$ = new lp::ModuloNode($1, $3);
-       }
+       		}
 
 	|	exp POWER exp 
-     	{ 
+     		{ 
 		  // Create a new power node	
   		  $$ = new lp::PowerNode($1, $3);
 		}
@@ -500,6 +513,12 @@ exp:	NUMBER
 		  // Create a new constant node	
 		  $$ = new lp::ConstantNode($1);
 
+		}
+
+	 | CADENA
+		{
+		  //Create a new cadena node
+		  $$ = new lp::CadenaNode($1);
 		}
 
 	| BUILTIN LPAREN listOfExp RPAREN

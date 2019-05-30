@@ -27,7 +27,7 @@ leer(N);
 
 factorial := 1;
 
-para i desde 2 hasta N paso 1 hacer
+para i desde 2 hasta n paso 1 hacer
 	factorial := factorial * i;
 fin_para;
 
@@ -35,6 +35,6 @@ fin_para;
 
 _lugar(15,10);
 escribir_cadena(' El factorial de ');
-escribir(N);
+escribir(n);
 escribir_cadena(' es ');
 escribir(factorial);

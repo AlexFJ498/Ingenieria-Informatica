@@ -1,4 +1,4 @@
-NAME=interpreter
+NAME=ipe
 
 # Compiler
 CPP = g++
@@ -18,15 +18,12 @@ LFLAGS = -lfl
 OBJECTS= $(NAME).o
 OBJECTS-PARSER = parser/*.o
 OBJECTS-ERROR = error/*.o
-OBJECTS-TABLE = table/*.o  # New in example 7
-OBJECTS-AST = ast/*.o  # New in example 16
+OBJECTS-TABLE = table/*.o  
+OBJECTS-AST = ast/*.o  
 
 
 # Includes
-# MODIFIED in example 7: ./table/table.hpp
-# MODIFIED in example 10: ./table/init.hpp
-# MODIFIED in example 16: ./ast/ast.hpp
-INCLUDES = ./parser/interpreter.tab.h ./error/error.hpp \
+INCLUDES = ./parser/ipe.tab.h ./error/error.hpp \
 			./table/table.hpp \
 			./table/init.hpp \
 			./ast/ast.hpp
@@ -41,7 +38,6 @@ INCLUDES = ./parser/interpreter.tab.h ./error/error.hpp \
 #######################################################
 
 
-#Modified in examples 7, 16
 $(NAME).exe :  parser-dir error-dir table-dir ast-dir $(OBJECTS)
 	@echo "Generating " $(NAME).exe
 	@$(CPP) $(OBJECTS) $(OBJECTS-PARSER) $(OBJECTS-ERROR)  $(OBJECTS-TABLE)  $(OBJECTS-AST) \
@@ -67,7 +63,6 @@ error-dir:
 	@make -C error/ 
 	@echo
 
-# New in example 7
 table-dir:
 	@echo "Accessing directory table" 
 	@echo
@@ -75,7 +70,6 @@ table-dir:
 	@echo
 
 
-# New in example 16
 ast-dir:
 	@echo "Accessing directory ast" 
 	@echo
@@ -97,7 +91,6 @@ doc: Doxyfile
 
 #######################################################
 # Auxiliary files and html directory are deleted
-# Modified in examples 7, 16
 clean: 
 	@echo "Deleting html"
 	@rm -rf html 

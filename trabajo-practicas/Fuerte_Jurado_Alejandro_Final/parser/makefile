@@ -1,6 +1,6 @@
 # MAKEFILE for parser
 
-NAME=interpreter
+NAME=ipe
 
 # Compiler
 CPP = g++
@@ -36,12 +36,6 @@ YFLAGS = -d -t -g
 OBJECTS= $(NAME).tab.o lex.yy.o 
 
 # Includes
-# MODIFIED in example 7: ../table/table.hpp  ../table/numericVariable.hpp
-# MODIFIED in example 10: ../table/init.hpp
-# MODIFIED in example 11: ../table/numericConstant.hpp
-# MODIFIED in example 13: ../table/builtinParameter1.hpp
-# MODIFIED in example 14: ../table/builtinParameter0.hpp ../table/builtinParameter2.hpp
-# MODIFIED in example 15: ./includes/Value.hpp
 INCLUDES = ../error/error.hpp ../includes/macros.hpp \
 			../table/table.hpp  ../table/numericVariable.hpp \
 			../table/init.hpp \

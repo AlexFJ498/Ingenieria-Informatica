@@ -1,5 +1,5 @@
 # Doxyfile 1.8.11
-PROJECT_NAME           = "Language Processors"
+PROJECT_NAME           = "Compilador Pseudocódigo"
 
 OUTPUT_LANGUAGE        = English
 
@@ -11,7 +11,6 @@ SOURCE_BROWSER         = YES
 
 GENERATE_LATEX         = NO
 
-#Modified in examples 7, 16
 INPUT = interpreter.cpp parser error includes table ast
 
 # If the value of the INPUT tag contains directories, you can use the

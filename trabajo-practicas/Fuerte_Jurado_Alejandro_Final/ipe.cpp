@@ -1,50 +1,44 @@
 /*! 
-  \file interpreter.cpp
+  \file ipe.cpp
   \brief Main program
 */
 
 /*!
- \mainpage Flex and Bison: example 17
- \author   
- \date     2018 - 4 - 26
+ \mainpage Compilador pseudocódigo
+ \author   Alejandro Fuerte Jurado
+ \date     2019 - 5 - 24
  \version  1.0
- \note Novelties
-	+ AST: intermidiate code
-	+ New statements: if, while, block
 */
 
 
 
-// New in example 2
 #include <stdio.h>
 #include <string>
+#include <fstream>
+#include "includes/macros.hpp"
 //
 
 /////////////////////////////
 /* 
-  NEW in example 16 
   AST class
-  IMPORTANT: must be written before interpreter.tab.h
+  IMPORTANT: must be written before ipe.tab.h
 */
 #include "ast/ast.hpp"
 ////////////////////////////////////////
 
-#include "./parser/interpreter.tab.h"
+#include "./parser/ipe.tab.h"
 
 int lineNumber = 1; //!< Line counter
 
-/* NEW in example 15 */
 bool interactiveMode; //!< Control the interactive mode of execution of the interpreter
 
 
-// New in example 2
 extern FILE * yyin; //!< Standard input device for yylex() 
 std::string progname; //!<  Program name
 //
 
 
 //////////////////////////////////////////////
-// NEW in example 6 
 
 // Use for recovery of runtime errors 
 #include <setjmp.h>
@@ -58,7 +52,6 @@ lp::AST *root; //!< Root of the abstract syntax tree AST
 ///////////////////////////////////////////// 
 
 //////////////////////////////////////////////
-// NEW in example 10 
 
 #include "table/init.hpp"
 
@@ -71,7 +64,6 @@ lp::AST *root; //!< Root of the abstract syntax tree AST
 extern jmp_buf begin; //!<  It enables recovery of runtime errors 
 
 //////////////////////////////////////////////
-// NEW in example 7 
 
 #include "table/table.hpp"
 
@@ -107,7 +99,12 @@ int main(int argc, char *argv[])
  */
  if (argc == 2) 
  {
-     yyin = fopen(argv[1],"r");
+    if(( yyin = fopen(argv[1],"r"))==NULL){
+		  std::cerr << BIRED; 
+		  std::cout<<"Error: no existe el fichero"<<std::endl;
+		  std::cerr << RESET; 
+		return -1;
+	}
 
 	 interactiveMode = false;
  }
@@ -139,7 +136,6 @@ else
 
  if (interactiveMode == false)
  {
-  /* NEW in example 15 */
   /*  root->print(); */
    root->evaluate();
  }

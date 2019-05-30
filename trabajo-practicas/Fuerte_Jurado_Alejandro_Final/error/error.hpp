@@ -44,7 +44,6 @@ void execerror(std::string errorMessage1,std::string errorMessage2);
 */
 void fpecatch(int p);
 
-// NEW in example 13
 
 /*! 
 	\brief  Control EDOM or ERANGE errors

@@ -1,8 +1,8 @@
 /*!	
 	\file    ast.cpp
 	\brief   Code of funcitons of AST clas
-	\author  
-	\date    2018-12-13
+	\author  Alejandro Fuerte Jurad0
+	\date    2019-5-24
 	\version 1.0
 */
 
@@ -10,6 +10,12 @@
 #include <stdlib.h>
 #include <string>
 #include <list>
+
+/* Para usar strlen y strcpy */
+#include <string.h>
+
+/*Para usar transform */
+#include <algorithm>
 
 // Para usar la funciones pow y std::abs
 #include <cmath>
@@ -27,6 +33,7 @@
 // 
 #include "../table/numericVariable.hpp"
 #include "../table/logicalVariable.hpp"
+#include "../table/cadenaVariable.hpp"
 
 #include "../table/numericConstant.hpp"
 #include "../table/logicalConstant.hpp"
@@ -35,7 +42,7 @@
 #include "../table/builtinParameter1.hpp"
 #include "../table/builtinParameter2.hpp"
 
-#include "../parser/interpreter.tab.h"
+#include "../parser/ipe.tab.h"
 
 
 
@@ -114,6 +121,27 @@ bool lp::VariableNode::evaluateBool()
 
 	// Return the value of the LogicalVariable
 	return result;
+}
+
+char const * lp::VariableNode::evaluateCadena() 
+{ 
+	char const * cadena = NULL;
+	if (this->getType() == CADENA)
+	{
+		// Get the identifier in the table of symbols as CadenaVariable
+		lp::CadenaVariable *var = (lp::CadenaVariable *) table.getSymbol(this->_id);
+
+		// Copy the value of the CadenaVariable
+		cadena = var->getValue();
+	}
+	else
+	{
+		warning("Runtime error in evaluateNumber(): the variable is not cadena", 
+				   this->_id);
+	}
+
+	// Return the value of the CadenaVariable
+	return cadena;
 }
 
 
@@ -202,6 +230,27 @@ double lp::NumberNode::evaluateNumber()
 }
 
 
+//////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////
+ 
+
+int lp::CadenaNode::getType()
+{
+	return CADENA;
+}
+
+
+void lp::CadenaNode::print()
+{
+  std::cout << "CadenaNode: " << this->_cadena << std::endl;
+}
+
+char const * lp::CadenaNode::evaluateCadena() 
+{ 
+    return this->_cadena; 
+}
+
+
 ///////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////
 int lp::NumericUnaryOperatorNode::getType()
@@ -251,6 +300,21 @@ int lp::NumericOperatorNode::getType()
 		result = NUMBER;
 	else
 		warning("Runtime error: incompatible types for", "Numeric Operator");
+
+	return	result;
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////
+
+int lp::CadenaOperatorNode::getType()
+{
+	int result;
+		
+	if ( (this->_left->getType() == CADENA) and (this->_right->getType() == CADENA))
+		result = CADENA;
+	else
+		warning("Runtime error: incompatible types for", "Cadena Operator");
 
 	return	result;
 }
@@ -433,6 +497,47 @@ double lp::MultiplicationNode::evaluateNumber()
 	}
 
   return result;
+}
+
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////
+
+void lp::ConcatenacionNode::print()
+{
+  std::cout << "ConcatenacionNode: " << std::endl;
+  this->_left->print();
+  std::cout << " / ";
+  this->_right->print();
+}
+
+char const * lp::ConcatenacionNode::evaluateCadena()
+{
+	std::string cadena;
+
+	// Check the types of the expressions
+	if (this->getType() == CADENA)
+	{
+		std::string leftCadena;
+		std::string rightCadena;
+
+		leftCadena = this->_left->evaluateCadena();
+		rightCadena = this->_right->evaluateCadena();
+
+		cadena = leftCadena + rightCadena;
+
+		char  * value = (char *) malloc(strlen(cadena.c_str())+1);
+		strcpy(value,cadena.c_str());
+
+		return value;
+	}
+	else
+	{
+		warning("Runtime error: the expressions are not cadena for", "Concatenacion");
+	}
+
+	return cadena.c_str();
 }
 
 
@@ -1039,7 +1144,7 @@ void lp::AssignmentStmt::evaluate()
 				// evaluate the expression as NUMBER
 			 	value = this->_exp->evaluateNumber();
 
-				// Check the type of the first varible
+				// Check the type of the first variable
 				if (firstVar->getType() == NUMBER)
 				{
 				  	// Get the identifier in the table of symbols as NumericVariable
@@ -1058,6 +1163,36 @@ void lp::AssignmentStmt::evaluate()
 					// with the type NUMBER and the value 
 					lp::NumericVariable *v = new lp::NumericVariable(this->_id,
 											VARIABLE,NUMBER,value);
+					table.installSymbol(v);
+				}
+			}
+			break;
+
+			case CADENA:
+			{
+				char const * cadena;
+				// evaluate the expresion as CADENA
+				cadena = this->_exp->evaluateCadena();
+
+				// Check the type of the first variable
+				if (firstVar->getType() == CADENA)
+				{
+					// Get the identifier in the table of symbols as CadenaVariable
+					lp::CadenaVariable *v = (lp::CadenaVariable *) table.getSymbol(this->_id);
+
+					//Assignment the value to the identifier in the table of symbols
+					v->setValue(cadena);
+				}
+				// The type of variable is not CADENA
+				else
+				{
+					// Delete the variable from the table os symbols
+					table.eraseSymbol(this->_id);
+
+					// Insert the variable in the table of symbols as CadenaVariable
+					// with the type CADENA and the value
+					lp::CadenaVariable *v = new lp::CadenaVariable(this->_id,
+										      VARIABLE,CADENA,cadena);
 					table.installSymbol(v);
 				}
 			}
@@ -1119,7 +1254,7 @@ void lp::AssignmentStmt::evaluate()
 				/* Get the identifier of the previous asgn in the table of symbols as NumericVariable */
 				lp::NumericVariable *secondVar = (lp::NumericVariable *) table.getSymbol(this->_asgn->_id);
 				// Check the type of the first variable
-				if (firstVar->getType() == NUMBER)
+				if (firstVar->getType() == BOOL)
 				{
 				/* Get the identifier of the first variable in the table of symbols as NumericVariable */
 				lp::NumericVariable *firstVar = (lp::NumericVariable *) table.getSymbol(this->_id);
@@ -1130,7 +1265,7 @@ void lp::AssignmentStmt::evaluate()
 					firstVar->setValue(secondVar->getValue());
 
 				}
-				// The type of variable is not NUMBER
+				// The type of variable is not BOOL
 				else
 				{
 					// Delete the first variable from the table of symbols 
@@ -1223,10 +1358,37 @@ void lp::PrintStmt::evaluate()
 ///////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////
 
+void lp::PrintCadenaStmt::print() 
+{
+  std::cout << "PrintStmt: "  << std::endl;
+  std::cout << " print ";
+  this->_exp->print();
+  std::cout << std::endl;
+}
+
+
+void lp::PrintCadenaStmt::evaluate() 
+{
+	std::cout << BIYELLOW; 
+	std::cout << "Print: ";
+	std::cout << RESET; 
+
+	if(this->_exp->getType() == CADENA){
+		std::cout << this->_exp->evaluateCadena() << std::endl;
+	}
+	else{
+		warning("Runtime error: incompatible type for ", "printCadena");
+	}
+}
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////
+
 void lp::ReadStmt::print() 
 {
-  std::cout << "ReadStmt: "  << std::endl;
-  std::cout << " read (" << this->_id << ")";
+  std::cout << "printStmt: "  << std::endl;
+  std::cout << " print (" << this->_id << ")";
   std::cout << std::endl;
 }
 
@@ -1238,6 +1400,7 @@ void lp::ReadStmt::evaluate()
 	std::cout << "Insert a numeric value --> " ;
 	std::cout << RESET; 
 	std::cin >> value;
+
 
 	/* Get the identifier in the table of symbols as Variable */
 	lp::Variable *var = (lp::Variable *) table.getSymbol(this->_id);
@@ -1270,6 +1433,69 @@ void lp::ReadStmt::evaluate()
 ///////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////
 
+void lp::ReadCadenaStmt::print() 
+{
+  std::cout << "ReadStmt: "  << std::endl;
+  std::cout << " read (" << this->_id << ")";
+  std::cout << std::endl;
+}
+
+void lp::ReadCadenaStmt::evaluate()
+{
+	std::string tmp;
+	std::cout << BIYELLOW;
+	std::cout << "Insert a text value --> " ;
+	std::cout << RESET;
+	std::cin >> (tmp);
+
+	char  * value = (char *) malloc(strlen(tmp.c_str())+1);
+	strcpy(value,tmp.c_str());
+
+	/* Get the identifier in the table of symbols as Variable */
+	lp::Variable *var = (lp::Variable *) table.getSymbol(this->_id);
+
+	// Check if the type of the variable is CADENA
+	if (var->getType() == CADENA)
+	{
+		/* Get the identifier in the table of symbols as CadenaVariable */
+		lp::CadenaVariable *n = (lp::CadenaVariable *) table.getSymbol(this->_id);
+						
+		/* Assignment the read value to the identifier */
+		n->setValue(value);
+	}
+	// The type of variable is not CADENA
+	else
+	{
+		// Delete $1 from the table of symbols as Variable
+		table.eraseSymbol(this->_id);
+
+			// Insert $1 in the table of symbols as CadenaVariable 
+		// with the type CADENA and the read value 
+		lp::CadenaVariable *n = new lp::CadenaVariable(this->_id, 
+									  VARIABLE,CADENA,value);
+		table.installSymbol(n);
+	}
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////
+
+void lp::ClearStmt::evaluate()
+{
+  std::cout << CLEAR_SCREEN << std::endl;
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////
+
+void lp::PlaceStmt::evaluate()
+{
+  PLACE(this->_exp1,this->_exp2);
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////
+
 void lp::EmptyStmt::print() 
 {
   std::cout << "EmptyStmt "  << std::endl;
@@ -1283,7 +1509,6 @@ void lp::EmptyStmt::evaluate()
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////
-// NEW in example 17
 
 void lp::IfStmt::print() 
 {
@@ -1292,11 +1517,19 @@ void lp::IfStmt::print()
   this->_cond->print();
 
   // Consequent
-  this->_stmt1->print();
+  std::list<Statement *>::iterator stmtIter;
+
+  for (stmtIter = this->_stmtList1->begin(); stmtIter != this->_stmtList1->end(); stmtIter++) 
+  {
+     (*stmtIter)->print();
+  }
 
  // The alternative is printed if exists
-  if (this->_stmt2 != NULL)
-	  this->_stmt2->print();
+  if (this->_stmtList2 != NULL)
+	 for (stmtIter = this->_stmtList2->begin(); stmtIter != this->_stmtList2->end(); stmtIter++) 
+  {
+     (*stmtIter)->print();
+  }
 
   std::cout << std::endl;
 }
@@ -1304,14 +1537,25 @@ void lp::IfStmt::print()
 
 void lp::IfStmt::evaluate() 
 {
+   std::list<Statement *>::iterator stmtIter;
+
    // If the condition is true,
-	if (this->_cond->evaluateBool() == true )
+	if (this->_cond->evaluateBool() == true ){
+
      // the consequent is run 
-	  this->_stmt1->evaluate();
+	  for (stmtIter = this->_stmtList1->begin(); stmtIter != this->_stmtList1->end(); stmtIter++) 
+  	  {
+     		(*stmtIter)->evaluate();
+   	  }
+	}
 
     // Otherwise, the alternative is run if exists
-	else if (this->_stmt2 != NULL)
-		  this->_stmt2->evaluate();
+	else if (this->_stmtList2 != NULL){
+	  for (stmtIter = this->_stmtList2->begin(); stmtIter != this->_stmtList2->end(); stmtIter++) 
+  	  {
+     		(*stmtIter)->evaluate();
+   	  }
+	}
 }
 
 
@@ -1319,7 +1563,6 @@ void lp::IfStmt::evaluate()
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////
-// NEW in example 17
 
 void lp::WhileStmt::print() 
 {
@@ -1328,7 +1571,12 @@ void lp::WhileStmt::print()
   this->_cond->print();
 
   // Body of the while loop
-  this->_stmt->print();
+  std::list<Statement *>::iterator stmtIter;
+
+  for (stmtIter = this->_stmtList->begin(); stmtIter != this->_stmtList->end(); stmtIter++) 
+  {
+     (*stmtIter)->print();
+  }
 
   std::cout << std::endl;
 }
@@ -1336,12 +1584,16 @@ void lp::WhileStmt::print()
 
 void lp::WhileStmt::evaluate() 
 {
+  std::list<Statement *>::iterator stmtIter;
+
   // While the condition is true. the body is run 
   while (this->_cond->evaluateBool() == true)
   {	
-	  this->_stmt->evaluate();
+	  for (stmtIter = this->_stmtList->begin(); stmtIter != this->_stmtList->end(); stmtIter++) 
+  	  {
+     	 (*stmtIter)->evaluate();
+   	  }
   }
-
 }
 
 
@@ -1355,22 +1607,49 @@ void lp::ForStmt::print()
   std::cout << "ForStmt: "  << std::endl;
   // Conditions 
   std::cout << "VariableNode: " << this->_var << std::endl;
-  this->_exp1->print();
-  this->_exp2->print();
-  this->_exp3->print();
+  std::cout << "ExpNodes: " << std::endl;
+  this->_num1->print();
+  this->_num2->print();
+  this->_num3->print();
 
   // Statement of the for loop
-  this->_stmt->print();
+  std::list<Statement *>::iterator stmtIter;
+
+  for (stmtIter = this->_stmtList->begin(); stmtIter != this->_stmtList->end(); stmtIter++) 
+  {
+     (*stmtIter)->print();
+  }
 
   std::cout << std::endl;
-}
+} 
 
 
 void lp::ForStmt::evaluate() 
 {
-  // While the condition is false. the body is run 
-  
+  VariableNode *var = new VariableNode(this->_var);
+  AssignmentStmt *asgn = new AssignmentStmt(this->_var,this->_num1);
+  PlusNode *suma = new PlusNode(var,this->_num3);
 
+  asgn->evaluate();
+  std::list<Statement *>::iterator stmtIter;
+  while (var->evaluateNumber()<this->_num2->evaluateNumber()){
+	asgn->evaluate();
+	for (stmtIter = this->_stmtList->begin(); stmtIter != this->_stmtList->end(); stmtIter++) 
+  	  {
+     		 (*stmtIter)->evaluate();
+   	  }
+	asgn = new AssignmentStmt(this->_var,suma);
+  }
+/*
+  std::list<Statement *>::iterator stmtIter;
+
+  // Enter the loop until condition is false
+  for(this->_var = this->_num1 ; this->_var < this->_num2 ; this->_var = this->_var + this->_num3){
+	for (stmtIter = this->_stmtList->begin(); stmtIter != this->_stmtList->end(); stmtIter++) 
+  	  {
+     	 (*stmtIter)->evaluate();
+   	  }
+  }*/
 }
 
 
@@ -1383,7 +1662,12 @@ void lp::DoStmt::print()
 {
   std::cout << "DoStmt: "  << std::endl;
   // Body of the do loop
-  this->_stmt->print();
+  std::list<Statement *>::iterator stmtIter;
+
+  for (stmtIter = this->_stmtList->begin(); stmtIter != this->_stmtList->end(); stmtIter++) 
+  {
+     (*stmtIter)->print();
+  }
 
   // Condition
   this->_cond->print();
@@ -1394,46 +1678,18 @@ void lp::DoStmt::print()
 
 void lp::DoStmt::evaluate() 
 {
+  std::list<Statement *>::iterator stmtIter;
+
   // While the condition is false. the body is run 
   while (this->_cond->evaluateBool() == false)
   {	
-	  this->_stmt->evaluate();
+	  for (stmtIter = this->_stmtList->begin(); stmtIter != this->_stmtList->end(); stmtIter++) 
+  	  {
+     	 (*stmtIter)->evaluate();
+   	  }
   }
 
 }
-
-
-
-
-///////////////////////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////////////
-// NEW in example 17
-
-void lp::BlockStmt::print() 
-{
-  std::list<Statement *>::iterator stmtIter;
-
-  std::cout << "BlockStmt: "  << std::endl;
-
-  for (stmtIter = this->_stmts->begin(); stmtIter != this->_stmts->end(); stmtIter++) 
-  {
-     (*stmtIter)->print();
-  }
-}
-
-
-void lp::BlockStmt::evaluate() 
-{
-  std::list<Statement *>::iterator stmtIter;
-
-  for (stmtIter = this->_stmts->begin(); stmtIter != this->_stmts->end(); stmtIter++) 
-  {
-    (*stmtIter)->evaluate();
-  }
-}
-
-
-
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////

@@ -150,7 +150,7 @@ repetir
   fin_si;                          
 
  _lugar(40,10); 
- escribir_cadena('\n Pulse una tecla para continuar --> ');
+ escribir_cadena(' Pulse una tecla para continuar --> \n ');
  leer_cadena(pausa);
  
 hasta (opcion = 0);             

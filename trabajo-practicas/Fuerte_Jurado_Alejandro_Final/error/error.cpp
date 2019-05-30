@@ -64,7 +64,6 @@ void fpecatch(int signum)
 
 
 
-// NEW in example 13
 double errcheck(double d, std::string s)
 {
   if (errno==EDOM)

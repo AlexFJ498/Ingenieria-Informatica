@@ -1,12 +1,11 @@
 /*! 
-  \file interpreter.l
+  \file ipe.l
   \brief Lexical or scanner file
 */
 %{
 #include <iostream>
 
 /*********************/
-/* NEW in example 4 */
 /* atof */
 #include <stdlib.h>
 /*********************/
@@ -16,28 +15,26 @@
 
 /*********************/
 /* 
-  NEW in example 16 
   AST class
-  IMPORTANT: must be written before interpreter.tab.h
+  IMPORTANT: must be written before ipe.tab.h
 */
 #include "../ast/ast.hpp"
 /*********************/
 
-/*  interpreter.tab.h contains the numeric values of the tokens produced by the parser */
-#include "interpreter.tab.h"
+/*  ipe.tab.h contains the numeric values of the tokens produced by the parser */
+#include "ipe.tab.h"
 
 /********************/
-/* NEW in example 3 */
 #include "../error/error.hpp"
 /********************/
 
 
 /*********************************************/
-/* NEW in example 7 */
 /* Table of symbols */
 #include "../table/table.hpp"
 
 #include "../table/numericVariable.hpp"
+#include "../table/cadenaVariable.hpp"
 
 extern lp::Table table; //!< External Table of Symbols
 /*********************************************/
@@ -61,7 +58,6 @@ NUMBER2 {DIGIT}*\.{DIGIT}+
 
 IDENTIFIER  {LETTER}({LETTER}|{DIGIT}|{SUBRAYADO}({LETTER}|{DIGIT}))*
 
-/* NEW in example 3 */
 /* STATE  */
 %x ERROR
 %x ESTADO_CADENA
@@ -77,83 +73,94 @@ IDENTIFIER  {LETTER}({LETTER}|{DIGIT}|{SUBRAYADO}({LETTER}|{DIGIT}))*
 			/* Line counter */
            	lineNumber++; 
 	
-			/* MODIFIED in example 3 */
-			/* COMMENTED in example 5 */
         	/* return NEWLINE; */
         }
 
 ";"		{
-			/* NEW in example 5 */
 			return SEMICOLON;
 		}
 
 
 ","		{
-			/* NEW in example 14 */
 			return COMMA;
 		}
 
-{NUMBER1}|{NUMBER2}  {
-					  /* MODIFIED in example 4 */
-					  /* Conversion of type and sending of the numerical value to the parser */
-					   yylval.number = atof(yytext); 
+{NUMBER1}|{NUMBER2}   {
+			/* Conversion of type and sending of the numerical value to the parser */
+			yylval.number = atof(yytext); 
 
-                       return NUMBER; 
+                        return NUMBER; 
                       }
 
-"'"			   {
-			    /* Se activa el reconocimiento de la cadena */
-			    BEGIN ESTADO_CADENA; 
-			    //numero_cadenas++; 
-			    lineNumber=1;
-			  }
+"'"		{
+			/* Se activa el reconocimiento de la cadena */
+			BEGIN ESTADO_CADENA; 
+		}
 
 
 <ESTADO_CADENA>"'"  { /* Fin de la cadena: se vuelve al estado por defecto */
-			         BEGIN 0; 
-			        // yytext[yyleng-1]='\0';
-					}      
+			        BEGIN 0; 
+			        yytext[yyleng-1]='\0';
+
+				yylval.cadena = (char *) malloc(strlen(yytext) + 1);
+				strcpy(yylval.cadena,yytext);
+				return CADENA;
+		    } 
 
 <ESTADO_CADENA>"\\\'"     {yymore();}
-
-<ESTADO_CADENA>\t	  { yymore(); }
-
-<ESTADO_CADENA>\n         {lineNumber++; yymore();}
+<ESTADO_CADENA>"\\t"       {
+				yymore(); 
+				char tab[10] = "  ";
+				char esp[10] = "";
+				yytext[yyleng-2] = *tab;
+				yytext[yyleng-1] = *esp;
+			}
+<ESTADO_CADENA>.          {yymore();}     
+<ESTADO_CADENA>"\\n"    {
+				yymore(); 
+				char esp[10] ="";
+				char tab[10] = "\n";
+				yytext[yyleng-2] = *tab;
+				yytext[yyleng-1] = *esp;
+				lineNumber++;
+				yymore();
+			}
 
 "#"	      	{
-			  		/* Se activa el reconocimiento de un comentario */
-			  		BEGIN ESTADO_COMENTARIO; 
-			  	}
+			  /* Se activa el reconocimiento de un comentario */
+			  BEGIN ESTADO_COMENTARIO; 
+		}
 
-<ESTADO_COMENTARIO>"#"          { /* Fin del comentario: se vuelve al estado por defecto */
+<ESTADO_COMENTARIO>"#"            { /* Fin del comentario: se vuelve al estado por defecto */
 				  BEGIN 0; 
 				  }      
-
 <ESTADO_COMENTARIO>.        {;}
-
 <ESTADO_COMENTARIO>\n       {;}
 
 "@"				{
 					BEGIN ESTADO_COMENTARIO2;
 				}
-
+<ESTADO_COMENTARIO2>.        {;}
 <ESTADO_COMENTARIO2>\n {BEGIN 0;}
 
 
 {IDENTIFIER}   		 {
-						 /* NEW in example 7 */
+
+						for(int i=0; yytext[i] != '\0'; i++){
+							yytext[i] = tolower(yytext[i]);
+						}
+
 						 std::string identifier(yytext);
 
 						/* 
                           strdup() function returns a pointer to a new string 
                           which  is a duplicate of the string yytext
                         */
+
 						  yylval.identifier =  strdup(yytext);
 
 						/* No diferenciar entre mayúsculas y minúsculas */
-						for(int i=0; yylval.identifier[i] != '\0'; i++){
-							yylval.identifier[i] = tolower(yytext[i]);
-						}
+						
 
 						/* If the identifier is not in the table of symbols then it is inserted */	
 						 if (table.lookupSymbol(identifier) == false)
@@ -170,7 +177,6 @@ IDENTIFIER  {LETTER}({LETTER}|{DIGIT}|{SUBRAYADO}({LETTER}|{DIGIT}))*
 								return VARIABLE;
 							}
 
-						/* MODIFIED in example 11 */
 						/* 
 							If the identifier is in the table of symbols then its token is returned 
 								The identifier can be a variable or a numeric constant
@@ -200,10 +206,10 @@ IDENTIFIER  {LETTER}({LETTER}|{DIGIT}|{SUBRAYADO}({LETTER}|{DIGIT}))*
 ")"	    { return RPAREN; } 			
 
 
-"_div"  { return DIVISION_ENTERA; }
-"_mod"  { return MODULO; }			
-"_borrar" { return BORRAR; }
-"_lugar"  { return LUGAR; }
+(?i:_div)  { return DIVISION_ENTERA; }
+(?i:_mod)  { return MODULO; }			
+(?i:_borrar) { return BORRAR; }
+(?i:_lugar)  { return LUGAR; }
 
 "**"    { return POWER; }			
 
@@ -221,30 +227,30 @@ IDENTIFIER  {LETTER}({LETTER}|{DIGIT}|{SUBRAYADO}({LETTER}|{DIGIT}))*
 
 "<"		{ return LESS_THAN; }		
 
-"_no"	{ return NOT; }				
+(?i:_no)	{ return NOT; }				
 
-"_o"	{ return OR; }				
+(?i:_o)	{ return OR; }				
 
-"_y"	{ return AND; }				
+(?i:_y)	{ return AND; }				
 
 "||"    { return CONCATENACION; }
 
 
 
-^~ { /* The interpreter finishes when the symbol # is written at the beginning of the line */
-	// std::cout << CLEAR_SCREEN; 
-	//  PLACE(24,10);
+^~ { /* The interpreter finishes when the symbol ~ is written at the beginning of the line */
+	  //std::cout << CLEAR_SCREEN; 
+	  //PLACE(24,10);
   	  std::cout <<  BIYELLOW;
    	  std::cout <<  ">>>>>>> End of program <<<<<<<";
  	  std::cout << std::endl;
    	  std::cout << RESET;
-	 // PLACE(25,1);
+	  //PLACE(25,1);
 
   	  return 0;
 	}
 
 <<EOF>> { /* The interpreter finishes when finds the end of file character */
-		/*  PLACE(24,10);
+		  /*PLACE(24,10);
 	  	  std::cout <<  BICYAN;
 	   	  std::cout <<  ">>>>>>> End of file <<<<<<<";
 	 	  std::cout << std::endl;
@@ -252,12 +258,12 @@ IDENTIFIER  {LETTER}({LETTER}|{DIGIT}|{SUBRAYADO}({LETTER}|{DIGIT}))*
 		  PLACE(25,1);
 		*/
 	  	  return 0;
+		
 	}
 
 
 .								{ 	
 									/* Any other character */
-									/* MODIFIIED in example 3 */
 									/* Change to error state */
 									BEGIN(ERROR); 
 
@@ -268,8 +274,7 @@ IDENTIFIER  {LETTER}({LETTER}|{DIGIT}|{SUBRAYADO}({LETTER}|{DIGIT}))*
 									yymore();  
 								}
 
-<ERROR>[^0-9+\-*/()\^% \t\n\;a-zA-Z=<>!&]	{ /* MODIFIED in examples 5, 7, 15 */
-								  /* NEW in example 3 */
+<ERROR>[^0-9+\-*/()\^% \t\n\;a-zA-Z=<>!&]	{ 
 								  /* 
 									The current value of yytext 
 									will be concatenated with the next character
@@ -278,7 +283,6 @@ IDENTIFIER  {LETTER}({LETTER}|{DIGIT}|{SUBRAYADO}({LETTER}|{DIGIT}))*
 								}
 
 <ERROR>(.|\n)                { 
-								/* NEW in example 3 */
 								/* Rewind one position */
 								yyless(yyleng-1); 
 

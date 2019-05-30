@@ -1,8 +1,8 @@
 /*!	
 	\file    ast.hpp
 	\brief   Declaration of AST class
-	\author  
-	\date    2018-12-13
+	\author  Alejandro Fuerte Jurado
+	\date    2019-5-24
 	\version 1.0
 */
 
@@ -63,6 +63,10 @@ namespace lp
 		return 0.0;
 	}		
 
+    virtual char const * evaluateCadena()
+	{
+		return "";
+	}
 
 	/*!	
 		\brief   Evaluate the expression as BOOL
@@ -131,6 +135,13 @@ class VariableNode : public ExpNode
 		\sa		 print
 	*/
 	  bool evaluateBool();
+
+	/*!	
+		\brief   Evaluate the Variable as CADENA
+		\return  cadena
+		\sa		 print
+	*/
+	  char const * evaluateCadena();
 
 };
 
@@ -238,6 +249,56 @@ class NumberNode : public ExpNode
 		\sa		 print
 	*/
 	double evaluateNumber();
+};
+
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////
+
+/*!	
+  \class CadenaNode
+  \brief Definition of atributes and methods of CadenaNode class
+  \note  CadenaNode Class publicly inherits from ExpNode class
+*/
+class CadenaNode : public ExpNode 
+{
+	private:
+	  char const * _cadena; //!< Name of the CadenaNode
+
+	public:
+
+	/*!		
+		\brief Constructor of CadenaNode
+		\param value: double
+		\post  A new CadenaNode is created with the name of the parameter
+		\note  Inline function
+	*/
+	  CadenaNode(char const * value)
+		{
+			this->_cadena = value; 
+		}
+
+	/*!	
+		\brief   Type of the cadena
+		\return  int
+		\sa		 print
+	*/
+	 int getType();
+
+	/*!
+		\brief   Print the cadena
+		\return  void
+		\sa		 evaluate()
+	*/
+	  void print();
+
+	/*!	
+		\brief   Evaluate the cadena as CADENA
+		\return  double
+		\sa		 print
+	*/
+	  char const * evaluateCadena();
 };
 
 
@@ -501,6 +562,41 @@ class NumericOperatorNode : public OperatorNode
 ///////////////////////////////////////////////////////////////////////////////////////////////
 
 /*!	
+  \class   CadenaOperatorNode
+  \brief   Definition of atributes and methods of CadenaOperatorNode class
+  \note    CadenaOperatorNode Class publicly inherits from OperatorNode class
+  \warning Abstract class, because it does not redefine the print method of ExpNode
+*/
+class CadenaOperatorNode : public OperatorNode 
+{
+	public:
+
+	/*!		
+		\brief Constructor of CadenaOperatorNode uses OperatorNode's constructor as members initializer
+		\param L: pointer to ExpNode
+		\param R: pointer to ExpNode
+		\post  A new CadenaOperatorNode is created with the parameters
+	*/
+    CadenaOperatorNode(ExpNode *L, ExpNode *R): OperatorNode(L,R) 
+	{
+		//	Empty
+	}
+
+	/*!	
+	\brief   Get the type of the children expressions
+	\return  int
+	\sa		 print()
+	*/
+	int getType();
+};
+
+
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////
+
+/*!	
   \class   RelationalOperatorNode
   \brief   Definition of atributes and methods of RelationalOperatorNode class
   \note    RelationalOperatorNode Class publicly inherits from OperatorNode class
@@ -680,6 +776,45 @@ class MultiplicationNode : public NumericOperatorNode
 	\sa		 print
 */
   double evaluateNumber();
+};
+
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////
+
+/*!
+  \class  ConcatenacionNode
+  \brief  Definition of atributes and methods of ConcatenacionNode class
+  \note   ConcatenacionNode Class publicly inherits from ExpNode class
+		   and adds its own print and evaluate functions
+*/
+class ConcatenacionNode : public CadenaOperatorNode
+{
+  public:
+/*!
+	\brief Constructor of DivisionNode uses CadenaOperatorNode's constructor as members initializer
+	\param L: pointer to ExpNode
+	\param R: pointer to ExpNode
+	\post  A new ConcatenacionNode is created with the parameter
+*/
+  ConcatenacionNode(ExpNode *L, ExpNode *R): CadenaOperatorNode(L,R)
+  {
+		// Empty
+  }
+/*!
+	\brief   Print the ConcatenacionNode
+	\return  void
+	\sa		 evaluate()
+*/
+  void print();
+
+/*!
+	\brief   Evaluate the ConcatenacionNode
+	\return  char const *
+	\sa		 print
+*/
+  char const * evaluateCadena();
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -1486,6 +1621,48 @@ class AssignmentStmt : public Statement
 ///////////////////////////////////////////////////////////////////////////////////////////////
 
 /*!	
+  \class   PrintCadenaStmt
+  \brief   Definition of atributes and methods of PrintCadenaStmt class
+  \note    PrintCadenaStmt Class publicly inherits from Statement class 
+		   and adds its own printCadena and evaluate functions
+  \warning  In this class, printCadena and evaluate functions have the same meaning.
+*/
+class PrintCadenaStmt: public Statement 
+{
+ private:
+  ExpNode *_exp; //!< Expresssion the printCadena statement
+
+ public:
+/*!		
+	\brief Constructor of PrintCadenaStmt 
+	\param expression: pointer to ExpNode
+	\post  A new PrintCadenaStmt is created with the parameter
+*/
+  PrintCadenaStmt(ExpNode * expression)
+	{
+		this->_exp = expression;
+	}
+
+/*!
+	\brief   Print the PrintCadenaStmt
+	\return  void
+	\sa		 evaluate()
+*/
+  void print();
+
+/*!	
+	\brief   Evaluate the PrintCadenaStmt
+	\return  double
+	\sa		 print
+*/
+  void evaluate();
+};
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////
+
+/*!	
   \class   PrintStmt
   \brief   Definition of atributes and methods of PrintStmt class
   \note    PrintStmt Class publicly inherits from Statement class 
@@ -1572,6 +1749,121 @@ class ReadStmt : public Statement
 
 
 /*!	
+  \class   ReadCadenaStmt
+  \brief   Definition of atributes and methods of ReadCadenaStmt class
+  \note    ReadCadenaStmt Class publicly inherits from Statement class 
+		   and adds its own print and evaluate functions
+*/
+class ReadCadenaStmt : public Statement 
+{
+  private:
+	std::string _id; //!< Name of the ReadCadenaStmt
+	
+
+  public:
+/*!		
+	\brief Constructor of ReadCadenaStmt
+	\param id: string, name of the variable of the ReadCadenaStmt
+	\post  A new ReadCadenaStmt is created with the parameter
+*/
+  ReadCadenaStmt(std::string id)
+	{
+		this->_id = id;
+	}
+
+/*!
+	\brief   Print the ReadCadenaStmt
+	\return  void
+	\sa		 evaluate()
+*/
+  void print();
+
+/*!	
+	\brief   Evaluate the ReadCadenaStmt
+	\return  void
+	\sa		 print
+*/
+  void evaluate();
+};
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////
+
+
+/*!	
+  \class   PlaceStmt
+  \brief   Definition of atributes and methods of PlaceStmt class
+  \note    PlaceStmt Class publicly inherits from Statement class 
+		   and adds its own print and evaluate functions
+*/
+class PlaceStmt : public Statement 
+{
+  private:
+	int _exp1;  //!< First number
+	int _exp2;  //!< Second number
+	
+
+  public:
+/*!		
+	\brief Constructor of PlaceStmt
+	\param id: string, name of the variable of the PlaceStmt
+	\post  A new PlaceStmt is created with the parameter
+*/
+  PlaceStmt(int exp1, int exp2)
+	{
+		this->_exp1 = exp1;
+		this->_exp2 = exp2;
+	}
+
+
+/*!	
+	\brief   Evaluate the PlaceStmt
+	\return  void
+	\sa		 print
+*/
+  void evaluate();
+};
+
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////
+
+
+/*!	
+  \class   ClearStmt
+  \brief   Definition of atributes and methods of ClearStmt class
+  \note    ClearStmt Class publicly inherits from Statement class 
+		   and adds its own print and evaluate functions
+*/
+class ClearStmt : public Statement 
+{	
+
+  public:
+/*!		
+	\brief Constructor of ClearStmt
+	\post  A new ClearStmt is created with the parameter
+*/
+  ClearStmt()
+	{
+		//Empty
+	}
+
+/*!	
+	\brief   Evaluate the ClearStmt
+	\return  void
+	\sa		 print
+*/
+  void evaluate();
+};
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////
+
+
+/*!	
   \class   EmptyStmt
   \brief   Definition of atributes and methods of EmptyStmt class
   \note    EmptyStmt Class publicly inherits from Statement class 
@@ -1609,7 +1901,6 @@ class EmptyStmt : public Statement
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////
-// NEW in example 17
 
 /*!	
   \class   IfStmt
@@ -1621,36 +1912,32 @@ class IfStmt : public Statement
 {
  private:
   ExpNode *_cond; //!< Condicion of the if statement
-  Statement *_stmt1; //!< Statement of the consequent
-  Statement *_stmt2; //!< Statement of the alternative
+  std::list<Statement *> *_stmtList1; //!< Statements of the consequent
+  std::list<Statement *> *_stmtList2; //!< Statements of the alternative
 
   public:
 /*!		
 	\brief Constructor of Single IfStmt (without alternative)
 	\param condition: ExpNode of the condition
-	\param statement1: Statement of the consequent
+	\param statement1: Statements of the consequent
 	\post  A new IfStmt is created with the parameters
 */
-  IfStmt(ExpNode *condition, Statement *statement1)
+  IfStmt(ExpNode *condition, std::list<Statement *> *statement): _cond(condition), _stmtList1(statement), _stmtList2(NULL)
 	{
-		this->_cond = condition;
-		this->_stmt1 = statement1;
-		this->_stmt2 = NULL;
+		//Empty
 	}
 
 
 /*!		
 	\brief Constructor of Compound IfStmt (with alternative)
 	\param condition: ExpNode of the condition
-	\param statement1: Statement of the consequent
-	\param statement2: Statement of the alternative
+	\param statement1: Statements of the consequent
+	\param statement2: Statements of the alternative
 	\post  A new IfStmt is created with the parameters
 */
-  IfStmt(ExpNode *condition, Statement *statement1, Statement *statement2)
+  IfStmt(ExpNode *condition, std::list<Statement *> *statement1, std::list<Statement *> *statement2): _cond(condition), _stmtList1(statement1), _stmtList2(statement2)
 	{
-		this->_cond = condition;
-		this->_stmt1 = statement1;
-		this->_stmt2 = statement2;
+		
 	}
 
 
@@ -1686,7 +1973,7 @@ class DoStmt : public Statement
 {
  private:
   ExpNode *_cond; //!< Condicion of the do statement
-  Statement *_stmt; //!< Statement of the body of the do loop
+  std::list<Statement *> *_stmtList; //!< Statement of the body of the do loop
 
   public:
 /*!		
@@ -1695,10 +1982,9 @@ class DoStmt : public Statement
 	\param statement: Statement of the body of the loop 
 	\post  A new DoStmt is created with the parameters
 */
-  DoStmt(Statement *statement, ExpNode *condition)
+  DoStmt(std::list<Statement *> *statement, ExpNode *condition): _cond(condition), _stmtList(statement)
 	{
-		this->_cond = condition;
-		this->_stmt = statement;
+		//Empty
 	}
 
 
@@ -1732,10 +2018,10 @@ class ForStmt : public Statement
 {
  private:
   std::string _var; //!< Name of the VariableNode
-  ExpNode *_exp1; //!< Begining of the condition
-  ExpNode *_exp2; //!< End of the condition
-  ExpNode *_exp3; //!< Condition
-  Statement *_stmt; //!< Statement of the body of the do loop
+  ExpNode *_num1; //!< Begining of the condition
+  ExpNode *_num2; //!< End of the condition
+  ExpNode *_num3; //!< Condition
+  std::list<Statement *> *_stmtList; //!< Statement of the body of the do loop
 
   public:
 /*!		
@@ -1744,13 +2030,22 @@ class ForStmt : public Statement
 	\param statement: Statement of the body of the loop 
 	\post  A new ForStmt is created with the parameters
 */
-  ForStmt(std::string id, ExpNode *condition2, ExpNode *condition3, ExpNode *condition4, Statement *statement)
+  ForStmt(std::string id, ExpNode *num1, ExpNode *num2, ExpNode *num3, std::list<Statement *> *statement): _stmtList(statement)
 	{
 		this-> _var = id;
-		this->_exp1 = condition2;
-		this->_exp2 = condition3;
-		this->_exp3 = condition4;
-		this->_stmt = statement;
+		this->_num1 = num1;
+		this->_num2 = num2;
+		this->_num3 = num3;
+	}
+
+  ForStmt(std::string id, ExpNode *num1, ExpNode *num2, std::list<Statement *> *statement): _stmtList(statement)
+	{
+		this-> _var = id;
+		this->_num1 = num1;
+		this->_num2 = num2;
+
+		NumberNode *exp = new NumberNode(1);
+		this->_num3 = exp;
 	}
 
 
@@ -1771,7 +2066,6 @@ class ForStmt : public Statement
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////
-// NEW in example 17
 
 /*!	
   \class   WhileStmt
@@ -1783,19 +2077,18 @@ class WhileStmt : public Statement
 {
  private:
   ExpNode *_cond; //!< Condicion of the while statement
-  Statement *_stmt; //!< Statement of the body of the while loop
+  std::list<Statement *> *_stmtList; //!< Statements of the body of the while loop
 
   public:
 /*!		
 	\brief Constructor of  WhileStmt
 	\param condition: ExpNode of the condition
-	\param statement: Statement of the body of the loop 
+	\param statement: Statements of the body of the loop 
 	\post  A new WhileStmt is created with the parameters
 */
-  WhileStmt(ExpNode *condition, Statement *statement)
+  WhileStmt(ExpNode *condition, std::list<Statement *> *statement): _cond(condition), _stmtList(statement)
 	{
-		this->_cond = condition;
-		this->_stmt = statement;
+		//Empty
 	}
 
 
@@ -1808,50 +2101,6 @@ class WhileStmt : public Statement
 
 /*!	
 	\brief   Evaluate the WhileStmt
-	\return  void
-	\sa		 print
-*/
-  void evaluate();
-};
-
-
-
-///////////////////////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////////////
-// NEW in example 17
-
-/*!	
-  \class   BlockStmt
-  \brief   Definition of atributes and methods of BlockStmt class
-  \note    BlockStmt Class publicly inherits from Statement class 
-		   and adds its own print and evaluate functions
-*/
-class BlockStmt : public Statement 
-{
- private:
-   std::list<Statement *> *_stmts;  //!< List of statements
-
-  public:
-/*!		
-	\brief Constructor of  WhileStmt
-	\param stmtList: list of Statement
-	\post  A new BlockStmt is created with the parameters
-*/
-  BlockStmt(std::list<Statement *> *stmtList): _stmts(stmtList)
-	{
-		// Empty
-	}
-
-
-/*!
-	\brief   Print the BlockStmt
-	\return  void
-	\sa		 evaluate
-*/
-  void print();
-
-/*!	
-	\brief   Evaluate the BlockStmt
 	\return  void
 	\sa		 print
 */
