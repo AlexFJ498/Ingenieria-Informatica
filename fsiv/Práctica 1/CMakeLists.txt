@@ -15,5 +15,3 @@ add_executable(practica1 practica1.cpp)
 #add_executable(pract1 pract1.cc)
 #add_executable(pract2 pract2.cc)
 #...
-
- 

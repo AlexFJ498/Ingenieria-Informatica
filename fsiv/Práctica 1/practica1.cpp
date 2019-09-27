@@ -26,15 +26,36 @@ const cv::String keys =
 //Rectangle values
 Rect cropRect(0,0,0,0);
 
-Mat src,img,ROI;
+Mat final,mask;
+Mat src,src_grey,img,ROI;
 Point P1(0,0);
 Point P2(0,0);
 Point Paux(0,0);
-
+vector<Point> pp1;
+int i=0;
 const char* winName="Image";
 bool clicked=false;
 char imgName[15];
+bool mode = true; /*true -> rectangle || false -> polygone*/
+int var = 0;
+int drag = 0;
+double contorno;
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+void changePolyColor(){
+	for(int i=0;i<img.rows;i++){
+		for(int j=0;j<img.cols;j++){
+			Paux.x=j;
+			Paux.y=i;
+			contorno=pointPolygonTest(pp1,Paux,false);
+			if(contorno<0){
+				Vec3b grey = img.at<Vec3b>(i,j);
+					img.at<Vec3b>(i,j)[0] = grey.val[0]*0.114+grey.val[1]*0.587+grey.val[2]*0.299;
+					img.at<Vec3b>(i,j)[1] = grey.val[0]*0.114+grey.val[1]*0.587+grey.val[2]*0.299;
+					img.at<Vec3b>(i,j)[2] = grey.val[0]*0.114+grey.val[1]*0.587+grey.val[2]*0.299;
+			}
+		}
+	}
+}
 
 void changeColor(){
 	if(!(cropRect.width==0 && cropRect.height == 0)){
@@ -62,12 +83,6 @@ void checkBoundary(){
 
     if(cropRect.height>img.rows-cropRect.y)
     	cropRect.height=img.rows-cropRect.y;
-
-    if(cropRect.x<0)
-        cropRect.x=0;
-
-    if(cropRect.y<0)
-       	cropRect.height=0;
 }
 
 void showImage(){
@@ -78,27 +93,74 @@ void showImage(){
         ROI=src(cropRect);
     }
 
-    rectangle(img, cropRect, Scalar(0,200,0), 0, 8, 0 );
-	changeColor();
-    imshow(winName,img);
+	if(mode){
+		rectangle(img, cropRect, Scalar(0,200,0), 0, 8, 0 );
+		changeColor();
+    	imshow(winName,img);
+	}
 }
 
 
 void onMouse( int event, int x, int y, int f, void* ){
 	switch(event){
     	case CV_EVENT_LBUTTONDOWN:
-        	clicked=true;
-            P1.x=x;
-            P1.y=y;
-            P2.x=x;
-            P2.y=y;
+			if(mode == false){
+				if (var == 0){
+                	img = src.clone();
+				}
+
+				Paux = Point(x,y);
+           	 	circle(img, Paux, 2, Scalar(0, 200, 0), -1, 8, 0);
+           	 	pp1.push_back(Paux);
+           	 	var++;
+           	 	drag=1;
+
+            	if (var>1){
+                	line(img,pp1[var-2], Paux, Scalar(0, 200, 0), 2, 8, 0);
+				}
+
+            	imshow(winName, img);
+			}else{
+	        	clicked=true;
+    	        P1.x=x;
+    	        P1.y=y;
+    	        P2.x=x;
+    	        P2.y=y;
+			}			
             break;
 
+		case CV_EVENT_RBUTTONDOWN:
+			if(mode == false){
+    		    img = src.clone();
+    	    	if (var != 0){
+    	    	    polylines( img, pp1, 1, Scalar(0,200,0), 2, 8, 0);
+    	    	}
+    	    //	imshow("Source", img);
+			}
+			break;
+
+		case CV_EVENT_RBUTTONUP:
+			if(mode == false){
+	 	       ROI = Mat::zeros(src.size(), CV_8UC3);
+    		    mask = Mat::zeros(src.size(), CV_8UC1);
+    	    vector<vector<Point> > vpts;
+    		    vpts.push_back(pp1);
+    		    fillPoly(mask, vpts, Scalar(255, 255, 255), 8, 0);
+    		    bitwise_and(src, src, ROI, mask);
+				changePolyColor();
+    	    	imshow(winName, img);
+			}
+			break;
+
         case CV_EVENT_LBUTTONUP:
-            P2.x=x;
-            P2.y=y;
-            clicked=false;
-            break;
+			if(mode == false){
+				imshow(winName, img);
+			}else{
+	            P2.x=x;
+    	        P2.y=y;
+    	        clicked=false;
+			}
+   	        break;
 
         case CV_EVENT_MOUSEMOVE:
             if(clicked){
@@ -112,16 +174,27 @@ void onMouse( int event, int x, int y, int f, void* ){
 
 	if(clicked){
     	if(P1.x>P2.x){
-			cropRect.x=P2.x;
-            cropRect.width=P1.x-P2.x; 
+			if(P2.x<0){
+				cropRect.x=0;
+				cropRect.width=P1.x;
+			}else{
+				cropRect.x=P2.x;
+    	        cropRect.width=P1.x-P2.x;
+			} 
 		}
-        else{  
+        else{
 			cropRect.x=P1.x;
-            cropRect.width=P2.x-P1.x; 
+    	    cropRect.width=P2.x-P1.x;
+
 		}
         if(P1.y>P2.y){ 
+			if(P2.y<0){
+				cropRect.y=0;
+				cropRect.height=P1.y;
+			}else{
 			cropRect.y=P2.y;
             cropRect.height=P1.y-P2.y; 
+			}
 		}
         else{
 	        cropRect.y=P1.y;
@@ -129,7 +202,8 @@ void onMouse( int event, int x, int y, int f, void* ){
 		}
     }
 
-	showImage();
+	if(mode)
+		showImage();
 }
 
 int main(int argc, char* const* argv){
@@ -170,7 +244,8 @@ int main(int argc, char* const* argv){
     	cout<<"------> Press 'b' decrease bottom"<<endl;
     	cout<<"------> Press 'h' decrease right"<<endl;
     	cout<<"------> Press 'f' decrease left"<<endl<<endl;
-	
+
+		cout<<"------> Press 'q' to change mode"<<endl<<endl;	
     	cout<<"------> Press 'r' to reset"<<endl;
     	cout<<"------> Press 'Esc' to quit"<<endl<<endl;
 	
@@ -185,7 +260,7 @@ int main(int argc, char* const* argv){
     	while(1){
  			char c=waitKey();
     		if(c=='s'&&ROI.data){
-    			sprintf(imgName,"%s.jpg",argv[2]);
+    			sprintf(imgName,"%s",argv[2]);
     			imwrite(imgName,ROI);
     			cout<<"  Saved "<<imgName<<endl;
     		}
@@ -194,10 +269,14 @@ int main(int argc, char* const* argv){
     		if(c=='8') cropRect.y--;
     		if(c=='2') cropRect.y++;
 		
-    		if(c=='w') { cropRect.y--; cropRect.height++;}
+    		if(c=='w') { if(!(cropRect.y==0)){
+							cropRect.y--; cropRect.height++;}
+					   }
     		if(c=='d') cropRect.width++;
     		if(c=='x') cropRect.height++;
-    		if(c=='a') { cropRect.x--; cropRect.width++;}
+    		if(c=='a') { if(!cropRect.x==0){
+							cropRect.x--; cropRect.width++;}
+					   }
 		
     		if(c=='t') { cropRect.y++; cropRect.height--;}
     		if(c=='h') cropRect.width--;
@@ -205,8 +284,27 @@ int main(int argc, char* const* argv){
     		if(c=='f') { cropRect.x++; cropRect.width--;}
 		
     		if(c==27) break;
-    		if(c=='r') {cropRect.x=0;cropRect.y=0;cropRect.width=0;cropRect.height=0;}
+    		if(c=='r'){
+				cropRect.x=0;cropRect.y=0;cropRect.width=0;cropRect.height=0;
+					pp1.clear();
+					var = 0;
+					drag = 0;		
+			}
     		showImage();
+			if(c=='q') {
+				if(mode){
+					mode = false;
+					std::cout<<"Mode set to polygone"<<std::endl;
+					pp1.clear();
+					var = 0;
+					drag = 0;
+				}
+				else{
+					mode = true;
+					std::cout<<"Mode set to rectangle"<<std::endl;
+					cropRect.x=0;cropRect.y=0;cropRect.width=0;cropRect.height=0;
+				}
+			}
     	}
 	
     	return 0;
