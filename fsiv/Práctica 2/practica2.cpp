@@ -12,8 +12,6 @@ using namespace std;
 using namespace cv;
 
 cv::Mat src, salida;
-cv::Mat_<Vec3f> vecSrc;
-cv::Mat_<Vec3f> vecSalida;
 bool interactiveMode = false;
 float c,b,g;
 
@@ -45,41 +43,38 @@ void setPixelValues(float c, float b, float g){
 }
 
 void setVectorValues(float c, float b, float g){
-	vecSalida = vecSrc.clone();
+	salida = src.clone();
 	
-	cv::pow(vecSrc,g,vecSalida);
-	vecSalida *= c + b;
+	cv::pow(src,g,salida);
+	salida = c * salida + b;
 	
 }
 
 void brightnessCallBack(int position, void *){
 	b = (float)(position-100)/100;
 
-	//  setPixelValues(c,b,g);
-	setVectorValues(c,b,g);
+	  setPixelValues(c,b,g);
+	//setVectorValues(c,b,g);
 
-	//  imshow("Image", salida);
-	imshow("Image", vecSalida);
+	  imshow("Image", salida);
 }
 
 void contrastCallBack(int position, void *){
 	c = (float)position/100;
 
-	//  setPixelValues(c,b,g);
-	setVectorValues(c,b,g);
+	  setPixelValues(c,b,g);
+	//setVectorValues(c,b,g);
 
-	//  imshow("Image", salida);
-	imshow("Image", vecSalida);
+	  imshow("Image", salida);
 }
 
 void gammaCallBack(int position, void *){
 	g = (float)position/100;
 
-	//  setPixelValues(c,b,g);
-	setVectorValues(c,b,g);
+	  setPixelValues(c,b,g);
+	//setVectorValues(c,b,g);
 
-	//  imshow("Image", salida);
-	imshow("Image", vecSalida);
+	  imshow("Image", salida);
 }
 
 int main (int argc, char* const* argv){
@@ -113,18 +108,15 @@ int main (int argc, char* const* argv){
 	//Set values
     src = imread(img1);
 
-	//  src.convertTo(src, CV_32F, 1.0/255.0, 0.0);
-	src.convertTo(vecSrc, CV_32F, 1.0/255.0, 0.0);
+	  src.convertTo(src, CV_32F, 1.0/255.0, 0.0);
 
-	//  salida.convertTo(salida, CV_32F, 1.0/255.0, 0.0);
-	vecSalida.convertTo(vecSalida, CV_32F, 1.0/255.0, 0.0);
+	  salida.convertTo(salida, CV_32F, 1.0/255.0, 0.0);
 
 	//  setPixelValues(c,b,g);
 	setVectorValues(c,b,g);
 
 	//Create window
-	//  imshow("Image", salida);
-	imshow("Image", vecSalida);
+	  imshow("Image", salida);
 
 	if(interactiveMode){
 		int brightInitial = b*100+100;
@@ -138,11 +130,9 @@ int main (int argc, char* const* argv){
 
 	//Wait for any key press
 	char k=waitKey();
-	if(!(k==27) && (salida.data || vecSalida.data)){
-				//  salida.convertTo(salida, CV_8UC3, 255.0); 
-				vecSalida.convertTo(salida, CV_8UC3, 255.0);
-    			//  imwrite(img2,salida);
-				imwrite(img2,salida);
+	if(!(k==27) && salida.data){
+				  salida.convertTo(salida, CV_8UC3, 255.0); 
+    			  imwrite(img2,salida);
     			cout<<"  Saved "<<img2<<endl;
 	};
 
