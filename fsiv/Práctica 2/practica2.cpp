@@ -12,12 +12,13 @@ using namespace std;
 using namespace cv;
 
 cv::Mat src, salida;
-bool interactiveMode = false;
 float c,b,g;
+bool lumaValue = false;
 
 const cv::String keys =
     "{help h usage ? |      | print this message   }"
 	"{i              |      | interactive mode     }"
+    "{luma           |      | enable hsv option    }"
 	"{c              |1.0   | contrast value       }"
 	"{b              |0.0   | brightness value     }"
 	"{g              |1.0   | gamma value          }"
@@ -50,31 +51,72 @@ void setVectorValues(float c, float b, float g){
 	
 }
 
+void setLumaValues(float c, float b, float g){
+	cvtColor(src,salida,CV_BGR2HSV);
+	std::vector<cv::Mat> channels;
+	split(salida,channels);
+	for(int i=0;i<salida.rows;i++){
+		for(int j=0;j<salida.cols;j++){
+			Vec3f aux = salida.at<Vec3f>(i,j);
+			salida.at<Vec3f>(i,j)[3] = c*(pow(aux[2],g)) + b;
+		}
+	}
+	merge(channels,salida);
+	cvtColor(salida,salida,CV_HSV2RGB);
+	imshow("Image", salida);
+}
+
 void brightnessCallBack(int position, void *){
 	b = (float)(position-100)/100;
 
-	  setPixelValues(c,b,g);
-	//setVectorValues(c,b,g);
-
-	  imshow("Image", salida);
+	if(lumaValue){
+		setLumaValues(c,b,g);
+std::cout<<"hola\n";
+	}
+	else{
+		  setPixelValues(c,b,g);
+		//setVectorValues(c,b,g);
+		imshow("Image", salida);
+	}
 }
 
 void contrastCallBack(int position, void *){
 	c = (float)position/100;
 
-	  setPixelValues(c,b,g);
-	//setVectorValues(c,b,g);
-
-	  imshow("Image", salida);
+	if(lumaValue){
+		setLumaValues(c,b,g);
+	}
+	else{
+		  setPixelValues(c,b,g);
+		//setVectorValues(c,b,g);
+		imshow("Image", salida);
+	}
 }
 
 void gammaCallBack(int position, void *){
 	g = (float)position/100;
 
-	  setPixelValues(c,b,g);
-	//setVectorValues(c,b,g);
+	if(lumaValue){
+		setLumaValues(c,b,g);
+	}
+	else{
+		  setPixelValues(c,b,g);
+		//setVectorValues(c,b,g);
+		imshow("Image", salida);
+	}
+}
 
-	  imshow("Image", salida);
+void lumaCallBack(int position, void *){
+	if(position == 0){
+		lumaValue = false;
+		  setPixelValues(c,b,g);
+		//setVectorValues(c,b,g);
+		imshow("Image", salida);
+	}
+	else{
+		lumaValue = true;
+		setLumaValues(c,b,g);
+	}
 }
 
 int main (int argc, char* const* argv){
@@ -87,9 +129,6 @@ int main (int argc, char* const* argv){
     	parser.printMessage();
         return 0;
     }
-	if (parser.has("i")){
-		interactiveMode = true;
-	}
     int N = parser.get<int>("N");
     double fps = parser.get<double>("fps");
     cv::String path = parser.get<cv::String>("path");
@@ -118,14 +157,18 @@ int main (int argc, char* const* argv){
 	//Create window
 	  imshow("Image", salida);
 
-	if(interactiveMode){
+	if(parser.has("i")){
 		int brightInitial = b*100+100;
 		int contrastInitial = c*100;
 		int gammaInitial = g*100;
 
-		createTrackbar("brightness","Image",&brightInitial,200,brightnessCallBack);
-		createTrackbar("contrast","Image",&contrastInitial,200,contrastCallBack);
-		createTrackbar("gamma","Image",&gammaInitial,200,gammaCallBack);
+		createTrackbar("B","Image",&brightInitial,200,brightnessCallBack);
+		createTrackbar("C","Image",&contrastInitial,200,contrastCallBack);
+		createTrackbar("G","Image",&gammaInitial,200,gammaCallBack);
+	}
+
+	if(parser.has("luma")){
+		createTrackbar("Luma","Image",0,1,lumaCallBack);
 	}
 
 	//Wait for any key press
