@@ -11,7 +11,7 @@
 using namespace std;
 using namespace cv;
 
-cv::Mat src, salida;
+cv::Mat src, salida, salida1, salida2;
 float c,b,g;
 bool lumaValue = false;
 
@@ -52,17 +52,14 @@ void setVectorValues(float c, float b, float g){
 }
 
 void setLumaValues(float c, float b, float g){
-	cvtColor(src,salida,CV_BGR2HSV);
-	std::vector<cv::Mat> channels;
-	split(salida,channels);
+	salida = src.clone();
+	cvtColor(salida,salida,CV_BGR2HSV);
 	for(int i=0;i<salida.rows;i++){
 		for(int j=0;j<salida.cols;j++){
-			Vec3f aux = salida.at<Vec3f>(i,j);
-			salida.at<Vec3f>(i,j)[3] = c*(pow(aux[2],g)) + b;
+			salida.at<Vec3f>(i,j)[2] = c*(pow(salida.at<Vec3f>(i,j)[2],g)) + b;
 		}
 	}
-	merge(channels,salida);
-	cvtColor(salida,salida,CV_HSV2RGB);
+	cvtColor(salida,salida,CV_HSV2BGR);
 	imshow("Image", salida);
 }
 
@@ -71,7 +68,6 @@ void brightnessCallBack(int position, void *){
 
 	if(lumaValue){
 		setLumaValues(c,b,g);
-std::cout<<"hola\n";
 	}
 	else{
 		  setPixelValues(c,b,g);
@@ -151,8 +147,8 @@ int main (int argc, char* const* argv){
 
 	  salida.convertTo(salida, CV_32F, 1.0/255.0, 0.0);
 
-	//  setPixelValues(c,b,g);
-	setVectorValues(c,b,g);
+	  setPixelValues(c,b,g);
+	//setVectorValues(c,b,g);
 
 	//Create window
 	  imshow("Image", salida);
