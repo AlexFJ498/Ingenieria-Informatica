@@ -11,7 +11,7 @@
 using namespace std;
 using namespace cv;
 
-cv::Mat src, salida, salida1, salida2;
+cv::Mat src, salida, mask;
 float c,b,g;
 bool lumaValue = false;
 
@@ -28,8 +28,35 @@ const cv::String keys =
     "{ts timestamp   |      | use time stamp       }"
     "{@image1        |      | image1 for compare   }"
     "{@image2        |<none>| image2 for compare   }"
+    "{@image3        |""    | mask image           }"
     "{@repeat        |1     | number               }"
     ;
+
+void setMask(){
+	if(!mask.empty()){
+		/*salida.convertTo(salida, CV_8UC3, 255.0); 
+		salida_mask = Mat::zeros(salida.size(), CV_8UC3);
+		mask = Mat::zeros(salida.size(), CV_8UC1);
+		bitwise_and(salida,salida,salida_mask,mask);
+		bitwise_or(salida_mask,src,salida);
+	salida.convertTo(salida, CV_32F, 1.0/255.0, 0.0);
+		*/
+	
+		for(int i=0;i<mask.rows;i++){
+			for(int j=0;j<mask.cols;j++){
+				Vec3f aux = mask.at<Vec3f>(i,j);
+				if(aux[0] == 0 && aux[1] == 0 && aux[2] == 0){
+					salida.at<Vec3f>(i,j) = src.at<Vec3f>(i,j);
+				}
+				else{
+					salida.at<Vec3f>(i,j) = salida.at<Vec3f>(i,j);
+				}
+			}
+		}
+
+	}
+	
+}
 
 void setPixelValues(float c, float b, float g){
 	salida = src.clone();
@@ -60,6 +87,7 @@ void setLumaValues(float c, float b, float g){
 		}
 	}
 	cvtColor(salida,salida,CV_HSV2BGR);
+	setMask();
 	imshow("Image", salida);
 }
 
@@ -72,6 +100,7 @@ void brightnessCallBack(int position, void *){
 	else{
 		  setPixelValues(c,b,g);
 		//setVectorValues(c,b,g);
+		setMask();
 		imshow("Image", salida);
 	}
 }
@@ -85,6 +114,7 @@ void contrastCallBack(int position, void *){
 	else{
 		  setPixelValues(c,b,g);
 		//setVectorValues(c,b,g);
+		setMask();
 		imshow("Image", salida);
 	}
 }
@@ -98,6 +128,7 @@ void gammaCallBack(int position, void *){
 	else{
 		  setPixelValues(c,b,g);
 		//setVectorValues(c,b,g);
+		setMask();
 		imshow("Image", salida);
 	}
 }
@@ -107,9 +138,11 @@ void lumaCallBack(int position, void *){
 		lumaValue = false;
 		  setPixelValues(c,b,g);
 		//setVectorValues(c,b,g);
+		setMask();
 		imshow("Image", salida);
 	}
 	else{
+		setMask();
 		lumaValue = true;
 		setLumaValues(c,b,g);
 	}
@@ -134,24 +167,30 @@ int main (int argc, char* const* argv){
 	g = parser.get<float>("g");
     cv::String img1 = parser.get<cv::String>(0);
     cv::String img2 = parser.get<cv::String>(1);
-    int repeat = parser.get<int>(2);
+	cv::String img3 = parser.get<cv::String>(2);
+    int repeat = parser.get<int>(3);
     if (!parser.check()){
         parser.printErrors();
         return 0;
     }
 
+	//Set mask
+	if(!img3.empty()){
+		mask = imread(img3);
+	}
+
 	//Set values
     src = imread(img1);
-
-	  src.convertTo(src, CV_32F, 1.0/255.0, 0.0);
-
-	  salida.convertTo(salida, CV_32F, 1.0/255.0, 0.0);
+	src.convertTo(src, CV_32F, 1.0/255.0, 0.0);
+	salida.convertTo(salida, CV_32F, 1.0/255.0, 0.0);
+	mask.convertTo(mask, CV_32F, 1.0/255.0, 0.0);
 
 	  setPixelValues(c,b,g);
 	//setVectorValues(c,b,g);
 
 	//Create window
-	  imshow("Image", salida);
+	setMask();
+	imshow("Image", salida);
 
 	if(parser.has("i")){
 		int brightInitial = b*100+100;
