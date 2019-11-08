@@ -22,14 +22,30 @@ const cv::String keys =
     "{@repeat        |1     | number               }"
     ;
 
-cv::Mat_<float> create_sharp_filter(int tipo, float g){
-	cv::Mat_<float> kernel(3,3);
+cv::Mat create_sharp_filter(int tipo, float g){
+	cv::Mat kernel(3,3,CV_32FC1);
 	if(tipo == 0){ //Laplaciano 5 puntos
-		kernel << 0, -1, 0, -1, g+4, -1, 0, -1, 0;
+		kernel.at<float>(0,0) = 0;
+		kernel.at<float>(0,1) = -1;
+		kernel.at<float>(0,2) = 0;
+		kernel.at<float>(1,0) = -1;
+		kernel.at<float>(1,1) = g+4;
+		kernel.at<float>(1,2) = -1;
+		kernel.at<float>(2,0) = 0;
+		kernel.at<float>(2,1) = -1;
+		kernel.at<float>(2,2) = 0;
 	} 
 
 	if(tipo == 1){ //Laplaciano 9 puntos
-		kernel << -1, -1, -1, -1, g+9, -1, -1, -1, -1;
+		kernel.at<float>(0,0) = -1;
+		kernel.at<float>(0,1) = -1;
+		kernel.at<float>(0,2) = -1;
+		kernel.at<float>(1,0) = -1;
+		kernel.at<float>(1,1) = g+8;
+		kernel.at<float>(1,2) = -1;
+		kernel.at<float>(2,0) = -1;
+		kernel.at<float>(2,1) = -1;
+		kernel.at<float>(2,2) = -1;
 	}	
 	return kernel;
 }
@@ -39,8 +55,8 @@ void convolve(const cv::Mat& in, const cv::Mat& filter, cv::Mat& out, int border
 		in.type() == CV_32FC1 && filter.type() == CV_32FC1
 	);
 
-	cv::filter2D(in, out, -1, filter,cv::Point(-1,-1),border_type);
-	cv::addWeighted(in,1.0,out,1.0,0.0,out);
+	//cv::filter2D(in, out, in.depth(),filter);
+	
 }
 
 int main (int argc, char* const* argv){
@@ -71,19 +87,26 @@ int main (int argc, char* const* argv){
 	int g = parser.get<float>("g");
 
     cv::Mat entrada = imread(img1);
-	cv::Mat salida;
-	cv::Mat_<float> kernel = create_sharp_filter(tipo,g);
+	cv::Mat entrada2;
+	cv::Mat kernel = create_sharp_filter(tipo,g);
+	cv::Mat salida = entrada.clone();
+	cv::Mat salida2;
+
+	entrada.convertTo(entrada2,CV_32F, 1.0/255.0);
+
+	std::vector<cv::Mat> canales;
+	std::vector<cv::Mat> canales2;
+	cv::split(entrada2,canales);
+
+	for(int i=0;i<canales.size();i++){
+		salida = cv::Mat();
+		convolve(canales[i],kernel,salida);
+		canales2.push_back(salida);
+	}
+	cv::merge(canales2,salida);
 
 	cv::imshow("Image", entrada);
-	//cv::imshow("Laplace",kernel);
-	cv::Mat entrada2;
-	cvtColor(entrada, entrada, CV_BGR2GRAY,1);
-	entrada.convertTo(entrada2,CV_32F);
-	convolve(entrada2,kernel,salida);
-	cvtColor(salida,salida,CV_GRAY2BGR);
-	cv::imshow("convolve", salida);
-	//Create window
-
+	cv::imshow("Realce", salida);
 
 	//Wait for any key press
 	cv::waitKey(0);
@@ -91,7 +114,6 @@ int main (int argc, char* const* argv){
 	//Destroy the window
 	cv::destroyWindow("Image");
 
-    
   }
   catch (std::exception& e)
   {
