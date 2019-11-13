@@ -55,8 +55,29 @@ void convolve(const cv::Mat& in, const cv::Mat& filter, cv::Mat& out, int border
 		in.type() == CV_32FC1 && filter.type() == CV_32FC1
 	);
 
-	//cv::filter2D(in, out, in.depth(),filter);
-	
+	cv::Mat img_conv = cv::Mat::zeros(in.rows+filter.rows-1, 
+									  in.cols+filter.cols-1, CV_32FC1);
+	int border = (filter.rows-1)/2;
+	for(int i=0;i<in.rows;i++){
+		for(int j=0;j<in.cols;j++){
+			 img_conv.at<float>(i+border,j+border) = in.at<float>(i,j);
+		}
+	}
+	cv::Rect roi;
+	cv::Mat cropped;
+	out = in.clone();
+	float sum;
+	for(int i=border;i<in.rows;i++){
+		for(int j=border;j<in.cols;j++){
+			sum = 0;
+			for(int u=-border;u<=border;u++){
+				for(int v=-border;v<=border;v++){
+					sum = sum + (img_conv.at<float>(i+u,j+v) * filter.at<float>(u+border, v+border));
+				}
+			}
+			out.at<float>(i-border,j-border) = sum;
+		}
+	}
 }
 
 int main (int argc, char* const* argv){
