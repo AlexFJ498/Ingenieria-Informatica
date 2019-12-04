@@ -8,12 +8,12 @@
 #include <opencv2/calib3d/calib3d.hpp>
 
 const cv::String keys =
-    "{help h usage ? |      | print this message   }"
-    "{@rows        |<none>| calib. pattern rows  }"
-    "{@cols        |<none>| calib. pattern cols. }"
-    "{@size        |<none>| calib. pattern cols size.}"
-    "{@calibfile   |<none>| intrinsics file.     }"
-    "{@input       |<none>| input video.         }"
+    "{help h usage ? |      | print this message        }"
+    "{@rows          |      | calib. pattern rows       }"
+    "{@cols          |      | calib. pattern cols.      }"
+    "{@size          |      | calib. pattern cols size. }"
+    "{@calibfile     |      | intrinsics file.          }"
+    "{@input_file    |<none>| input video.              }"
     ;
 
 using namespace cv;
@@ -26,8 +26,10 @@ void crearPuntos(std::vector<cv::Point3f> &puntos3d, int size){
 	puntos3d.push_back(cv::Point3f(0,0,-size));
 }
 
-void dibujarEjesXYZ(){
-
+void dibujarEjesXYZ(cv::Mat frame, std::vector<cv::Point2f> puntosRespuesta){
+	cv::line(frame, puntosRespuesta[0], puntosRespuesta[1], cv::Scalar(0,0,255), 6); //Azul
+	cv::line(frame, puntosRespuesta[0], puntosRespuesta[2], cv::Scalar(0,255,0), 6); //Verde
+	cv::line(frame, puntosRespuesta[0], puntosRespuesta[3], cv::Scalar(255,0,0), 6); //Rojo
 }
 
 int main (int argc, char* const* argv){
@@ -42,11 +44,11 @@ int main (int argc, char* const* argv){
           parser.printMessage();
           return 0;
       }
-      int rows = parser.get<int>(1);
-      int cols = parser.get<int>(2);
-      float size = parser.get<float>(3);
-      String calibfile = parser.get<String>(4);
-      String input_file = parser.get<String>(5);
+      int rows = parser.get<int>(0);
+      int cols = parser.get<int>(1);
+      float size = parser.get<float>(2);
+      cv::String calibfile = parser.get<String>(3);
+      cv::String input_file = parser.get<String>(4);
 
       if (!parser.check())
       {
@@ -56,7 +58,7 @@ int main (int argc, char* const* argv){
 
     //Abrir el vídeo
     VideoCapture vid;
-    vid.open(input_file, FileStorage::READ);
+    vid.open(input_file);
     if(! vid.isOpened()){
         cerr << "Error video."<<endl;
         return EXIT_FAILURE;
@@ -70,30 +72,33 @@ int main (int argc, char* const* argv){
 
     cv::Mat camera_mat;
     cv::Mat dist_coefs;
-    intr["camera-matrix"] >> camera_mat;
-    intr["distorsion-coefficients"] >> dist_coefs;
+    intr["camera_matrix"] >> camera_mat;
+    intr["distorsion_coefficients"] >> dist_coefs;
 
-    cv::Mat frame;
-
-    vid >> frame;
-
+	std::vector<Point3f> obj_pts;
+	for(int i=0;i<rows-1;i++){
+		for(int j=0;j<cols-1;j++){
+			obj_pts.push_back(cv::Point3f(j*size,i*size,0));
+		}
+	}
+	std::vector<Point2f> corners;
     int k = 0;
+	cv::Mat frame;
+	vid >> frame;
     while(!frame.empty() && k != 27){
         //detectar el tablero
 		cv::Mat gray;
-		std::vector<Point3f> obj_pts = create obj_points();
-	    std::vector<Point2f> corners;
         cv::imshow("Video",frame);
-        if(findChessboardCorners(frame, Size(cols-1,rows-1), corners)){
+        if(findChessboardCorners(frame, Size(cols-1,rows-1), corners,cv::CALIB_CB_FAST_CHECK)){
             cv::cvtColor(frame, gray, COLOR_BGR2GRAY);
 
 			//refinar esquinas detectadas
             cv::cornerSubPix(gray, corners, Size(11,11), Size(-1,-1),
-                             TermCriteria(CV_TERMCRIT_EPS + CV_TERMCRIT_ITER, 30, 0.1));
+                             TermCriteria(cv::TermCriteria(cv::TermCriteria::COUNT | cv::TermCriteria::EPS, 20, 0.03)));
 
 			//Estimar orientación de la cámara
 			cv::Mat rotation_vec, translation_vec;
-            cv::solvePnP(obj_points, corners, camera_mat, dist_coefs, rotation_vec, translation_vec);
+            cv::solvePnP(obj_pts, corners, camera_mat, dist_coefs, rotation_vec, translation_vec);
 
 			//Proyectar sobre la imagen información 3D
 			std::vector<cv::Point3f> puntos3d;
@@ -101,12 +106,13 @@ int main (int argc, char* const* argv){
 
 			crearPuntos(puntos3d,size);
 			cv::projectPoints(puntos3d, rotation_vec, translation_vec, camera_mat, dist_coefs, puntosResultado);
-			cv::dibujarEjesXYZ(frame,puntosResultado);
+			dibujarEjesXYZ(frame,puntosResultado);
         }
-    }
+        cv::imshow("Video",frame);
+		k = cv::waitKey(20);
 
-    //Wait for any key press
-    cv::waitKey(0);
+	    vid >> frame;
+    }
 
   }
   catch (std::exception& e)
@@ -116,4 +122,3 @@ int main (int argc, char* const* argv){
   }
   return retCode;
 }
-parametro C hace referencia al kernel Chi2
