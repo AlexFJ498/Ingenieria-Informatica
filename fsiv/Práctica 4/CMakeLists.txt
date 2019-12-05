@@ -11,7 +11,7 @@ LINK_LIBRARIES(Xrandr)
 
 
 add_executable(calibration_opencv calibration_Opencv.cpp)
-add_executable(practica4 practica4.cpp)
+add_executable(augReal augReal.cpp)
 
 #add_executable(pract1 pract1.cc)
 #add_executable(pract2 pract2.cc)

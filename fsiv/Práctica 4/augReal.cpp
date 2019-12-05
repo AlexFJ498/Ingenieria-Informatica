@@ -9,15 +9,31 @@
 
 const cv::String keys =
     "{help h usage ? |      | print this message        }"
+	"{v              |      | renderice video option    }"
     "{@rows          |      | calib. pattern rows       }"
     "{@cols          |      | calib. pattern cols.      }"
     "{@size          |      | calib. pattern cols size. }"
     "{@calibfile     |      | intrinsics file.          }"
     "{@input_file    |<none>| input video.              }"
+	"{@image         |      | image for -i              }"
     ;
 
 using namespace cv;
 using namespace std;
+
+void crearVerticesInput(std::vector<cv::Point3f> &vertices, int size, int cols, int rows){
+	vertices.push_back(cv::Point3f(0,0,0));
+	vertices.push_back(cv::Point3f(0,size*(rows-1),0));
+	vertices.push_back(cv::Point3f(size*(cols-1),size*(rows-1),0));
+	vertices.push_back(cv::Point3f(size*(cols-1),0,0));
+}
+
+void crearVerticesOutput(std::vector<cv::Point2f> &vertices, int cols, int rows){
+	vertices.push_back(cv::Point2f(0,0));
+	vertices.push_back(cv::Point2f(0,rows-1));
+	vertices.push_back(cv::Point2f(cols-1,rows-1));
+	vertices.push_back(cv::Point2f(cols-1,0));
+}
 
 void crearPuntos(std::vector<cv::Point3f> &puntos3d, int size){
 	puntos3d.push_back(cv::Point3f(0,0,0));
@@ -64,6 +80,12 @@ int main (int argc, char* const* argv){
         return EXIT_FAILURE;
     }
 
+	VideoCapture video;
+	if(parser.has("v")){
+		cv::String nombre = parser.get<cv::String>(5);
+		video.open(nombre);
+	}
+
     cv::FileStorage intr (calibfile, FileStorage::READ);
     if(!intr.isOpened()){
         cerr <<"Error calib." << endl;
@@ -83,12 +105,16 @@ int main (int argc, char* const* argv){
 	}
 	std::vector<Point2f> corners;
     int k = 0;
-	cv::Mat frame;
+	cv::Mat frame,input;
 	vid >> frame;
+
+	if(parser.has("v"))
+		video >> input;
+
     while(!frame.empty() && k != 27){
         //detectar el tablero
 		cv::Mat gray;
-        cv::imshow("Video",frame);
+
         if(findChessboardCorners(frame, Size(cols-1,rows-1), corners,cv::CALIB_CB_FAST_CHECK)){
             cv::cvtColor(frame, gray, COLOR_BGR2GRAY);
 
@@ -101,17 +127,35 @@ int main (int argc, char* const* argv){
             cv::solvePnP(obj_pts, corners, camera_mat, dist_coefs, rotation_vec, translation_vec);
 
 			//Proyectar sobre la imagen información 3D
-			std::vector<cv::Point3f> puntos3d;
-			std::vector<cv::Point2f> puntosResultado;
+			if(parser.has("v") && !input.empty()){
+				std::vector<cv::Point3f> vertices;
+				std::vector<cv::Point2f> verticesInput;
+				std::vector<cv::Point2f> verticesOutput;
 
-			crearPuntos(puntos3d,size);
-			cv::projectPoints(puntos3d, rotation_vec, translation_vec, camera_mat, dist_coefs, puntosResultado);
-			dibujarEjesXYZ(frame,puntosResultado);
-        }
-        cv::imshow("Video",frame);
-		k = cv::waitKey(20);
+				crearVerticesInput(vertices,size,cols-1,rows-1);
+				cv::projectPoints(vertices, rotation_vec, translation_vec, camera_mat, dist_coefs,verticesInput);
 
-	    vid >> frame;
+				crearVerticesOutput(verticesOutput,frame.cols,frame.rows);
+
+				cv::Mat matrix = cv::getPerspectiveTransform(verticesOutput,verticesInput);
+				cv::warpPerspective(input,frame,matrix,frame.size(),1,cv::BORDER_TRANSPARENT);
+
+				video >> input;
+			}
+			if(!parser.has("v")){
+				std::vector<cv::Point3f> puntos3d;
+				std::vector<cv::Point2f> puntosResultado;
+
+				crearPuntos(puntos3d,size);
+				cv::projectPoints(puntos3d, rotation_vec, translation_vec, camera_mat, dist_coefs, puntosResultado);
+				dibujarEjesXYZ(frame,puntosResultado);
+			}
+		}
+    	    
+    	    cv::imshow("Video",frame);
+			k = cv::waitKey(20);
+
+		    vid >> frame;
     }
 
   }
