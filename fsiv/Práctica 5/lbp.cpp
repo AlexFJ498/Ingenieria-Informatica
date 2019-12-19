@@ -33,6 +33,37 @@ void fsiv_lbp(const cv::Mat & imagem, cv::Mat & lbp)
 			unsigned char result = 0; 
 
 			//Pixel 0
+			result = result | uchar(value >= imagem.at<uchar>(x-1,y-1));
+
+			//Pixel 1
+			result <<=1;
+			result = result | uchar(value >= imagem.at<uchar>(x-1,y));
+
+			//Pixel 2
+			result <<=1;
+			result = result | uchar(value >= imagem.at<uchar>(x-1,y+1));
+
+			//Pixel 3
+			result <<=1;
+			result = result | uchar(value >= imagem.at<uchar>(x,y+1));
+
+			//Pixel 4
+			result <<=1;
+			result = result | uchar(value >= imagem.at<uchar>(x+1,y+1));
+
+			//Pixel 5
+			result <<=1;
+			result = result | uchar(value >= imagem.at<uchar>(x+1,y));
+
+			//Pixel 6
+			result <<=1;
+			result = result | uchar(value >= imagem.at<uchar>(x+1,y-1));
+
+			//Pixel 7
+			result <<=1;
+			result = result | uchar(value >= imagem.at<uchar>(x,y-1));
+
+/*
 			aux = imagem.at<uchar>(x,y-1);
 			if(aux > value)
 				result = result | (1 << 7);
@@ -87,7 +118,7 @@ void fsiv_lbp(const cv::Mat & imagem, cv::Mat & lbp)
 				result = result | (1 << 0);
 			else
 				result = result | (0 << 0);
-
+*/
 			lbp.at<uchar>(x,y) = result;
 		}
 	}
@@ -131,8 +162,8 @@ void fsiv_lbp_hist(const cv::Mat & lbp, cv::Mat & lbp_hist, bool normalize, int 
 
 void fsiv_lbp_desc(const cv::Mat & image, cv::Mat & lbp_desc, const int *ncells, bool normalize, int nbins)
 {
-	int nx = ncells[0]; 
-	int ny = ncells[1]; 
+	int ny = ncells[0]; 
+	int nx = ncells[1]; 
 	vector <cv::Mat> vector;
 
 	int rows = image.rows; 
