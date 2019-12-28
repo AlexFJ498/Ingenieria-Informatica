@@ -157,7 +157,7 @@ void fsiv_lbp_hist(const cv::Mat & lbp, cv::Mat & lbp_hist, bool normalize, int 
 		}
 	}
 
-	lbp_hist = lbp_hist.t();
+	lbp_hist = lbp_hist.reshape(0,1);
 }
 
 void fsiv_lbp_desc(const cv::Mat & image, cv::Mat & lbp_desc, const int *ncells, bool normalize, int nbins)
@@ -166,43 +166,32 @@ void fsiv_lbp_desc(const cv::Mat & image, cv::Mat & lbp_desc, const int *ncells,
 	int nx = ncells[1]; 
 	vector <cv::Mat> vector;
 
-	int rows = image.rows; 
-	int cols = image.cols; 
-	int c = cols/nx; 
-	int r = rows/ny; 
+	int ancho = image.cols/nx;
+	int alto = image.rows/ny;
 
-	int numero = 0;
-	for(int i = 1; i <= ny; i++){ 
-		for(int j = 1; j <= nx; j++){ 
-			numero += 1;
+	//Tendremos nx*ny histogramas de nbins flotantes
 
-			int oldx = (j-1)*c;
-			int oldy = (i-1)*r;
-			int newx = j*c;
-			int newy = i*r;
-			int ccopy = c;
-			int rcopy = r;
+	lbp_desc = cv::Mat(nx*ny,nbins,CV_32FC1);
 
-			if(j == nx)
-				ccopy += cols%nx; 
-			if(i == ny)
-				rcopy += rows%ny; 
+	//Calculamos el lbp de toda la imagen de una vez para ir más rápido
 
-			cv::Rect rect(oldx, oldy, ccopy, rcopy);
-			cv::Mat region = image(rect);
-			cv::Mat aux = region.clone();
+	cv::Mat lbp = image.clone();
+
+	fsiv_lbp(image, lbp);
+std::cout<<"hola\n";
+	int fila = 0;
+	for(int i = 0; i < ny; i++){ 
+		for(int j = 0; j < nx; j++){ 
+			cv::Mat region = lbp(cv::Rect(j*ancho,i*alto,ancho,alto));							
 			cv::Mat lbpregion;
 
-			fsiv_lbp(region, aux);
-			lbpregion = aux.clone();
-			fsiv_lbp_hist(aux, lbpregion, normalize, nbins);
-
-			if(numero == 1)
-				lbp_desc = lbpregion.clone();
-			else
-				hconcat(lbpregion, lbp_desc, lbp_desc);
+			fsiv_lbp_hist(region, lbpregion, normalize, nbins);
+			lbpregion.copyTo(lbp_desc.row(fila));
+			fila++;
 		}
 	}
+
+	lbp_desc.reshape(0, 1); //ahora lo ponemos todo como una sola fila
 }
 
 void fsiv_lbp_disp(const cv::Mat & lbpmat, const std::string & winname)

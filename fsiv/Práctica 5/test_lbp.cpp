@@ -59,6 +59,9 @@ int main(int argc, char * argv[])
 		fsiv_lbp_desc(image1, lbp_desc1, ncells);
 		fsiv_lbp_desc(image2, lbp_desc2, ncells);
 
+		//fsiv_lbp_disp(lbp_desc1, "lbp1");
+   		//fsiv_lbp_disp(lbp_desc2, "lbp2");
+
 		dist = fsiv_chisquared_dist(lbp_desc1,lbp_desc2);
 	}
 	else{
