@@ -16,18 +16,32 @@
 
 int compute_lbp_from_list(const std::vector<std::string> & lfiles, cv::Mat & train_lbp, const int * ncells, const bool normalize, const bool asrows, const bool withmirror)
 {
-	
-	 	 
+  //train_lbp = cv::Mat(lfiles.size(), ncells[0]*ncells[1]*256, CV_32FC1);
+
+  int cont = 0;
   for (int fix =0; fix < lfiles.size(); fix++)
   {
 		 
 	  auto imagePath = lfiles[fix].c_str();
 
     // TODO: compute LBP descriptor for current image and add to output matrix
-	
+		cv::Mat lbp_img = cv::imread(imagePath,0);
+		cv::Mat lbp_row = lbp_img.clone();
+
+		fsiv_lbp_desc(lbp_img, lbp_row, ncells, normalize);
+
+		if(fix==0){
+			train_lbp = lbp_row.clone();
+		}
+		else{
+			cv::vconcat(train_lbp,lbp_row,train_lbp);
+			//lbp_row.copyTo(train_lbp.row(fix));
+		}
+
+		cont++;
 	}
-	
-	return 0;
+
+	return cont;
 
 }
 

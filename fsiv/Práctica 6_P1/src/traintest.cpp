@@ -114,9 +114,9 @@ main(int argc, char * argv[])
 	   std::cout << "done!" << std::endl;
 	   
 	   for (int i =0; i<npos; i++)
-	      train_labels_v.push_back(1);
+	      train_labels_v.push_back(0);
 	   for (int i =0; i<nneg; i++)
-	      train_labels_v.push_back(-1);
+	      train_labels_v.push_back(1);
 	      
 	   cv::Mat labelsMat(npos+nneg, 1, CV_32SC1);
 	   for (int i =0; i < train_labels_v.size(); i++)
@@ -170,13 +170,13 @@ main(int argc, char * argv[])
 
 	for (int i = 0; i < npos_test; i++)
 	{
-		true_labels.at<float>(i,0) = +1;
+		true_labels.at<float>(i,0) = 0;
 		predicted_labels.at<float>(i,0) = MAX(0, predictions_pos.at<float>(i,0)); 
 	}
 
 	for (int i = 0; i < nneg_test; i++)
 	{
-		true_labels.at<float>(npos_test+i,0) = 0;
+		true_labels.at<float>(npos_test+i,0) = 1;
 		predicted_labels.at<float>(npos_test+i,0) = MAX(0, predictions_neg.at<float>(i,0)); 
 	} 
 
