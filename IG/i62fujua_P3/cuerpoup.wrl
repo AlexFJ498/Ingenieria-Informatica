@@ -1,0 +1,66 @@
+#VRML V2.0 utf8
+
+DEF CUERPOUP Group{
+    children[
+        Transform{
+            children[
+                Inline{
+                    url "torsoup.wrl"
+                }
+            ]
+        }
+
+        Transform{
+            translation 0 23 0
+            children[
+                Transform{
+                    rotation 0 1 0 0.27
+                    children[
+                        Transform{
+                            rotation 1 0 0 -0.2
+                            children[
+                                Inline{
+                                    url "cabeza.wrl"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+
+        Transform{
+            translation 12 10 0
+            center 0 10 0
+            rotation 0 0 1 0.78
+            children[
+                Inline{
+                    url "brazoI.wrl"
+                }
+            ]
+        }
+
+        Transform{
+            translation -12 10 0
+            center 0 10 0
+            rotation 0 0 1 -2
+            children[
+                Transform{
+                    center 0 10 0
+                    rotation 1 0 0 0.5
+                    children[
+                        Transform{
+                            center 0 10 0
+                            rotation 0 1 0 -0.5
+                            children[
+                                Inline{
+                                    url "brazoD.wrl"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

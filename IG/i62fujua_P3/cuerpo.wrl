@@ -1,0 +1,28 @@
+#VRML V2.0 utf8
+
+DEF CUERPO Group{
+    children[
+        Transform{
+            rotation 1 0 0 0.6
+            children[
+                Transform{
+                    rotation 0 1 0 -0.3
+                    children[
+                        Inline{
+                            url "cuerpoup.wrl"
+                        }   
+                    ]
+                }
+            ]
+        }
+
+        Transform{
+            rotation 1 0 0 0.6
+            children[
+                Inline{
+                    url "cuerpodown.wrl"
+                }
+            ]
+        }
+    ]
+}

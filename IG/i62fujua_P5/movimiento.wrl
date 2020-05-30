@@ -1,0 +1,900 @@
+#VRML V2.0 utf8
+
+#Cuerpo completo
+DEF CUERPO Transform{
+    children[
+        Group{
+        children[
+            Transform{
+                #rotation 1 0 0 0.6
+                children[
+                    DEF CUERPOUP Transform{
+                        #rotation 0 1 0 -0.3
+                        children[
+                            Group{
+                            children[
+                                DEF TORSOUP Transform{
+                                    children[
+                                        Group{
+                                        children[
+                                            Shape{
+                                                appearance Appearance {
+                                                    material Material {
+                                                        diffuseColor 1 1 0
+                                                    }
+                                                }
+                                                geometry Sphere {
+                                                    radius 3
+                                                }
+                                            }
+
+                                            Transform{
+                                                translation 0 10 0
+                                                children[
+                                                    Shape{
+                                                        appearance Appearance{
+                                                            material Material{
+                                                                diffuseColor 0 1 1
+                                                            }
+                                                        }
+                                                        geometry Cylinder {
+                                                            radius 2
+                                                            height 20   
+                                                            bottom TRUE
+                                                            top TRUE
+                                                            side TRUE
+                                                        }
+                                                    }
+                                                ]
+                                            }
+
+                                            Transform{
+                                                translation 0 20 0
+                                                children[
+                                                    Shape{
+                                                        appearance Appearance {
+                                                            material Material {
+                                                                diffuseColor 1 1 0
+                                                            }
+                                                        }
+                                                        geometry Sphere {
+                                                            radius 3
+                                                        }
+                                                    }
+                                                ]
+                                            }
+
+                                            Transform{
+                                                translation -5 10 0
+                                                center 0 10 0
+                                                rotation 0 0 1 1.57
+                                                children[
+                                                    Shape{
+                                                        appearance Appearance{
+                                                            material Material{
+                                                                diffuseColor 0 1 1
+                                                            }
+                                                        }
+                                                        geometry Cylinder {
+                                                            radius 2
+                                                            height 12   
+                                                            bottom TRUE
+                                                            top TRUE
+                                                            side TRUE
+                                                        }
+                                                    }
+                                                ]
+                                            }
+
+                                            Transform{
+                                                translation 5 10 0
+                                                center 0 10 0
+                                                rotation 0 0 1 -1.57
+                                                children[
+                                                    Shape{
+                                                        appearance Appearance{
+                                                            material Material{
+                                                                diffuseColor 0 1 1
+                                                            }
+                                                        }
+                                                        geometry Cylinder {
+                                                            radius 2
+                                                            height 12   
+                                                            bottom TRUE
+                                                            top TRUE
+                                                            side TRUE
+                                                        }
+                                                    }
+                                                ]
+                                            }
+                                        ]
+                                        }
+                                    ]
+                                }
+
+                                DEF CABEZA Transform{
+                                    translation 0 23 0
+                                    children[
+                                        Transform{
+                                            #rotation 0 1 0 0.27
+                                            children[
+                                                Transform{
+                                                    #rotation 1 0 0 -0.2
+                                                    children[
+                                                        Group{
+                                                        children[
+                                                            Transform{
+                                                                translation -10.3 -8 -14
+                                                                scale 1.5 1.5 1.5
+                                                                children[
+                                                                    Inline{
+                                                                        url "CabezaMickey.wrl"
+                                                                    }
+                                                                ]
+                                                            }
+                                                            Shape{
+                                                                appearance Appearance{
+                                                                    material Material{
+                                                                        diffuseColor 0 1 1
+                                                                    }
+                                                                }
+                                                                geometry Cylinder {
+                                                                    radius 2
+                                                                    height 10   
+                                                                    bottom TRUE
+                                                                    top TRUE
+                                                                    side TRUE
+                                                                }
+                                                            }
+                                                        ]
+                                                        }
+                                                    ]
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                }
+
+                                DEF BRAZOI Transform{
+                                    translation 12 10 0
+                                    center 0 10 0
+                                    rotation 0 0 1 0.78
+                                    children[
+                                        Group{
+                                        children[
+                                            Shape{
+                                                appearance Appearance{
+                                                    material Material{
+                                                        diffuseColor 0 1 1
+                                                    }
+                                                }
+                                                geometry Cylinder {
+                                                    radius 2
+                                                    height 20   
+                                                    bottom TRUE
+                                                    top TRUE
+                                                    side TRUE
+                                                }
+                                            }
+
+                                            Transform{
+                                                translation 0 10 0
+                                                children[
+                                                    Shape{
+                                                        appearance Appearance {
+                                                            material Material {
+                                                                diffuseColor 1 1 0
+                                                            }
+                                                        }
+                                                        geometry Sphere {
+                                                            radius 3
+                                                        }
+                                                    }
+                                                ]
+                                            }
+
+                                            DEF ANTEBRAZOI Transform{
+                                                translation 0 -20 0
+                                                center 0 10 0
+                                                #rotation 1 0 0 -1.5
+                                                children[
+                                                    Transform{
+                                                        center 0 10 0
+                                                        #rotation 0 0 1 0.6
+                                                        children[
+                                                            Group {
+                                                            children [
+                                                                Transform{
+                                                                    translation 0 -10 0
+                                                                    children[
+                                                                        Shape{
+                                                                            appearance Appearance {
+                                                                                material Material {
+                                                                                    diffuseColor 1 1 0
+                                                                                }
+                                                                            }
+                                                                            geometry Sphere {
+                                                                                radius 3
+                                                                            }
+                                                                        }
+                                                                    ]
+                                                                }
+
+                                                                Transform{
+                                                                    translation 0 10 0
+                                                                    children[
+                                                                        Shape{
+                                                                            appearance Appearance {
+                                                                                material Material {
+                                                                                    diffuseColor 1 1 0
+                                                                                }
+                                                                            }
+                                                                            geometry Sphere {
+                                                                                radius 3
+                                                                            }
+                                                                        }
+                                                                    ]
+                                                                }
+                                                                
+                                                                Shape{
+                                                                    appearance Appearance{
+                                                                        material Material{
+                                                                            diffuseColor 0 1 1
+                                                                        }
+                                                                    }
+                                                                    geometry Cylinder {
+                                                                        radius 2
+                                                                        height 20   
+                                                                        bottom TRUE
+                                                                        top TRUE
+                                                                        side TRUE
+                                                                    }
+                                                                }
+                                                            ]
+                                                            }
+                                                        ]
+                                                    }
+                                                ]
+                                            }
+                                        ]
+                                        }
+                                    ]
+                                }
+
+                                DEF BRAZOD Transform{
+                                    translation -12 10 0
+                                    center 0 10 0
+                                    #rotation 0 0 1 -2
+                                    rotation 0 0 1 -0.78
+                                    children[
+                                        Transform{
+                                            center 0 10 0
+                                            #rotation 1 0 0 0.5
+                                            children[
+                                                Transform{
+                                                    center 0 10 0
+                                                    #rotation 0 1 0 -0.5
+                                                    children[
+                                                        Group{
+                                                        children[
+                                                            Shape{
+                                                                appearance Appearance{
+                                                                    material Material{
+                                                                        diffuseColor 0 1 1
+                                                                    }
+                                                                }
+                                                                geometry Cylinder {
+                                                                    radius 2
+                                                                    height 20   
+                                                                    bottom TRUE
+                                                                    top TRUE
+                                                                    side TRUE
+                                                                }
+                                                            }
+
+                                                            Transform{
+                                                                translation 0 10 0
+                                                                children[
+                                                                    Shape{
+                                                                        appearance Appearance {
+                                                                            material Material {
+                                                                                diffuseColor 1 1 0
+                                                                            }
+                                                                        }
+                                                                        geometry Sphere {
+                                                                            radius 3
+                                                                        }
+                                                                    }
+                                                                ]
+                                                            }
+
+                                                            DEF ANTEBRAZOD Transform{
+                                                                translation 0 -20 0
+                                                                children[
+                                                                    Group{
+                                                                    children[
+                                                                        Transform{
+                                                                            translation 0 -10 0
+                                                                            children[
+                                                                                Group{
+                                                                                    children[
+                                                                                        Shape{
+                                                                                            appearance Appearance {
+                                                                                                material Material {
+                                                                                                    diffuseColor 1 1 0
+                                                                                                }
+                                                                                            }
+                                                                                            geometry Sphere {
+                                                                                                radius 3
+                                                                                            }
+                                                                                        }
+
+                                                                                        Transform{
+                                                                                            translation 0 -6 -1
+                                                                                            rotation 0 1 0 3.5
+                                                                                            children[
+                                                                                                Transform{
+                                                                                                    center 0 0 -6
+                                                                                                    rotation 1 0 0 -0.8
+                                                                                                    children[
+                                                                                                        Transform{
+                                                                                                            scale 1.5 1.5 1.5
+                                                                                                            rotation 0 0 1 -1
+                                                                                                            children[
+                                                                                                                Inline{
+                                                                                                                    url "llaveespada.wrl"
+                                                                                                                }
+                                                                                                            ]
+                                                                                                        }
+                                                                                                    ]
+                                                                                                }
+                                                                                            ]
+                                                                                        }
+                                                                                    ]
+                                                                                }
+                                                                            ]
+                                                                        }
+
+                                                                        Transform{
+                                                                            translation 0 10 0
+                                                                            children[
+                                                                                Shape{
+                                                                                    appearance Appearance {
+                                                                                        material Material {
+                                                                                            diffuseColor 1 1 0
+                                                                                        }
+                                                                                    }
+                                                                                    geometry Sphere {
+                                                                                        radius 3
+                                                                                    }
+                                                                                }
+                                                                            ]
+                                                                        }
+
+                                                                        Shape{
+                                                                            appearance Appearance{
+                                                                                material Material{
+                                                                                    diffuseColor 0 1 1
+                                                                                }
+                                                                            }
+                                                                            geometry Cylinder {
+                                                                                radius 2
+                                                                                height 20   
+                                                                                bottom TRUE
+                                                                                top TRUE
+                                                                                side TRUE
+                                                                            }
+                                                                        }
+                                                                    ]
+                                                                    }
+                                                                ]
+                                                            }
+                                                        ]
+                                                        }
+                                                    ]
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
+                            }   
+                        ]
+                    }
+                ]
+            }
+
+            DEF CUERPODOWN Transform{
+                #rotation 1 0 0 0.6
+                children[
+                    Group{
+                    children[
+                        DEF TORSODOWN Transform{
+                            children[
+                                Group{
+                                children[
+                                    Shape{
+                                        appearance Appearance {
+                                            material Material {
+                                                diffuseColor 1 1 0
+                                            }
+                                        }
+                                        geometry Sphere {
+                                            radius 3
+                                        }
+                                    }
+
+                                    Transform{
+                                        translation 0 -10 0
+                                        children[
+                                            Shape{
+                                                appearance Appearance{
+                                                    material Material{
+                                                        diffuseColor 0 1 1
+                                                    }
+                                                }
+                                                geometry Cylinder {
+                                                    radius 2
+                                                    height 20   
+                                                    bottom TRUE
+                                                    top TRUE
+                                                    side TRUE
+                                                }
+                                            }
+                                        ]
+                                    }
+
+                                    Transform{
+                                        translation 0 -20 0
+                                        children[
+                                            Shape{
+                                                appearance Appearance {
+                                                    material Material {
+                                                        diffuseColor 1 1 0
+                                                    }
+                                                }
+                                                geometry Sphere {
+                                                    radius 3
+                                                }
+                                            }
+                                        ]
+                                    }
+
+                                    Transform{
+                                        translation -5 -30 0
+                                        center 0 10 0
+                                        rotation 0 0 1 1.57
+                                        children[
+                                            Shape{
+                                                appearance Appearance{
+                                                    material Material{
+                                                        diffuseColor 0 1 1
+                                                    }
+                                                }
+                                                geometry Cylinder {
+                                                    radius 2
+                                                    height 12   
+                                                    bottom TRUE
+                                                    top TRUE
+                                                    side TRUE
+                                                }
+                                            }
+                                        ]
+                                    }
+
+                                    Transform{
+                                        translation 5 -30 0
+                                        center 0 10 0
+                                        rotation 0 0 1 -1.57
+                                        children[
+                                            Shape{
+                                                appearance Appearance{
+                                                    material Material{
+                                                        diffuseColor 0 1 1
+                                                    }
+                                                }
+                                                geometry Cylinder {
+                                                    radius 2
+                                                    height 12   
+                                                    bottom TRUE
+                                                    top TRUE
+                                                    side TRUE
+                                                }
+                                            }
+                                        ]
+                                    }
+                                ]
+                                }
+                            ]
+                        }
+
+                        DEF PIERNAI Transform{
+                            translation 12 -30 0
+                            center 0 10 0
+                            #rotation 1 0 0 -1.5
+                            children[
+                                Transform{
+                                    center 0 10 0
+                                    #rotation 0 0 1 0.3
+                                    children[
+                                        Group{
+                                        children[
+                                            Shape{
+                                                appearance Appearance{
+                                                    material Material{
+                                                        diffuseColor 0 1 1
+                                                    }
+                                                }
+                                                geometry Cylinder {
+                                                    radius 2
+                                                    height 20   
+                                                    bottom TRUE
+                                                    top TRUE
+                                                    side TRUE
+                                                }
+                                            }
+
+                                            Transform{
+                                                translation 0 10 0
+                                                children[
+                                                    Shape{
+                                                        appearance Appearance {
+                                                            material Material {
+                                                                diffuseColor 1 1 0
+                                                            }
+                                                        }
+                                                        geometry Sphere {
+                                                            radius 3
+                                                        }
+                                                    }
+                                                ]
+                                            }
+                                            
+                                            DEF ANTEPIERNAI Transform{
+                                                translation 0 -20 0
+                                                center 0 10 0
+                                                #rotation 1 0 0 2
+                                                children[
+                                                    Group{
+                                                    children[
+                                                        Transform{
+                                                            translation 0 -10 0
+                                                            children[
+                                                                Shape{
+                                                                    appearance Appearance {
+                                                                        material Material {
+                                                                            diffuseColor 1 1 0
+                                                                        }
+                                                                    }
+                                                                    geometry Sphere {
+                                                                        radius 3
+                                                                    }
+                                                                }
+                                                            ]
+                                                        }
+
+                                                        Transform{
+                                                            translation 0 10 0
+                                                            children[
+                                                                Shape{
+                                                                    appearance Appearance {
+                                                                        material Material {
+                                                                            diffuseColor 1 1 0
+                                                                        }
+                                                                    }
+                                                                    geometry Sphere {
+                                                                        radius 3
+                                                                    }
+                                                                }
+                                                            ]
+                                                        }
+
+                                                        Shape{
+                                                            appearance Appearance{
+                                                                material Material{
+                                                                    diffuseColor 0 1 1
+                                                                }
+                                                            }
+                                                            geometry Cylinder {
+                                                                radius 2
+                                                                height 20   
+                                                                bottom TRUE
+                                                                top TRUE
+                                                                side TRUE
+                                                            }
+                                                        }
+                                                    ]
+                                                    }
+                                                ]
+                                            }
+                                        ]
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+
+                        DEF PIERNAD Transform{
+                            translation -12 -30 0
+                            center 0 10 0
+                            #rotation 1 0 0 -2
+                            children[
+                                Transform{
+                                    center 0 10 0
+                                    #rotation 0 0 1 -0.3
+                                    children[
+                                        Group{
+                                        children[
+                                            Shape{
+                                                appearance Appearance{
+                                                    material Material{
+                                                        diffuseColor 0 1 1
+                                                    }
+                                                }
+                                                geometry Cylinder {
+                                                    radius 2
+                                                    height 20   
+                                                    bottom TRUE
+                                                    top TRUE
+                                                    side TRUE
+                                                }
+                                            }
+
+                                            Transform{
+                                                translation 0 10 0
+                                                children[
+                                                    Shape{
+                                                        appearance Appearance {
+                                                            material Material {
+                                                                diffuseColor 1 1 0
+                                                            }
+                                                        }
+                                                        geometry Sphere {
+                                                            radius 3
+                                                        }
+                                                    }
+                                                ]
+                                            }
+
+                                            DEF ANTEPIERNAD Transform{
+                                                translation 0 -20 0
+                                                center 0 10 0
+                                                #rotation 1 0 0 1
+                                                children[
+                                                    Group{
+                                                    children[
+                                                        Transform{
+                                                            translation 0 -10 0
+                                                            children[
+                                                                Shape{
+                                                                    appearance Appearance {
+                                                                        material Material {
+                                                                            diffuseColor 1 1 0
+                                                                        }
+                                                                    }
+                                                                    geometry Sphere {
+                                                                        radius 3
+                                                                    }
+                                                                }
+                                                            ]
+                                                        }
+
+                                                        Transform{
+                                                            translation 0 10 0
+                                                            children[
+                                                                Shape{
+                                                                    appearance Appearance {
+                                                                        material Material {
+                                                                            diffuseColor 1 1 0
+                                                                        }
+                                                                    }
+
+                                                                    geometry Sphere {
+                                                                        radius 3
+                                                                    }
+                                                                }
+                                                            ]
+                                                        }
+                                                        
+                                                        Shape{
+                                                            appearance Appearance{
+                                                                material Material{
+                                                                    diffuseColor 0 1 1
+                                                                }
+                                                            }
+                                                            geometry Cylinder {
+                                                                radius 2
+                                                                height 20   
+                                                                bottom TRUE
+                                                                top TRUE
+                                                                side TRUE
+                                                            }
+                                                        }
+                                                    ]
+                                                    }
+                                                ]
+                                            }
+                                        ]
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                    }
+                ]
+            }
+        ]
+        }
+    ]
+}
+
+#Botón de activación
+DEF Objeto Transform{
+    translation 100 50 50
+    
+    children[
+        DEF TSensor1 TouchSensor{},
+        Shape {
+            
+            appearance Appearance {
+                material Material { }
+            }
+
+            geometry Box {
+            size 20 20 20
+            }
+        }
+    ]
+}
+
+#Sensor de tiempo
+#	Duración: 4 segundos
+DEF Time1 TimeSensor{
+	cycleInterval 3.0
+	startTime 0.0
+	stopTime 0.0
+	loop FALSE
+}
+
+#Interpoladores de posición
+#Cuerpo
+DEF MovCuerpo OrientationInterpolator{
+	key[0.0, 1.0]
+	keyValue[
+        0 0 0  0,
+		1 0 0  0.6
+    ]
+}
+
+#CuerpoUp
+DEF MovCuerpoUp OrientationInterpolator{
+    key[0.0, 1.0]
+    keyValue[
+        0 0 0  0,
+        0 1 0  -0.3
+    ]
+}
+
+#CuerpoDown
+DEF MovCuerpoDown OrientationInterpolator{
+    key[0.0, 1.0]
+    keyValue[
+        0 0 0  0,
+        1 0 0  0.6
+    ]
+}
+
+#Cabeza
+DEF MovCabeza OrientationInterpolator{
+    key[0.0, 1.0]
+    keyValue[
+        0 0 0  0,
+        1 -1.35 0  -0.2
+    ]
+}
+
+#AntebrazoI
+DEF MovAntebrazoI OrientationInterpolator{
+    key[0.0, 1.0]
+    keyValue[
+        0 0 0  0,
+        1 0 -0.4  -1.5
+    ]
+}
+
+#BrazoD
+DEF MovBrazoD OrientationInterpolator{
+    key[0.0, 1.0]
+    keyValue[
+        0 0 1  -0.78,
+        -0.25 0.25 1  -2
+    ]
+}
+
+#PiernaI
+DEF MovPiernaI OrientationInterpolator{
+    key[0.0, 1.0]
+    keyValue[
+        0 0 0  0
+        1 0 -0.2  -1.5
+    ]
+}
+
+#PiernaD
+DEF MovPiernaD OrientationInterpolator{
+    key[0.0, 1.0]
+    keyValue[
+        0 0 0  0
+        1 0 0.15  -2
+    ]
+}
+
+#AntepiernaI
+DEF MovAntepiernaI OrientationInterpolator{
+    key[0.0, 1.0]
+    keyValue[
+        0 0 0  0
+        1 0 0  2
+    ]
+}
+
+#AntepiernaD
+DEF MovAntepiernaD OrientationInterpolator{
+    key[0.0, 1.0]
+    keyValue[
+        0 0 0  0
+        1 0 0  1
+    ]
+}
+
+#Routes
+#Cuerpo
+ROUTE TSensor1.touchTime TO Time1.startTime
+ROUTE Time1.fraction_changed TO MovCuerpo.set_fraction
+ROUTE MovCuerpo.value_changed TO CUERPO.set_rotation
+
+#CuerpoUp
+ROUTE TSensor1.touchTime TO Time1.startTime
+ROUTE Time1.fraction_changed TO MovCuerpoUp.set_fraction
+ROUTE MovCuerpoUp.value_changed TO CUERPOUP.set_rotation
+
+#CuerpoDown
+ROUTE TSensor1.touchTime TO Time1.startTime
+ROUTE Time1.fraction_changed TO MovCuerpoUp.set_fraction
+ROUTE MovCuerpoDown.value_changed TO CUERPODOWN.set_rotation
+
+#Cabeza
+ROUTE TSensor1.touchTime TO Time1.startTime
+ROUTE Time1.fraction_changed TO MovCabeza.set_fraction
+ROUTE MovCabeza.value_changed TO CABEZA.set_rotation
+
+#AntebrazoI
+ROUTE TSensor1.touchTime TO Time1.startTime
+ROUTE Time1.fraction_changed TO MovAntebrazoI.set_fraction
+ROUTE MovAntebrazoI.value_changed TO ANTEBRAZOI.set_rotation
+
+#BrazoD
+ROUTE TSensor1.touchTime TO Time1.startTime
+ROUTE Time1.fraction_changed TO MovBrazoD.set_fraction
+ROUTE MovBrazoD.value_changed TO BRAZOD.set_rotation
+
+#PiernaI
+ROUTE TSensor1.touchTime TO Time1.startTime
+ROUTE Time1.fraction_changed TO MovPiernaI.set_fraction
+ROUTE MovPiernaI.value_changed TO PIERNAI.set_rotation
+
+#PiernaD
+ROUTE TSensor1.touchTime TO Time1.startTime
+ROUTE Time1.fraction_changed TO MovPiernaD.set_fraction
+ROUTE MovPiernaD.value_changed TO PIERNAD.set_rotation
+
+#AntepiernaI
+ROUTE TSensor1.touchTime TO Time1.startTime
+ROUTE Time1.fraction_changed TO MovAntepiernaI.set_fraction
+ROUTE MovAntepiernaI.value_changed TO ANTEPIERNAI.set_rotation
+
+#AntepiernaD
+ROUTE TSensor1.touchTime TO Time1.startTime
+ROUTE Time1.fraction_changed TO MovAntepiernaD.set_fraction
+ROUTE MovAntepiernaD.value_changed TO ANTEPIERNAD.set_rotation

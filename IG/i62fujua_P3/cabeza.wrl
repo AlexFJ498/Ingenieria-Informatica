@@ -1,0 +1,31 @@
+#VRML V2.0 utf8
+
+DEF CABEZA Group{
+    children[
+        Transform{
+            translation -10.3 -8 -14
+            scale 1.5 1.5 1.5
+            children[
+                Inline{
+                    url "CabezaMickey.wrl"
+                }
+            ]
+        }
+
+        Shape{
+            appearance Appearance{
+                material Material{
+                    diffuseColor 0 1 1
+                }
+            }
+
+            geometry Cylinder {
+                radius 2
+                height 10   
+                bottom TRUE
+                top TRUE
+                side TRUE
+            }
+        }
+    ]
+}

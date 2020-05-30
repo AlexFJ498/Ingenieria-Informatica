@@ -1,0 +1,48 @@
+#VRML V2.0 utf8
+
+DEF PIERNAD Group{
+    children[
+        Shape{
+            appearance Appearance{
+                material Material{
+                    diffuseColor 0 1 1
+                }
+            }
+
+            geometry Cylinder {
+                radius 2
+                height 20   
+                bottom TRUE
+                top TRUE
+                side TRUE
+            }
+        }
+
+        Transform{
+            translation 0 10 0
+            children[
+                Shape{
+                    appearance Appearance {
+                        material Material {
+                            diffuseColor 1 1 0
+                        }
+                    }
+                    geometry Sphere {
+                        radius 3
+                    }
+                }
+            ]
+        }
+
+        Transform{
+            translation 0 -20 0
+            center 0 10 0
+            rotation 1 0 0 1
+            children[
+                Inline{
+                    url "antepiernaD.wrl"
+                }
+            ]
+        }
+    ]
+}

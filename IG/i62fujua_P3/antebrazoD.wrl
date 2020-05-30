@@ -1,0 +1,79 @@
+#VRML V2.0 utf8
+
+DEF ANTEBRAZOD Group {
+    children[
+        Transform{
+            translation 0 -10 0
+            children[
+                Group{
+                    children[
+                        Shape{
+                            appearance Appearance {
+                                material Material {
+                                    diffuseColor 1 1 0
+                                }
+                            }
+                            geometry Sphere {
+                                radius 3
+                            }
+                        }
+
+                        Transform{
+                            translation 0 -6 -1
+                            rotation 0 1 0 4
+                            children[
+                                Transform{
+                                    center 0 0 -6
+                                    rotation 1 0 0 -0.8
+                                    children[
+                                        Transform{
+                                            scale 1.5 1.5 1.5
+                                            rotation 0 0 1 -1
+                                            children[
+                                                Inline{
+                                                    url "llaveespada.wrl"
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+
+        Transform{
+            translation 0 10 0
+            children[
+                Shape{
+                    appearance Appearance {
+                        material Material {
+                            diffuseColor 1 1 0
+                        }
+                    }
+                    geometry Sphere {
+                        radius 3
+                    }
+                }
+            ]
+        }
+
+        Shape{
+            appearance Appearance{
+                material Material{
+                    diffuseColor 0 1 1
+                }
+            }
+
+            geometry Cylinder {
+                radius 2
+                height 20   
+                bottom TRUE
+                top TRUE
+                side TRUE
+            }
+        }
+    ]
+}

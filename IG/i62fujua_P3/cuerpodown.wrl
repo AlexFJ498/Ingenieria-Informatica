@@ -1,0 +1,47 @@
+#VRML V2.0 utf8
+
+DEF CUERPODOWN Group{
+    children[
+        Transform{
+            children[
+                Inline{
+                    url "torsodown.wrl"
+                }
+            ]
+        }
+
+        Transform{
+            translation 12 -30 0
+            center 0 10 0
+            rotation 1 0 0 -1.5
+            children[
+                Transform{
+                    center 0 10 0
+                    rotation 0 0 1 0.3
+                    children[
+                        Inline{
+                            url "piernaI.wrl"
+                        }
+                    ]
+                }
+            ]
+        }
+
+        Transform{
+            translation -12 -30 0
+            center 0 10 0
+            rotation 1 0 0 -2
+            children[
+                Transform{
+                    center 0 10 0
+                    rotation 0 0 1 -0.3
+                    children[
+                        Inline{
+                            url "piernaD.wrl"
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}
