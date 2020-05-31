@@ -1,3 +1,0 @@
-/home/i62fujua/Desktop/fsiv/Práctica6_P1/src/CMakeFiles/rebuild_cache.dir
-/home/i62fujua/Desktop/fsiv/Práctica6_P1/src/CMakeFiles/traintest.dir
-/home/i62fujua/Desktop/fsiv/Práctica6_P1/src/CMakeFiles/edit_cache.dir

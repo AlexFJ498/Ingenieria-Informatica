@@ -1,4 +1,4 @@
-/home/i62fujua/Desktop/Ingenieria-Informatica/fsiv/Práctica 4/CMakeFiles/rebuild_cache.dir
-/home/i62fujua/Desktop/Ingenieria-Informatica/fsiv/Práctica 4/CMakeFiles/edit_cache.dir
-/home/i62fujua/Desktop/Ingenieria-Informatica/fsiv/Práctica 4/CMakeFiles/calibration_opencv.dir
-/home/i62fujua/Desktop/Ingenieria-Informatica/fsiv/Práctica 4/CMakeFiles/augReal.dir
+/home/alejandro/Escritorio/Ingenieria-Informatica/fsiv/Práctica 4/CMakeFiles/rebuild_cache.dir
+/home/alejandro/Escritorio/Ingenieria-Informatica/fsiv/Práctica 4/CMakeFiles/edit_cache.dir
+/home/alejandro/Escritorio/Ingenieria-Informatica/fsiv/Práctica 4/CMakeFiles/calibration_opencv.dir
+/home/alejandro/Escritorio/Ingenieria-Informatica/fsiv/Práctica 4/CMakeFiles/augReal.dir

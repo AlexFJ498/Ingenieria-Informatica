@@ -10,6 +10,7 @@
 const cv::String keys =
     "{help h usage ? |      | print this message        }"
 	"{v              |      | renderice video option    }"
+	"{i              |      | renderice video option    }"
     "{@rows          |      | calib. pattern rows       }"
     "{@cols          |      | calib. pattern cols.      }"
     "{@size          |      | calib. pattern cols size. }"
@@ -86,6 +87,12 @@ int main (int argc, char* const* argv){
 		video.open(nombre);
 	}
 
+	cv::Mat input;
+	if(parser.has("i")){
+		cv::String nombre = parser.get<cv::String>(5);
+		input = cv::imread(nombre);
+	}
+
     cv::FileStorage intr (calibfile, FileStorage::READ);
     if(!intr.isOpened()){
         cerr <<"Error calib." << endl;
@@ -105,7 +112,7 @@ int main (int argc, char* const* argv){
 	}
 	std::vector<Point2f> corners;
     int k = 0;
-	cv::Mat frame,input;
+	cv::Mat frame;
 	vid >> frame;
 
 	if(parser.has("v"))
@@ -143,12 +150,27 @@ int main (int argc, char* const* argv){
 				video >> input;
 			}
 			if(!parser.has("v")){
-				std::vector<cv::Point3f> puntos3d;
-				std::vector<cv::Point2f> puntosResultado;
-
-				crearPuntos(puntos3d,size);
-				cv::projectPoints(puntos3d, rotation_vec, translation_vec, camera_mat, dist_coefs, puntosResultado);
-				dibujarEjesXYZ(frame,puntosResultado);
+				if(parser.has("i")){
+					std::vector<cv::Point3f> vertices;
+					std::vector<cv::Point2f> verticesInput;
+					std::vector<cv::Point2f> verticesOutput;
+	
+					crearVerticesInput(vertices,size,cols-1,rows-1);
+					cv::projectPoints(vertices, rotation_vec, translation_vec, camera_mat, dist_coefs,verticesInput);
+	
+					crearVerticesOutput(verticesOutput,frame.cols,frame.rows);
+	
+					cv::Mat matrix = cv::getPerspectiveTransform(verticesOutput,verticesInput);
+					cv::warpPerspective(input,frame,matrix,frame.size(),1,cv::BORDER_TRANSPARENT);
+				}
+				else{
+					std::vector<cv::Point3f> puntos3d;
+					std::vector<cv::Point2f> puntosResultado;
+	
+					crearPuntos(puntos3d,size);
+					cv::projectPoints(puntos3d, rotation_vec, translation_vec, camera_mat, dist_coefs, puntosResultado);
+					dibujarEjesXYZ(frame,puntosResultado);
+				}
 			}
 		}
     	    
