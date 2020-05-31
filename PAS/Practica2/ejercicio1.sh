@@ -39,3 +39,4 @@ echo "7) Lineas que contienen d, l o t, una vocal y la misma letra:"
 cat $1 | grep -E -e '([dlt])[aeiou]\1'
 echo "*******"
 #8
+
