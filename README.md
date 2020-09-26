@@ -9,4 +9,5 @@ Las asignaturas son:
 * **PAS**: Programación y Administración de Sistemas.
 * **PL**: Procesadores de Lenguajes.
 * **POO**: Programación Orientada a Objetos.
+* **REDES**: Redes...
 * **SO**: Sistemas Operativos.
