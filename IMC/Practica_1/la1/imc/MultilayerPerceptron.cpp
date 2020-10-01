@@ -14,6 +14,7 @@
 #include <string>
 #include <cstdlib>  // To establish the seed srand() and generate pseudorandom numbers rand()
 #include <limits>
+#include <random>
 #include <math.h>
 
 
@@ -59,12 +60,16 @@ void MultilayerPerceptron::freeMemory() {
 // ------------------------------
 // Feed all the weights (w) with random numbers between -1 and +1
 void MultilayerPerceptron::randomWeights() {
-	for(int i=0; i<sizeof(layers); i++){
-		for(int j=0; j<sizeof(layers.at(i).neurons); j++){
-			Neuron n = layers.at(i).neurons.at(j);
+	std::random_device rd;
+	std::mt19937 gen(rd());
+	std::uniform_real_distribution<> dis(-1.0, 1.0);
+
+	for(int i=0; i<sizeof(this->layers); i++){
+		for(int j=0; j<sizeof(this->layers.at(i).neurons); j++){
+			Neuron n = this->layers.at(i).neurons.at(j);
 
 			for(int z=0; z<sizeof(n.w); z++){
-
+				n.w[z] = dis(gen);
 			}
 		}
 	}
@@ -73,26 +78,37 @@ void MultilayerPerceptron::randomWeights() {
 // ------------------------------
 // Feed the input neurons of the network with a vector passed as an argument
 void MultilayerPerceptron::feedInputs(double* input) {
-
+	for(int i=0;i<sizeof(this->layers.at(0).neurons); i++){
+		this->layers.at(0).neurons.at(i).w = input;
+	}
 }
 
 // ------------------------------
 // Get the outputs predicted by the network (out vector the output layer) and save them in the vector passed as an argument
-void MultilayerPerceptron::getOutputs(double* output)
-{
+void MultilayerPerceptron::getOutputs(double* output) {
 
 }
 
 // ------------------------------
 // Make a copy of all the weights (copy w in wCopy)
 void MultilayerPerceptron::copyWeights() {
-
+	for(int i=0; i<sizeof(this->layers); i++){
+		for(int j=0; j<sizeof(this->layers.at(i).neurons); j++){
+			Neuron n = this->layers.at(i).neurons.at(j);
+			n.wCopy = n.w;
+		}
+	}
 }
 
 // ------------------------------
 // Restore a copy of all the weights (copy wCopy in w)
 void MultilayerPerceptron::restoreWeights() {
-
+	for(int i=0; i<sizeof(this->layers); i++){
+		for(int j=0; j<sizeof(this->layers.at(i).neurons); j++){
+			Neuron n = this->layers.at(i).neurons.at(j);
+			n.w = n.wCopy;
+		}
+	}
 }
 
 // ------------------------------
