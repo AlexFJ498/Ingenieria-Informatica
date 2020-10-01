@@ -6,6 +6,7 @@ Las asignaturas son:
 * **ED**: Estructuras de Datos.
 * **FSIV**: Fundamentos de Sistemas Inteligentes en Visión.
 * **IG**: Informática Gráfica.
+* **IMC**: Introducción a los Modelos Computacionales.
 * **PAS**: Programación y Administración de Sistemas.
 * **PL**: Procesadores de Lenguajes.
 * **POO**: Programación Orientada a Objetos.
