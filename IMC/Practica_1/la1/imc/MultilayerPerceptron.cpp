@@ -79,7 +79,7 @@ void MultilayerPerceptron::randomWeights() {
 // Feed the input neurons of the network with a vector passed as an argument
 void MultilayerPerceptron::feedInputs(double* input) {
 	for(int i=0;i<sizeof(this->layers.at(0).neurons); i++){
-		this->layers.at(0).neurons.at(i).w = input;
+		this->layers.at(0).neurons.at(i).w[0] = input[i];
 	}
 }
 
