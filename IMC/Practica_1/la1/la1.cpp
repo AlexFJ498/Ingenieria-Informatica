@@ -2,7 +2,7 @@
 // Introduction to computational models
 // Name        : la1.cpp
 // Author      : Alejandro Fuerte Jurado
-// Version     :
+// Version     : 
 // Copyright   : Universidad de Córdoba
 //============================================================================
 
@@ -23,22 +23,56 @@ using namespace std;
 
 int main(int argc, char **argv) {
     // Process arguments of the command line
-    bool Tflag = 0, wflag = 0, pflag = 0;
-    char *Tvalue = NULL, *wvalue = NULL;
-    int c;
+    bool tflag = 0, Tflag = 0, iflag = 0, lflag = 0, hflag = 0, eflag = 0;
+    bool mflag = 0, vflag = 0, dflag = 0, wflag = 0, pflag = 0;
+    char *tvalue = NULL, *Tvalue = NULL, *wvalue = NULL;
+    int c, ivalue = 0, lvalue = 0, hvalue = 0, dvalue = 0;
+    double evalue = 0.0, mvalue = 0.0, vvalue = 0.0;
 
     opterr = 0;
 
     // a: Option that requires an argument
     // a:: The argument required is optional
-    while ((c = getopt(argc, argv, "T:w:p")) != -1)
+    while ((c = getopt(argc, argv, "t:T:i:l:h:e:m:v:d:w:p")) != -1)
     {
         // The parameters needed for using the optional prediction mode of Kaggle have been included.
         // You should add the rest of parameters needed for the lab assignment.
         switch(c){
+            case 't':
+                tflag = true;
+                tvalue = optarg;
+                break;
             case 'T':
                 Tflag = true;
                 Tvalue = optarg;
+                break;
+            case 'i':
+                iflag = true;
+                ivalue = atoi(optarg);
+                break;
+            case 'l':
+                lflag = true;
+                lvalue = atoi(optarg);
+                break;
+            case 'h':
+                lflag = true;
+                lvalue = atoi(optarg);
+                break;
+            case 'e':
+                lflag = true;
+                lvalue = atof(optarg);
+                break;
+            case 'm':
+                lflag = true;
+                lvalue = atof(optarg);
+                break;
+            case 'v':
+                lflag = true;
+                lvalue = atof(optarg);
+                break;
+            case 'd':
+                lflag = true;
+                lvalue = atoi(optarg);
                 break;
             case 'w':
                 wflag = true;
@@ -48,7 +82,10 @@ int main(int argc, char **argv) {
                 pflag = true;
                 break;
             case '?':
-                if (optopt == 'T' || optopt == 'w' || optopt == 'p')
+                if (optopt == 't' || optopt == 'T' || optopt == 'i' 
+                    || optopt == 'l' || optopt == 'h' || optopt == 'e' 
+                    || optopt == 'm' || optopt == 'v' || optopt == 'd' 
+                    || optopt == 'w' || optopt == 'p')
                     fprintf (stderr, "The option -%c requires an argument.\n", optopt);
                 else if (isprint (optopt))
                     fprintf (stderr, "Unknown option `-%c'.\n", optopt);
@@ -70,16 +107,54 @@ int main(int argc, char **argv) {
         // Multilayer perceptron object
     	MultilayerPerceptron mlp;
 
-        // Parameters of the mlp. For example, mlp.eta = value;
-    	int iterations = -1; // This should be corrected
+        // Parameters of the mlp
+        if(!eflag){
+            evalue = 0.1;
+        }
+        mlp.eta = evalue;
 
-        // Read training and test data: call to mlp.readData(...)
-    	Dataset * trainDataset = NULL; // This should be corrected
-    	Dataset * testDataset = NULL; // This should be corrected
+        if(!mflag){
+            mvalue = 0.9;
+        }
+        mlp.mu = mvalue;
+
+        if(!vflag){
+            vvalue = 0.0;
+        }
+        mlp.validationRatio = vvalue;
+
+        if(!dvalue){
+            dvalue = 1;
+        }
+        mlp.decrementFactor = dvalue;
+
+        if(!iflag){
+            ivalue = 1000;
+        }
+    	int iterations = ivalue;
+
+        // Read training and test data
+        if(!Tflag){
+            Tvalue = tvalue;
+        }
+    	Dataset * trainDataset = mlp.readData(tvalue);
+    	Dataset * testDataset = mlp.readData(Tvalue);
 
         // Initialize topology vector
-    	int layers=-1; // This should be corrected
-    	int * topology=NULL; // This should be corrected
+        if(!lflag){
+            lvalue = 1;
+        }
+    	int layers = lvalue;
+    	int * topology = new int[lvalue+2];
+
+        if(!hflag){
+            hvalue = 5;
+        }
+        topology[0] = trainDataset->nOfInputs;
+        for(int i=0; i<sizeof(topology); i++){
+            topology[i] = hvalue;
+        }
+        topology[lvalue+2] = trainDataset->nOfOutputs;
 
         // Initialize the network using the topology vector
         mlp.initialize(layers+2,topology);
@@ -99,8 +174,7 @@ int main(int argc, char **argv) {
             cout << "We end!! => Final test error: " << testErrors[i] << endl;
 
             // We save the weights every time we find a better model
-            if(wflag && testErrors[i] <= bestTestError)
-            {
+            if(wflag && testErrors[i] <= bestTestError){
                 mlp.saveWeights(wvalue);
                 bestTestError = testErrors[i];
             }
@@ -113,6 +187,23 @@ int main(int argc, char **argv) {
         
         // Obtain training and test averages and standard deviations
 
+        //Averages
+        for(int i=0; i<5; i++){
+            averageTestError += testErrors[i];
+            averageTrainError += trainErrors[i];
+        }
+        averageTestError /= 5;
+        averageTrainError /= 5;
+
+        //Standard deviations
+        for(int i=0; i<5; i++){
+            stdTestError += pow(testErrors[i] - averageTestError, 2);
+            stdTrainError += pow(trainErrors[i] - averageTrainError, 2);
+        }
+        stdTestError = sqrt(stdTestError / 5);
+        stdTrainError = sqrt(stdTrainError / 5);
+        
+
         cout << "FINAL REPORT" << endl;
         cout << "************" << endl;
         cout << "Train error (Mean +- SD): " << averageTrainError << " +- " << stdTrainError << endl;
@@ -120,7 +211,6 @@ int main(int argc, char **argv) {
         return EXIT_SUCCESS;
     }
     else {
-
         //////////////////////////////
         // PREDICTION MODE (KAGGLE) //
         //////////////////////////////

@@ -114,7 +114,11 @@ void MultilayerPerceptron::restoreWeights() {
 // ------------------------------
 // Calculate and propagate the outputs of the neurons, from the first layer until the last one -->-->
 void MultilayerPerceptron::forwardPropagate() {
-	
+	for(int i=0; i<sizeof(layers); i++){
+		for(int j=0;j<sizeof(layers.at(i).neurons); j++){
+
+		}
+	}
 }
 
 // ------------------------------
