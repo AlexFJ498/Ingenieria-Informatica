@@ -38,7 +38,7 @@ int MultilayerPerceptron::initialize(int nl, int npl[]) {
 	Layer layer;
 	for(int i=0; i<nl; i++){
 		layer.nOfNeurons = npl[i];
-		layers.push_back(layer);
+		this->layers.push_back(layer);
 	}
 }
 
@@ -66,10 +66,8 @@ void MultilayerPerceptron::randomWeights() {
 
 	for(int i=0; i<sizeof(this->layers); i++){
 		for(int j=0; j<sizeof(this->layers.at(i).neurons); j++){
-			Neuron n = this->layers.at(i).neurons.at(j);
-
-			for(int z=0; z<sizeof(n.w); z++){
-				n.w[z] = dis(gen);
+			for(int z=0; z<sizeof(this->layers.at(i).neurons.at(j).w); z++){
+				this->layers.at(i).neurons.at(j).w[z] = dis(gen);
 			}
 		}
 	}
@@ -86,7 +84,9 @@ void MultilayerPerceptron::feedInputs(double* input) {
 // ------------------------------
 // Get the outputs predicted by the network (out vector the output layer) and save them in the vector passed as an argument
 void MultilayerPerceptron::getOutputs(double* output) {
-
+	for(int i=0; i<sizeof(this->layers[this->nOfLayers-1].neurons); i++){
+		output[i] = this->layers[this->nOfLayers-1].neurons.at(i).out;
+	}
 }
 
 // ------------------------------
@@ -114,9 +114,16 @@ void MultilayerPerceptron::restoreWeights() {
 // ------------------------------
 // Calculate and propagate the outputs of the neurons, from the first layer until the last one -->-->
 void MultilayerPerceptron::forwardPropagate() {
-	for(int i=0; i<sizeof(layers); i++){
+	for(int i=1; i<sizeof(layers); i++){
 		for(int j=0;j<sizeof(layers.at(i).neurons); j++){
-
+			Neuron n = this->layers.at(i).neurons.at(j);
+			double net = 0.0;
+			for(int z=1; z<sizeof(n.w)+1; z++){
+				Neuron n0 = this->layers.at(i-1).neurons.at(z-1);
+				net += n.w[z] * n0.out;
+			}
+			net += n.w[0];
+			this->layers.at(i).neurons.at(j).out = 1.0 / (1 + exp(-net));
 		}
 	}
 }
