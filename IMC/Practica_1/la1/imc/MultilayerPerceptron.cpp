@@ -25,7 +25,11 @@ using namespace util;
 // ------------------------------
 // Constructor: Default values for all the parameters
 MultilayerPerceptron::MultilayerPerceptron(){
-
+	this->nOfLayers = 1;
+	this->eta = 0.1;
+	this->mu = 0.9;
+	this->validationRatio = 0.2;
+	this->decrementFactor = 1;
 }
 
 // ------------------------------
@@ -64,10 +68,10 @@ void MultilayerPerceptron::randomWeights() {
 	std::mt19937 gen(rd());
 	std::uniform_real_distribution<> dis(-1.0, 1.0);
 
-	for(int i=0; i<sizeof(this->layers); i++){
-		for(int j=0; j<sizeof(this->layers.at(i).neurons); j++){
-			for(int z=0; z<sizeof(this->layers.at(i).neurons.at(j).w); z++){
-				this->layers.at(i).neurons.at(j).w[z] = dis(gen);
+	for(int i=0; i<this->nOfLayers; i++){
+		for(int j=0; j<this->layers.at(i).nOfNeurons; j++){
+			for(int k=0; k<sizeof(this->layers.at(i).neurons.at(j).w); k++){
+				this->layers.at(i).neurons.at(j).w[k] = dis(gen);
 			}
 		}
 	}
@@ -76,7 +80,7 @@ void MultilayerPerceptron::randomWeights() {
 // ------------------------------
 // Feed the input neurons of the network with a vector passed as an argument
 void MultilayerPerceptron::feedInputs(double* input) {
-	for(int i=0;i<sizeof(this->layers.at(0).neurons); i++){
+	for(int i=0;i<this->layers.at(0).nOfNeurons; i++){
 		this->layers.at(0).neurons.at(i).w[0] = input[i];
 	}
 }
@@ -84,7 +88,7 @@ void MultilayerPerceptron::feedInputs(double* input) {
 // ------------------------------
 // Get the outputs predicted by the network (out vector the output layer) and save them in the vector passed as an argument
 void MultilayerPerceptron::getOutputs(double* output) {
-	for(int i=0; i<sizeof(this->layers[this->nOfLayers-1].neurons); i++){
+	for(int i=0; i<this->layers.at(this->nOfLayers-1).nOfNeurons; i++){
 		output[i] = this->layers[this->nOfLayers-1].neurons.at(i).out;
 	}
 }
@@ -92,8 +96,8 @@ void MultilayerPerceptron::getOutputs(double* output) {
 // ------------------------------
 // Make a copy of all the weights (copy w in wCopy)
 void MultilayerPerceptron::copyWeights() {
-	for(int i=0; i<sizeof(this->layers); i++){
-		for(int j=0; j<sizeof(this->layers.at(i).neurons); j++){
+	for(int i=0; i<this->nOfLayers; i++){
+		for(int j=0; j<this->layers.at(i).nOfNeurons; j++){
 			Neuron n = this->layers.at(i).neurons.at(j);
 			n.wCopy = n.w;
 		}
@@ -103,8 +107,8 @@ void MultilayerPerceptron::copyWeights() {
 // ------------------------------
 // Restore a copy of all the weights (copy wCopy in w)
 void MultilayerPerceptron::restoreWeights() {
-	for(int i=0; i<sizeof(this->layers); i++){
-		for(int j=0; j<sizeof(this->layers.at(i).neurons); j++){
+	for(int i=0; i<this->nOfLayers; i++){
+		for(int j=0; j<this->layers.at(i).nOfNeurons; j++){
 			Neuron n = this->layers.at(i).neurons.at(j);
 			n.w = n.wCopy;
 		}
@@ -114,15 +118,13 @@ void MultilayerPerceptron::restoreWeights() {
 // ------------------------------
 // Calculate and propagate the outputs of the neurons, from the first layer until the last one -->-->
 void MultilayerPerceptron::forwardPropagate() {
-	for(int i=1; i<sizeof(layers); i++){
-		for(int j=0;j<sizeof(layers.at(i).neurons); j++){
-			Neuron n = this->layers.at(i).neurons.at(j);
+	for(int i=1; i<this->nOfLayers; i++){
+		for(int j=0;j<this->layers.at(i).nOfNeurons; j++){
 			double net = 0.0;
-			for(int z=1; z<sizeof(n.w)+1; z++){
-				Neuron n0 = this->layers.at(i-1).neurons.at(z-1);
-				net += n.w[z] * n0.out;
+			for(int k=1; k<sizeof(this->layers.at(i).neurons.at(j).w)+1; k++){
+				net += this->layers.at(i).neurons.at(j).w[k] * this->layers.at(i-1).neurons.at(k-1).out;
 			}
-			net += n.w[0];
+			net += this->layers.at(i).neurons.at(j).w[0];
 			this->layers.at(i).neurons.at(j).out = 1.0 / (1 + exp(-net));
 		}
 	}
@@ -131,28 +133,63 @@ void MultilayerPerceptron::forwardPropagate() {
 // ------------------------------
 // Obtain the output error (MSE) of the out vector of the output layer wrt a target vector and return it
 double MultilayerPerceptron::obtainError(double* target) {
-	return -1;
+	double mse = 0.0;
+
+	for(int i=0; i<this->layers.at(this->nOfLayers-1).nOfNeurons; i++){
+		
+	}
 }
 
 
 // ------------------------------
 // Backpropagate the output error wrt a vector passed as an argument, from the last layer to the first one <--<--
 void MultilayerPerceptron::backpropagateError(double* target) {
-	
+	for(int i=0; i<this->layers.at(this->nOfLayers-1).nOfNeurons; i++){
+		double out = this->layers.at(nOfLayers-1).neurons.at(i).out;
+		this->layers.at(this->nOfLayers).neurons.at(i).delta = -(target[i] - out) * out * (1 - out);
+	}
+
+	for(int j=this->nOfLayers-2; j<0; j++){
+		for( int k=0; k=this->layers.at(j).nOfNeurons; k++){
+			double out = this->layers.at(j).neurons.at(k).out;
+			double aux = 0.0;
+			for(int l=0; l=this->layers.at(j+1).nOfNeurons; l++){
+				aux += this->layers.at(j+1).neurons.at(l).w[k+1] * this->layers.at(j+1).neurons.at(l).delta;
+			}
+			 this->layers.at(j).neurons.at(k).delta = aux * out * (1 - out);
+		}
+	}
 }
 
 
 // ------------------------------
 // Accumulate the changes produced by one pattern and save them in deltaW
 void MultilayerPerceptron::accumulateChange() {
-
+	for(int i=1; i<this->nOfLayers; i++){
+		for(int j=0; j<this->layers.at(i).nOfNeurons; j++){
+			for(int k=1; k<this->layers.at(i-1).nOfNeurons; k++){
+				this->layers.at(i).neurons.at(j).deltaW[k] += this->layers.at(i).neurons.at(j).delta * this->layers.at(i-1).neurons.at(k-1).out;
+			}
+			this->layers.at(i).neurons.at(j).deltaW[0] += this->layers.at(i).neurons.at(j).delta;
+		}
+	}
 }
 
 // ------------------------------
 // Update the network weights, from the first layer to the last one
 void MultilayerPerceptron::weightAdjustment() {
-
-
+	for(int i=1; i<this->nOfLayers; i++){
+		for(int j=0; j<this->layers.at(i).nOfNeurons; j++){
+			for(int k=1; k<this->layers.at(i-1).nOfNeurons; k++){
+				this->layers.at(i).neurons.at(j).w[k] += (- this->eta * this->layers.at(i).neurons.at(j).deltaW[k]) 
+														  - this->mu * this->layers.at(i).neurons.at(j).lastDeltaW[k];
+				this->layers.at(i).neurons.at(j).lastDeltaW[k] = this->layers.at(i).neurons.at(j).deltaW[k];
+			}
+			this->layers.at(i).neurons.at(j).w[0] += (- this->eta * this->layers.at(i).neurons.at(j).deltaW[0]) 
+													  - this->mu * this->layers.at(i).neurons.at(j).lastDeltaW[0];
+			this->layers.at(i).neurons.at(j).lastDeltaW[0] = this->layers.at(i).neurons.at(j).deltaW[0];			
+		}
+	}
 }
 
 // ------------------------------
