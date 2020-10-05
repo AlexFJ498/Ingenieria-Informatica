@@ -42,6 +42,21 @@ int MultilayerPerceptron::initialize(int nl, int npl[]) {
 	Layer layer;
 	for(int i=0; i<nl; i++){
 		layer.nOfNeurons = npl[i];
+
+		Neuron n;
+		for(int j=0; j<layer.nOfNeurons; j++){
+			n.w = new double[layer.nOfNeurons + 1];
+			n.deltaW = new double[layer.nOfNeurons + 1];
+			n.lastDeltaW = new double[layer.nOfNeurons + 1];
+			n.wCopy = new double[layer.nOfNeurons + 1];
+
+			for(int j=0; j<layer.nOfNeurons + 1; j++){
+				n.lastDeltaW[j] = 0.0;
+			}
+
+			layer.neurons.push_back(n);
+		}
+
 		this->layers.push_back(layer);
 	}
 }
@@ -136,8 +151,10 @@ double MultilayerPerceptron::obtainError(double* target) {
 	double mse = 0.0;
 
 	for(int i=0; i<this->layers.at(this->nOfLayers-1).nOfNeurons; i++){
-		
+		mse += pow(target[i] - this->layers.at(this->nOfLayers - 1).neurons.at(i).out, 2);
 	}
+
+	return mse / this->layers.at(this->nOfLayers - 1).nOfNeurons;
 }
 
 
@@ -195,6 +212,15 @@ void MultilayerPerceptron::weightAdjustment() {
 // ------------------------------
 // Print the network, i.e. all the weight matrices
 void MultilayerPerceptron::printNetwork() {
+	for(int i=0; i<this->nOfLayers; i++){
+		std::cout<<"Layer "<<i<<":"<<std::endl;
+		for(int j=0; j<this->layers.at(i).nOfNeurons; j++){
+			for(int k=0; k<sizeof(this->layers.at(i).neurons.at(j).w); k++){
+				std::cout<<"\tNeuron "<<j<<" --> "<<this->layers.at(i).neurons.at(j).w[k]<<" ";
+			}
+			std::cout<<std::endl;
+		}
+	}
 }
 
 // ------------------------------
