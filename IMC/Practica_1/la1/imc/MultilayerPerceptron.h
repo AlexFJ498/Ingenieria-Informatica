@@ -99,7 +99,7 @@ public:
 	// Allocate memory for the data structures
     // nl is the number of layers and npl is a vetor containing the number of neurons in every layer
     // Give values to Layer* layers
-	int initialize(int nl, int npl[]);
+	void initialize(int nl, int npl[]);
 
 	// Read a dataset from a file name and return it
 	Dataset* readData(const char *fileName);

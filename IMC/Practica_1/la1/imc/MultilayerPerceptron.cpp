@@ -36,7 +36,7 @@ MultilayerPerceptron::MultilayerPerceptron(){
 // Allocate memory for the data structures
 // nl is the number of layers and npl is a vector containing the number of neurons in every layer
 // Give values to Layer* layers
-int MultilayerPerceptron::initialize(int nl, int npl[]) {
+void MultilayerPerceptron::initialize(int nl, int npl[]) {
 	this->nOfLayers = nl;
 	
 	Layer layer;
@@ -85,7 +85,7 @@ void MultilayerPerceptron::randomWeights() {
 
 	for(int i=0; i<this->nOfLayers; i++){
 		for(int j=0; j<this->layers.at(i).nOfNeurons; j++){
-			for(int k=0; k<sizeof(this->layers.at(i).neurons.at(j).w); k++){
+			for(int k=0; k<this->layers.at(i-1).nOfNeurons; k++){
 				this->layers.at(i).neurons.at(j).w[k] = dis(gen);
 			}
 		}
@@ -136,7 +136,7 @@ void MultilayerPerceptron::forwardPropagate() {
 	for(int i=1; i<this->nOfLayers; i++){
 		for(int j=0;j<this->layers.at(i).nOfNeurons; j++){
 			double net = 0.0;
-			for(int k=1; k<sizeof(this->layers.at(i).neurons.at(j).w)+1; k++){
+			for(int k=1; k<this->layers.at(i-1).nOfNeurons+1; k++){
 				net += this->layers.at(i).neurons.at(j).w[k] * this->layers.at(i-1).neurons.at(k-1).out;
 			}
 			net += this->layers.at(i).neurons.at(j).w[0];
@@ -167,13 +167,15 @@ void MultilayerPerceptron::backpropagateError(double* target) {
 	}
 
 	for(int j=this->nOfLayers-2; j<0; j++){
-		for( int k=0; k=this->layers.at(j).nOfNeurons; k++){
+		for( int k=0; k<this->layers.at(j).nOfNeurons; k++){
 			double out = this->layers.at(j).neurons.at(k).out;
 			double aux = 0.0;
-			for(int l=0; l=this->layers.at(j+1).nOfNeurons; l++){
+
+			for(int l=0; l<this->layers.at(j+1).nOfNeurons; l++){
 				aux += this->layers.at(j+1).neurons.at(l).w[k+1] * this->layers.at(j+1).neurons.at(l).delta;
 			}
-			 this->layers.at(j).neurons.at(k).delta = aux * out * (1 - out);
+
+			this->layers.at(j).neurons.at(k).delta = aux * out * (1 - out);
 		}
 	}
 }
@@ -215,7 +217,7 @@ void MultilayerPerceptron::printNetwork() {
 	for(int i=0; i<this->nOfLayers; i++){
 		std::cout<<"Layer "<<i<<":"<<std::endl;
 		for(int j=0; j<this->layers.at(i).nOfNeurons; j++){
-			for(int k=0; k<sizeof(this->layers.at(i).neurons.at(j).w); k++){
+			for(int k=0; k<this->layers.at(i-1).nOfNeurons; k++){
 				std::cout<<"\tNeuron "<<j<<" --> "<<this->layers.at(i).neurons.at(j).w[k]<<" ";
 			}
 			std::cout<<std::endl;
@@ -229,7 +231,7 @@ void MultilayerPerceptron::printNetwork() {
 void MultilayerPerceptron::performEpochOnline(double* input, double* target) {
 	for(int i=1; i<this->nOfLayers; i++){
 		for(int j=0; j<this->layers.at(i).nOfNeurons; j++){
-			for(int k=0; k<sizeof(this->layers.at(i).neurons.at(j).deltaW); k++){
+			for(int k=0; k<this->layers.at(i-1).nOfNeurons; k++){
 				this->layers.at(i).neurons.at(j).deltaW[k] = 0.0;
 			}
 		}
