@@ -350,13 +350,45 @@ void MultilayerPerceptron::runOnlineBackPropagation(Dataset * trainDataset, Data
 
 	// Generate validation data
 	if(this->validationRatio > 0 && this->validationRatio < 1){
-		
-	}
+		validationDataset->nOfInputs = trainDataset->nOfInputs;
+		validationDataset->nOfOutputs = trainDataset->nOfOutputs;
+		validationDataset->nOfPatterns = trainDataset->nOfPatterns * this->validationRatio;
 
+		validationDataset->inputs = new double*[validationDataset->nOfPatterns];
+		validationDataset->outputs = new double*[validationDataset->nOfPatterns];
+
+		for(int i=0; i<validationDataset->nOfPatterns; i++){
+			validationDataset->inputs[i] = new double[validationDataset->nOfInputs];
+			validationDataset->outputs[i] = new double[validationDataset->nOfOutputs];
+		}
+
+		for(int i=0; i<validationDataset->nOfPatterns; i++){
+			validationDataset->inputs[i] = trainDataset->inputs[i];
+			validationDataset->outputs[i] = trainDataset->outputs[i];
+
+			delete [] trainDataset->inputs[i];
+			delete [] trainDataset->outputs[i];
+		}
+
+		trainDataset->nOfPatterns -= validationDataset->nOfPatterns;
+
+		double **tmpInput = new double*[trainDataset->nOfPatterns];
+		double **tmpOutput = new double*[trainDataset->nOfPatterns];
+
+		for(int i=0; i<trainDataset->nOfPatterns; i++){
+			tmpInput[i] = trainDataset->inputs[i + validationDataset->nOfPatterns];
+			tmpOutput[i] = trainDataset->outputs[i + validationDataset->nOfPatterns];
+		}
+
+		delete [] trainDataset->inputs;
+		delete [] trainDataset->outputs;
+
+		trainDataset->inputs = tmpInput;
+		trainDataset->outputs = tmpOutput;
+	}
 
 	// Learning
 	do {
-
 		trainOnline(trainDataset);
 		double trainError = test(trainDataset);
 		if(countTrain==0 || trainError < minTrainError){
