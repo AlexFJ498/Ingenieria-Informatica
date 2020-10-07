@@ -96,7 +96,7 @@ void MultilayerPerceptron::randomWeights() {
 // Feed the input neurons of the network with a vector passed as an argument
 void MultilayerPerceptron::feedInputs(double* input) {
 	for(int i=0;i<this->layers.at(0).nOfNeurons; i++){
-		this->layers.at(0).neurons.at(i).w[0] = input[i];
+		this->layers.at(0).neurons.at(i).out = input[i];
 	}
 }
 
@@ -227,22 +227,67 @@ void MultilayerPerceptron::printNetwork() {
 // Perform an epoch: forward propagate the inputs, backpropagate the error and adjust the weights
 // input is the input vector of the pattern and target is the desired output vector of the pattern
 void MultilayerPerceptron::performEpochOnline(double* input, double* target) {
+	for(int i=1; i<this->nOfLayers; i++){
+		for(int j=0; j<this->layers.at(i).nOfNeurons; j++){
+			for(int k=0; k<sizeof(this->layers.at(i).neurons.at(j).deltaW); k++){
+				this->layers.at(i).neurons.at(j).deltaW[k] = 0.0;
+			}
+		}
+	}
 
+	this->feedInputs(input);
+	this->forwardPropagate();
+	this->backpropagateError(target);
+	this->accumulateChange();
+	this->weightAdjustment();
 }
 
 // ------------------------------
 // Read a dataset from a file name and return it
 Dataset* MultilayerPerceptron::readData(const char *fileName) {
+	ifstream file;
+	file.open(fileName);
+	Dataset *dataset;
 
+	int inputs, outputs, patterns;
+	if(file >> inputs >> outputs >> patterns){
+		dataset = new Dataset[1];
+		dataset->nOfInputs = inputs;
+		dataset->nOfOutputs = outputs;
+		dataset->nOfPatterns = patterns;
 
-	return NULL;
+		dataset->inputs = new double*[patterns];
+		dataset->outputs = new double*[patterns];
+
+		for(int i=0; i<patterns; i++){
+			dataset->inputs[i] = new double[inputs];
+			dataset->outputs[i] = new double[outputs];
+		}
+
+		for(int i=0; i<patterns; i++){
+			for(int j=0; j<inputs; j++){
+				file >> dataset->inputs[i][j];
+			}
+
+			for(int k=0; k<outputs; k++){
+				file >> dataset->outputs[i][k];
+			}
+		}
+	}
+	else{
+		std::cout<<"Incorrect file"<<std::endl;
+		file.close();
+		return NULL;
+	}
+
+	file.close();
+	return dataset;
 }
 
 // ------------------------------
 // Perform an online training for a specific trainDataset
 void MultilayerPerceptron::trainOnline(Dataset* trainDataset) {
-	int i;
-	for(i=0; i<trainDataset->nOfPatterns; i++){
+	for(int i=0; i<trainDataset->nOfPatterns; i++){
 		performEpochOnline(trainDataset->inputs[i], trainDataset->outputs[i]);
 	}
 }
@@ -250,33 +295,39 @@ void MultilayerPerceptron::trainOnline(Dataset* trainDataset) {
 // ------------------------------
 // Test the network with a dataset and return the MSE
 double MultilayerPerceptron::test(Dataset* testDataset) {
-	return -1.0;
+	double mse = 0.0;
+
+	for(int i=0; i<testDataset->nOfPatterns; i++){
+		this->feedInputs(testDataset->inputs[i]);
+		this->forwardPropagate();
+
+		mse += this->obtainError(testDataset->outputs[i]);
+	}
+
+	return mse / testDataset->nOfPatterns;
 }
 
 
 // Optional - KAGGLE
 // Test the network with a dataset and return the MSE
 // Your have to use the format from Kaggle: two columns (Id y predictied)
-void MultilayerPerceptron::predict(Dataset* pDatosTest)
-{
-	int i;
-	int j;
+void MultilayerPerceptron::predict(Dataset* pDatosTest) {
 	int numSalidas = layers[nOfLayers-1].nOfNeurons;
 	double * obtained = new double[numSalidas];
 	
-	cout << "Id,Predicted" << endl;
+	std::cout << "Id,Predicted" << endl;
 	
-	for (i=0; i<pDatosTest->nOfPatterns; i++){
+	for (int i=0; i<pDatosTest->nOfPatterns; i++){
 
 		feedInputs(pDatosTest->inputs[i]);
 		forwardPropagate();
 		getOutputs(obtained);
 		
-		cout << i;
+		std::cout << i;
 
-		for (j = 0; j < numSalidas; j++)
-			cout << "," << obtained[j];
-		cout << endl;
+		for (int j = 0; j < numSalidas; j++)
+			std::cout << "," << obtained[j];
+		std::cout << endl;
 
 	}
 }
@@ -285,22 +336,21 @@ void MultilayerPerceptron::predict(Dataset* pDatosTest)
 // Run the traning algorithm for a given number of epochs, using trainDataset
 // Once finished, check the performance of the network in testDataset
 // Both training and test MSEs should be obtained and stored in errorTrain and errorTest
-void MultilayerPerceptron::runOnlineBackPropagation(Dataset * trainDataset, Dataset * pDatosTest, int maxiter, double *errorTrain, double *errorTest)
-{
+void MultilayerPerceptron::runOnlineBackPropagation(Dataset * trainDataset, Dataset * testDataset, int maxiter, double *errorTrain, double *errorTest) {
 	int countTrain = 0;
 
 	// Random assignment of weights (starting point)
-	randomWeights();
+	this->randomWeights();
 
-	double minTrainError = 0;
 	int iterWithoutImproving;
+	double minTrainError = 0;
 	double testError = 0;
-
 	double validationError = 1;
+	Dataset *validationDataset = new Dataset[1];
 
 	// Generate validation data
-	if(validationRatio > 0 && validationRatio < 1){
-		// .......
+	if(this->validationRatio > 0 && this->validationRatio < 1){
+		
 	}
 
 
@@ -320,7 +370,7 @@ void MultilayerPerceptron::runOnlineBackPropagation(Dataset * trainDataset, Data
 			iterWithoutImproving++;
 
 		if(iterWithoutImproving==50){
-			cout << "We exit because the training is not improving!!"<< endl;
+			std::cout << "We exit because the training is not improving!!"<< endl;
 			restoreWeights();
 			countTrain = maxiter;
 		}
@@ -333,31 +383,31 @@ void MultilayerPerceptron::runOnlineBackPropagation(Dataset * trainDataset, Data
 		// Apart from this, the way the stopping condition is checked is the same than that
 		// applied for the training set
 
-		cout << "Iteration " << countTrain << "\t Training error: " << trainError << "\t Validation error: " << validationError << endl;
+		std::cout << "Iteration " << countTrain << "\t Training error: " << trainError << "\t Validation error: " << validationError << endl;
 
 	} while ( countTrain<maxiter );
 
-	cout << "NETWORK WEIGHTS" << endl;
-	cout << "===============" << endl;
+	std::cout << "NETWORK WEIGHTS" << endl;
+	std::cout << "===============" << endl;
 	printNetwork();
 
-	cout << "Desired output Vs Obtained output (test)" << endl;
-	cout << "=========================================" << endl;
-	for(int i=0; i<pDatosTest->nOfPatterns; i++){
-		double* prediction = new double[pDatosTest->nOfOutputs];
+	std::cout << "Desired output Vs Obtained output (test)" << endl;
+	std::cout << "=========================================" << endl;
+	for(int i=0; i<testDataset->nOfPatterns; i++){
+		double* prediction = new double[testDataset->nOfOutputs];
 
 		// Feed the inputs and propagate the values
-		feedInputs(pDatosTest->inputs[i]);
+		feedInputs(testDataset->inputs[i]);
 		forwardPropagate();
 		getOutputs(prediction);
-		for(int j=0; j<pDatosTest->nOfOutputs; j++)
-			cout << pDatosTest->outputs[i][j] << " -- " << prediction[j] << " ";
-		cout << endl;
+		for(int j=0; j<testDataset->nOfOutputs; j++)
+			std::cout << testDataset->outputs[i][j] << " -- " << prediction[j] << " ";
+		std::cout << endl;
 		delete[] prediction;
 
 	}
 
-	testError = test(pDatosTest);
+	testError = test(testDataset);
 	*errorTest=testError;
 	*errorTrain=minTrainError;
 
