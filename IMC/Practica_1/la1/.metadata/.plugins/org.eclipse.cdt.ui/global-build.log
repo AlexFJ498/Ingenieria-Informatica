@@ -1,0 +1,120 @@
+20:28:23 **** Clean-only build of configuration Debug for project la1 ****
+make clean 
+rm -rf  ./imc/MultilayerPerceptron.o  ./la1.o  ./imc/MultilayerPerceptron.d  ./la1.d  la1
+ 
+20:28:23 **** Build of configuration Debug for project la1 ****
+make all 
+Building file: ../imc/MultilayerPerceptron.cpp
+Invoking: GCC C++ Compiler
+g++ -O3 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"imc/MultilayerPerceptron.d" -MT"imc/MultilayerPerceptron.o" -o "imc/MultilayerPerceptron.o" "../imc/MultilayerPerceptron.cpp"
+../imc/MultilayerPerceptron.cpp: In member function ‘int imc::MultilayerPerceptron::initialize(int, int*)’:
+../imc/MultilayerPerceptron.cpp:43:1: warning: no return statement in function returning non-void [-Wreturn-type]
+ }
+ ^
+../imc/MultilayerPerceptron.cpp: In member function ‘void imc::MultilayerPerceptron::randomWeights()’:
+../imc/MultilayerPerceptron.cpp:67:16: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+  for(int i=0; i<sizeof(this->layers); i++){
+               ~^~~~~~~~
+../imc/MultilayerPerceptron.cpp:68:17: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+   for(int j=0; j<sizeof(this->layers.at(i).neurons); j++){
+                ~^~~~~~~~
+../imc/MultilayerPerceptron.cpp:71:18: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+    for(int z=0; z<sizeof(n.w); z++){
+                 ~^~~~~~~~
+../imc/MultilayerPerceptron.cpp: In member function ‘void imc::MultilayerPerceptron::feedInputs(double*)’:
+../imc/MultilayerPerceptron.cpp:81:15: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+  for(int i=0;i<sizeof(this->layers.at(0).neurons); i++){
+              ~^~~~~~~~
+../imc/MultilayerPerceptron.cpp: In member function ‘void imc::MultilayerPerceptron::copyWeights()’:
+../imc/MultilayerPerceptron.cpp:95:16: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+  for(int i=0; i<sizeof(this->layers); i++){
+               ~^~~~~~~~
+../imc/MultilayerPerceptron.cpp:96:17: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+   for(int j=0; j<sizeof(this->layers.at(i).neurons); j++){
+                ~^~~~~~~~
+../imc/MultilayerPerceptron.cpp: In member function ‘void imc::MultilayerPerceptron::restoreWeights()’:
+../imc/MultilayerPerceptron.cpp:106:16: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+  for(int i=0; i<sizeof(this->layers); i++){
+               ~^~~~~~~~
+../imc/MultilayerPerceptron.cpp:107:17: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+   for(int j=0; j<sizeof(this->layers.at(i).neurons); j++){
+                ~^~~~~~~~
+In file included from ../imc/MultilayerPerceptron.cpp:8:0:
+../imc/util.h: At global scope:
+../imc/util.h:13:14: warning: ‘int* util::integerRandomVectoWithoutRepeating(int, int, int)’ defined but not used [-Wunused-function]
+ static int * integerRandomVectoWithoutRepeating(int min, int max, int howMany){
+              ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Finished building: ../imc/MultilayerPerceptron.cpp
+ 
+Building file: ../la1.cpp
+Invoking: GCC C++ Compiler
+g++ -O3 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"la1.d" -MT"la1.o" -o "la1.o" "../la1.cpp"
+../la1.cpp: In function ‘int main(int, char**)’:
+../la1.cpp:26:10: warning: variable ‘Tflag’ set but not used [-Wunused-but-set-variable]
+     bool Tflag = 0, wflag = 0, pflag = 0;
+          ^~~~~
+Finished building: ../la1.cpp
+ 
+Building target: la1
+Invoking: GCC C++ Linker
+g++  -o "la1"  ./imc/MultilayerPerceptron.o  ./la1.o   
+Finished building target: la1
+ 
+20:28:29 **** Auto Build of configuration Debug for project la1 ****
+make all 
+Building file: ../imc/MultilayerPerceptron.cpp
+Invoking: GCC C++ Compiler
+g++ -O3 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"imc/MultilayerPerceptron.d" -MT"imc/MultilayerPerceptron.o" -o "imc/MultilayerPerceptron.o" "../imc/MultilayerPerceptron.cpp"
+../imc/MultilayerPerceptron.cpp: In member function ‘int imc::MultilayerPerceptron::initialize(int, int*)’:
+../imc/MultilayerPerceptron.cpp:43:1: warning: no return statement in function returning non-void [-Wreturn-type]
+ }
+ ^
+../imc/MultilayerPerceptron.cpp: In member function ‘void imc::MultilayerPerceptron::randomWeights()’:
+../imc/MultilayerPerceptron.cpp:67:16: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+  for(int i=0; i<sizeof(this->layers); i++){
+               ~^~~~~~~~
+../imc/MultilayerPerceptron.cpp:68:17: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+   for(int j=0; j<sizeof(this->layers.at(i).neurons); j++){
+                ~^~~~~~~~
+../imc/MultilayerPerceptron.cpp:71:18: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+    for(int z=0; z<sizeof(n.w); z++){
+                 ~^~~~~~~~
+../imc/MultilayerPerceptron.cpp: In member function ‘void imc::MultilayerPerceptron::feedInputs(double*)’:
+../imc/MultilayerPerceptron.cpp:81:15: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+  for(int i=0;i<sizeof(this->layers.at(0).neurons); i++){
+              ~^~~~~~~~
+../imc/MultilayerPerceptron.cpp: In member function ‘void imc::MultilayerPerceptron::copyWeights()’:
+../imc/MultilayerPerceptron.cpp:95:16: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+  for(int i=0; i<sizeof(this->layers); i++){
+               ~^~~~~~~~
+../imc/MultilayerPerceptron.cpp:96:17: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+   for(int j=0; j<sizeof(this->layers.at(i).neurons); j++){
+                ~^~~~~~~~
+../imc/MultilayerPerceptron.cpp: In member function ‘void imc::MultilayerPerceptron::restoreWeights()’:
+../imc/MultilayerPerceptron.cpp:106:16: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+  for(int i=0; i<sizeof(this->layers); i++){
+               ~^~~~~~~~
+../imc/MultilayerPerceptron.cpp:107:17: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+   for(int j=0; j<sizeof(this->layers.at(i).neurons); j++){
+                ~^~~~~~~~
+In file included from ../imc/MultilayerPerceptron.cpp:8:0:
+../imc/util.h: At global scope:
+../imc/util.h:13:14: warning: ‘int* util::integerRandomVectoWithoutRepeating(int, int, int)’ defined but not used [-Wunused-function]
+ static int * integerRandomVectoWithoutRepeating(int min, int max, int howMany){
+              ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Finished building: ../imc/MultilayerPerceptron.cpp
+ 
+Building file: ../la1.cpp
+Invoking: GCC C++ Compiler
+g++ -O3 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"la1.d" -MT"la1.o" -o "la1.o" "../la1.cpp"
+../la1.cpp: In function ‘int main(int, char**)’:
+../la1.cpp:26:10: warning: variable ‘Tflag’ set but not used [-Wunused-but-set-variable]
+     bool Tflag = 0, wflag = 0, pflag = 0;
+          ^~~~~
+Finished building: ../la1.cpp
+ 
+Building target: la1
+Invoking: GCC C++ Linker
+g++  -o "la1"  ./imc/MultilayerPerceptron.o  ./la1.o   
+Finished building target: la1
+ 

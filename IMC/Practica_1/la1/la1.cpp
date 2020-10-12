@@ -55,24 +55,24 @@ int main(int argc, char **argv) {
                 lvalue = atoi(optarg);
                 break;
             case 'h':
-                lflag = true;
-                lvalue = atoi(optarg);
+                hflag = true;
+                hvalue = atoi(optarg);
                 break;
             case 'e':
-                lflag = true;
-                lvalue = atof(optarg);
+                eflag = true;
+                evalue = atof(optarg);
                 break;
             case 'm':
-                lflag = true;
-                lvalue = atof(optarg);
+                mflag = true;
+                mvalue = atof(optarg);
                 break;
             case 'v':
-                lflag = true;
-                lvalue = atof(optarg);
+                vflag = true;
+                vvalue = atof(optarg);
                 break;
             case 'd':
-                lflag = true;
-                lvalue = atoi(optarg);
+                dflag = true;
+                dvalue = atoi(optarg);
                 break;
             case 'w':
                 wflag = true;
@@ -99,6 +99,10 @@ int main(int argc, char **argv) {
         }
     }
 
+    if(!tflag && !pflag){
+        std::cout<<"Error: Incorrect arguments"<<std::endl;
+    }
+
     if (!pflag) {
         //////////////////////////////////
         // TRAINING AND EVALUATION MODE //
@@ -123,7 +127,7 @@ int main(int argc, char **argv) {
         }
         mlp.validationRatio = vvalue;
 
-        if(!dvalue){
+        if(!dflag){
             dvalue = 1;
         }
         mlp.decrementFactor = dvalue;
@@ -148,13 +152,13 @@ int main(int argc, char **argv) {
     	int * topology = new int[lvalue+2];
 
         if(!hflag){
-            hvalue = 5;
+            hvalue = 4;
         }
         topology[0] = trainDataset->nOfInputs;
-        for(int i=0; i<sizeof(topology); i++){
+        for(int i=1; i<lvalue+1; i++){
             topology[i] = hvalue;
         }
-        topology[lvalue+2] = trainDataset->nOfOutputs;
+        topology[lvalue+1] = trainDataset->nOfOutputs;
 
         // Initialize the network using the topology vector
         mlp.initialize(layers+2,topology);

@@ -79,13 +79,14 @@ void MultilayerPerceptron::freeMemory() {
 // ------------------------------
 // Feed all the weights (w) with random numbers between -1 and +1
 void MultilayerPerceptron::randomWeights() {
+
 	std::random_device rd;
 	std::mt19937 gen(rd());
 	std::uniform_real_distribution<> dis(-1.0, 1.0);
 
-	for(int i=0; i<this->nOfLayers; i++){
+	for(int i=1; i<this->nOfLayers; i++){
 		for(int j=0; j<this->layers.at(i).nOfNeurons; j++){
-			for(int k=0; k<this->layers.at(i-1).nOfNeurons; k++){
+			for(int k=0; k<this->layers.at(i-1).nOfNeurons + 1; k++){
 				this->layers.at(i).neurons.at(j).w[k] = dis(gen);
 			}
 		}
@@ -163,8 +164,9 @@ double MultilayerPerceptron::obtainError(double* target) {
 void MultilayerPerceptron::backpropagateError(double* target) {
 	for(int i=0; i<this->layers.at(this->nOfLayers-1).nOfNeurons; i++){
 		double out = this->layers.at(nOfLayers-1).neurons.at(i).out;
-		this->layers.at(this->nOfLayers).neurons.at(i).delta = -(target[i] - out) * out * (1 - out);
+		this->layers.at(this->nOfLayers - 1).neurons.at(i).delta = -(target[i] - out) * out * (1 - out);
 	}
+
 
 	for(int j=this->nOfLayers-2; j<0; j++){
 		for( int k=0; k<this->layers.at(j).nOfNeurons; k++){
@@ -214,11 +216,12 @@ void MultilayerPerceptron::weightAdjustment() {
 // ------------------------------
 // Print the network, i.e. all the weight matrices
 void MultilayerPerceptron::printNetwork() {
-	for(int i=0; i<this->nOfLayers; i++){
+	for(int i=1; i<this->nOfLayers; i++){
 		std::cout<<"Layer "<<i<<":"<<std::endl;
+		std::cout<<"-------"<<std::endl;
 		for(int j=0; j<this->layers.at(i).nOfNeurons; j++){
-			for(int k=0; k<this->layers.at(i-1).nOfNeurons; k++){
-				std::cout<<"\tNeuron "<<j<<" --> "<<this->layers.at(i).neurons.at(j).w[k]<<" ";
+			for(int k=0; k<this->layers.at(i-1).nOfNeurons + 1; k++){
+				std::cout<<this->layers.at(i).neurons.at(j).w[k]<<" ";
 			}
 			std::cout<<std::endl;
 		}
@@ -247,8 +250,11 @@ void MultilayerPerceptron::performEpochOnline(double* input, double* target) {
 // ------------------------------
 // Read a dataset from a file name and return it
 Dataset* MultilayerPerceptron::readData(const char *fileName) {
-	ifstream file;
-	file.open(fileName);
+	ifstream file(fileName);
+	if(!file.is_open()){
+		std::cout<<"Error"<<std::endl;;
+		exit(-1);
+	}
 	Dataset *dataset;
 
 	int inputs, outputs, patterns;
