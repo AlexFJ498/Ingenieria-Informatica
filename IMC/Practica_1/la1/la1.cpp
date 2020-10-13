@@ -163,19 +163,18 @@ int main(int argc, char **argv) {
         // Initialize the network using the topology vector
         mlp.initialize(layers+2,topology);
 
-
         // Seed for random numbers
         int seeds[] = {1,2,3,4,5};
         double *testErrors = new double[5];
         double *trainErrors = new double[5];
         double bestTestError = 1;
         for(int i=0; i<5; i++){
-            cout << "**********" << endl;
+            cout << "\n**********" << endl;
             cout << "SEED " << seeds[i] << endl;
             cout << "**********" << endl;
             srand(seeds[i]);
             mlp.runOnlineBackPropagation(trainDataset,testDataset,iterations,&(trainErrors[i]),&(testErrors[i]));
-            cout << "We end!! => Final test error: " << testErrors[i] << endl;
+            cout << "\nWe end!! => Final test error: " << testErrors[i] << endl;
 
             // We save the weights every time we find a better model
             if(wflag && testErrors[i] <= bestTestError){

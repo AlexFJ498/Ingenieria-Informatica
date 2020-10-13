@@ -38,27 +38,90 @@ MultilayerPerceptron::MultilayerPerceptron(){
 // Give values to Layer* layers
 void MultilayerPerceptron::initialize(int nl, int npl[]) {
 	this->nOfLayers = nl;
-	
-	Layer layer;
-	for(int i=0; i<nl; i++){
-		layer.nOfNeurons = npl[i];
+	int nOfNeuronsPrev;
 
-		Neuron n;
-		for(int j=0; j<layer.nOfNeurons; j++){
-			n.w = new double[layer.nOfNeurons + 1];
-			n.deltaW = new double[layer.nOfNeurons + 1];
-			n.lastDeltaW = new double[layer.nOfNeurons + 1];
-			n.wCopy = new double[layer.nOfNeurons + 1];
+	for(int i=0; i<this->nOfLayers;i++){
+		Layer l;
+		l.nOfNeurons = npl[i];
 
-			for(int j=0; j<layer.nOfNeurons + 1; j++){
-				n.lastDeltaW[j] = 0.0;
+		//Layer 0
+		if(i == 0){
+			for(int j=0; j<l.nOfNeurons; j++){
+				Neuron n;
+				n.w = NULL;
+				n.deltaW = NULL;
+				n.lastDeltaW = NULL;
+				n.wCopy = NULL;
+
+				l.neurons.push_back(n);
 			}
 
-			layer.neurons.push_back(n);
+			this->layers.push_back(l);
+			nOfNeuronsPrev = l.nOfNeurons;
+
+			continue;
 		}
 
-		this->layers.push_back(layer);
+		//Layers 1 - H
+		for(int j=0; j<l.nOfNeurons; j++){
+			Neuron n;
+			n.w = new double[nOfNeuronsPrev + 1];
+			n.deltaW = new double[nOfNeuronsPrev + 1];
+			n.lastDeltaW = new double[nOfNeuronsPrev + 1];
+			n.wCopy = new double[nOfNeuronsPrev + 1];		
+
+			for(int k=0; k<nOfNeuronsPrev + 1; k++){
+				n.lastDeltaW[k] = 0.0;
+			}
+
+			l.neurons.push_back(n);
+		}
+
+		this->layers.push_back(l);
+		nOfNeuronsPrev = l.nOfNeurons;
 	}
+
+/*
+	Layer l;
+
+	l.nOfNeurons = npl[0];
+
+	//Layer 0
+	for(int i=0; i<l.nOfNeurons; i++){
+		Neuron n;
+		n.w = NULL;
+		n.deltaW = NULL;
+		n.lastDeltaW = NULL;
+		n.wCopy = NULL;
+
+		l.neurons.push_back(n);
+	}
+	this->layers.push_back(l);
+
+	//Layers 1-n
+	for(int i=1; i<nl; i++){
+		Neuron n;
+		Layer l;
+		nOfNeuronsPrev = l.nOfNeurons;
+		l.neurons.clear();
+		l.nOfNeurons = npl[i];
+
+		n.w = new double[nOfNeuronsPrev + 1];
+		n.deltaW = new double[nOfNeuronsPrev + 1];
+		n.lastDeltaW = new double[nOfNeuronsPrev + 1];
+		n.wCopy = new double[nOfNeuronsPrev + 1];
+			
+		for(int j=0; j<nOfNeuronsPrev + 1; j++){
+			n.lastDeltaW[j] = 0.0;
+		}
+		
+		for(int j=0; j<l.nOfNeurons; j++){
+			l.neurons.push_back(n);
+		}
+
+		this->layers.push_back(l);
+	}
+	*/
 }
 
 
@@ -80,14 +143,14 @@ void MultilayerPerceptron::freeMemory() {
 // Feed all the weights (w) with random numbers between -1 and +1
 void MultilayerPerceptron::randomWeights() {
 
-	std::random_device rd;
-	std::mt19937 gen(rd());
-	std::uniform_real_distribution<> dis(-1.0, 1.0);
+	//std::random_device rd;
+	//std::mt19937 gen(rd());
+	//std::uniform_real_distribution<> dis(-1.0, 1.0);
 
 	for(int i=1; i<this->nOfLayers; i++){
 		for(int j=0; j<this->layers.at(i).nOfNeurons; j++){
 			for(int k=0; k<this->layers.at(i-1).nOfNeurons + 1; k++){
-				this->layers.at(i).neurons.at(j).w[k] = dis(gen);
+				this->layers.at(i).neurons.at(j).w[k] = (rand()/(double)RAND_MAX)*(1-(-1)) + (-1);
 			}
 		}
 	}
@@ -112,10 +175,11 @@ void MultilayerPerceptron::getOutputs(double* output) {
 // ------------------------------
 // Make a copy of all the weights (copy w in wCopy)
 void MultilayerPerceptron::copyWeights() {
-	for(int i=0; i<this->nOfLayers; i++){
+	for(int i=1; i<this->nOfLayers; i++){
 		for(int j=0; j<this->layers.at(i).nOfNeurons; j++){
-			Neuron n = this->layers.at(i).neurons.at(j);
-			n.wCopy = n.w;
+			for(int k=0; k<this->layers.at(i-1).nOfNeurons + 1; k++){
+				this->layers.at(i).neurons.at(j).wCopy[k] = this->layers.at(i).neurons.at(j).w[k];
+			}
 		}
 	}
 }
@@ -123,10 +187,11 @@ void MultilayerPerceptron::copyWeights() {
 // ------------------------------
 // Restore a copy of all the weights (copy wCopy in w)
 void MultilayerPerceptron::restoreWeights() {
-	for(int i=0; i<this->nOfLayers; i++){
+	for(int i=1; i<this->nOfLayers; i++){
 		for(int j=0; j<this->layers.at(i).nOfNeurons; j++){
-			Neuron n = this->layers.at(i).neurons.at(j);
-			n.w = n.wCopy;
+			for(int k=0; k<this->layers.at(i-1).nOfNeurons + 1; k++){
+				this->layers.at(i).neurons.at(j).w[k] = this->layers.at(i).neurons.at(j).wCopy[k];
+			}
 		}
 	}
 }
@@ -134,10 +199,11 @@ void MultilayerPerceptron::restoreWeights() {
 // ------------------------------
 // Calculate and propagate the outputs of the neurons, from the first layer until the last one -->-->
 void MultilayerPerceptron::forwardPropagate() {
+	double net;
 	for(int i=1; i<this->nOfLayers; i++){
 		for(int j=0;j<this->layers.at(i).nOfNeurons; j++){
-			double net = 0.0;
-			for(int k=1; k<this->layers.at(i-1).nOfNeurons+1; k++){
+			net = 0.0;
+			for(int k=1; k<this->layers.at(i-1).nOfNeurons + 1; k++){
 				net += this->layers.at(i).neurons.at(j).w[k] * this->layers.at(i-1).neurons.at(k-1).out;
 			}
 			net += this->layers.at(i).neurons.at(j).w[0];
@@ -162,22 +228,22 @@ double MultilayerPerceptron::obtainError(double* target) {
 // ------------------------------
 // Backpropagate the output error wrt a vector passed as an argument, from the last layer to the first one <--<--
 void MultilayerPerceptron::backpropagateError(double* target) {
+	double out, aux;
+
 	for(int i=0; i<this->layers.at(this->nOfLayers-1).nOfNeurons; i++){
-		double out = this->layers.at(nOfLayers-1).neurons.at(i).out;
+		out = this->layers.at(nOfLayers-1).neurons.at(i).out;
 		this->layers.at(this->nOfLayers - 1).neurons.at(i).delta = -(target[i] - out) * out * (1 - out);
 	}
 
-
-	for(int j=this->nOfLayers-2; j<0; j++){
-		for( int k=0; k<this->layers.at(j).nOfNeurons; k++){
-			double out = this->layers.at(j).neurons.at(k).out;
-			double aux = 0.0;
-
-			for(int l=0; l<this->layers.at(j+1).nOfNeurons; l++){
-				aux += this->layers.at(j+1).neurons.at(l).w[k+1] * this->layers.at(j+1).neurons.at(l).delta;
+	for(int i=this->nOfLayers-2; i>=1; i--){
+		for( int j=0; j<this->layers.at(i).nOfNeurons; j++){
+			out = this->layers.at(i).neurons.at(j).out;
+			aux = 0.0;
+			for(int k=0; k<this->layers.at(i+1).nOfNeurons; k++){
+				aux += this->layers.at(i+1).neurons.at(k).w[j+1] * this->layers.at(i+1).neurons.at(k).delta;
 			}
 
-			this->layers.at(j).neurons.at(k).delta = aux * out * (1 - out);
+			this->layers.at(i).neurons.at(j).delta = aux * out * (1 - out);
 		}
 	}
 }
@@ -188,7 +254,7 @@ void MultilayerPerceptron::backpropagateError(double* target) {
 void MultilayerPerceptron::accumulateChange() {
 	for(int i=1; i<this->nOfLayers; i++){
 		for(int j=0; j<this->layers.at(i).nOfNeurons; j++){
-			for(int k=1; k<this->layers.at(i-1).nOfNeurons; k++){
+			for(int k=1; k<this->layers.at(i-1).nOfNeurons + 1; k++){
 				this->layers.at(i).neurons.at(j).deltaW[k] += this->layers.at(i).neurons.at(j).delta * this->layers.at(i-1).neurons.at(k-1).out;
 			}
 			this->layers.at(i).neurons.at(j).deltaW[0] += this->layers.at(i).neurons.at(j).delta;
@@ -199,14 +265,16 @@ void MultilayerPerceptron::accumulateChange() {
 // ------------------------------
 // Update the network weights, from the first layer to the last one
 void MultilayerPerceptron::weightAdjustment() {
+	double newEta;
 	for(int i=1; i<this->nOfLayers; i++){
+		newEta =  pow(this->decrementFactor, -(this->nOfLayers - 1 - i)) * this->eta;
 		for(int j=0; j<this->layers.at(i).nOfNeurons; j++){
-			for(int k=1; k<this->layers.at(i-1).nOfNeurons; k++){
-				this->layers.at(i).neurons.at(j).w[k] += (- this->eta * this->layers.at(i).neurons.at(j).deltaW[k]) 
+			for(int k=1; k<this->layers.at(i-1).nOfNeurons + 1; k++){
+				this->layers.at(i).neurons.at(j).w[k] += (- newEta * this->layers.at(i).neurons.at(j).deltaW[k]) 
 														  - this->mu * this->layers.at(i).neurons.at(j).lastDeltaW[k];
 				this->layers.at(i).neurons.at(j).lastDeltaW[k] = this->layers.at(i).neurons.at(j).deltaW[k];
 			}
-			this->layers.at(i).neurons.at(j).w[0] += (- this->eta * this->layers.at(i).neurons.at(j).deltaW[0]) 
+			this->layers.at(i).neurons.at(j).w[0] += (- newEta * this->layers.at(i).neurons.at(j).deltaW[0]) 
 													  - this->mu * this->layers.at(i).neurons.at(j).lastDeltaW[0];
 			this->layers.at(i).neurons.at(j).lastDeltaW[0] = this->layers.at(i).neurons.at(j).deltaW[0];			
 		}
@@ -217,7 +285,7 @@ void MultilayerPerceptron::weightAdjustment() {
 // Print the network, i.e. all the weight matrices
 void MultilayerPerceptron::printNetwork() {
 	for(int i=1; i<this->nOfLayers; i++){
-		std::cout<<"Layer "<<i<<":"<<std::endl;
+		std::cout<<"\nLayer "<<i<<":"<<std::endl;
 		std::cout<<"-------"<<std::endl;
 		for(int j=0; j<this->layers.at(i).nOfNeurons; j++){
 			for(int k=0; k<this->layers.at(i-1).nOfNeurons + 1; k++){
@@ -234,7 +302,7 @@ void MultilayerPerceptron::printNetwork() {
 void MultilayerPerceptron::performEpochOnline(double* input, double* target) {
 	for(int i=1; i<this->nOfLayers; i++){
 		for(int j=0; j<this->layers.at(i).nOfNeurons; j++){
-			for(int k=0; k<this->layers.at(i-1).nOfNeurons; k++){
+			for(int k=0; k<this->layers.at(i-1).nOfNeurons + 1; k++){
 				this->layers.at(i).neurons.at(j).deltaW[k] = 0.0;
 			}
 		}
@@ -353,7 +421,7 @@ void MultilayerPerceptron::runOnlineBackPropagation(Dataset * trainDataset, Data
 	int iterWithoutImproving;
 	double minTrainError = 0;
 	double testError = 0;
-	double validationError = 1;
+	double validationError = 0;
 	Dataset *validationDataset = new Dataset[1];
 
 	// Generate validation data
@@ -415,7 +483,6 @@ void MultilayerPerceptron::runOnlineBackPropagation(Dataset * trainDataset, Data
 			countTrain = maxiter;
 		}
 
-
 		countTrain++;
 
 		// Check validation stopping condition and force it
@@ -423,15 +490,17 @@ void MultilayerPerceptron::runOnlineBackPropagation(Dataset * trainDataset, Data
 		// Apart from this, the way the stopping condition is checked is the same than that
 		// applied for the training set
 
-		std::cout << "Iteration " << countTrain << "\t Training error: " << trainError << "\t Validation error: " << validationError << endl;
+		if(iterWithoutImproving < 50){
+			std::cout << "Iteration " << countTrain << "\t Training error: " << trainError << "\t Validation error: " << validationError << endl;
+		}
 
 	} while ( countTrain<maxiter );
 
-	std::cout << "NETWORK WEIGHTS" << endl;
+	std::cout << "\nNETWORK WEIGHTS" << endl;
 	std::cout << "===============" << endl;
 	printNetwork();
 
-	std::cout << "Desired output Vs Obtained output (test)" << endl;
+	std::cout << "\nDesired output Vs Obtained output (test)" << endl;
 	std::cout << "=========================================" << endl;
 	for(int i=0; i<testDataset->nOfPatterns; i++){
 		double* prediction = new double[testDataset->nOfOutputs];
