@@ -419,7 +419,9 @@ void MultilayerPerceptron::runOnlineBackPropagation(Dataset * trainDataset, Data
 	this->randomWeights();
 
 	int iterWithoutImproving;
+	int validationWithoutImproving;
 	double minTrainError = 0;
+	double minValidationError = 0;
 	double testError = 0;
 	double validationError = 0;
 	Dataset *validationDataset = new Dataset[1];
@@ -476,6 +478,20 @@ void MultilayerPerceptron::runOnlineBackPropagation(Dataset * trainDataset, Data
 			iterWithoutImproving = 0;
 		else
 			iterWithoutImproving++;
+
+		if(this->validationRatio > 0 && this->validationRatio < 1){
+			validationError = test(validationDataset);
+
+			if(countTrain == 0 || validationError < minValidationError){
+				minValidationError = validationError;
+				validationWithoutImproving = 0;
+			}
+			else if ((validationError - minValidationError) < 0.00001)
+				validationWithoutImproving = 0;
+			else
+				validationWithoutImproving++;
+			
+		}
 
 		if(iterWithoutImproving==50){
 			std::cout << "We exit because the training is not improving!!"<< endl;
