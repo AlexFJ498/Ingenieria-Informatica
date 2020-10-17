@@ -341,7 +341,6 @@ double MultilayerPerceptron::test(Dataset* testDataset) {
 // Your have to use the format from Kaggle: two columns (Id y predictied)
 void MultilayerPerceptron::predict(Dataset* pDatosTest) {
 	ofstream f("prediccion_kaggle.csv");
-	string aux = "";
 	int numSalidas = layers[nOfLayers-1].nOfNeurons;
 	double * obtained = new double[numSalidas];
 	
@@ -355,11 +354,11 @@ void MultilayerPerceptron::predict(Dataset* pDatosTest) {
 		getOutputs(obtained);
 		
 		std::cout << i;
-		f << std::to_string(i);
+		f << i;
 
 		for (int j = 0; j < numSalidas; j++){
 			std::cout << "," << obtained[j];
-			f << "," << std::to_string(obtained[j]);
+			f << "," << obtained[j];
 		}
 
 		f << std::endl;
