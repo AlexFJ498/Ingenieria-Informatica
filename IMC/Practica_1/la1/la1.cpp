@@ -183,7 +183,7 @@ int main(int argc, char **argv) {
             }
         }
 
-        cout << "WE HAVE FINISHED WITH ALL THE SEEDS" << endl;
+        cout << "\nWE HAVE FINISHED WITH ALL THE SEEDS" << endl;
 
         double averageTestError = 0, stdTestError = 0;
         double averageTrainError = 0, stdTrainError = 0;
@@ -207,7 +207,7 @@ int main(int argc, char **argv) {
         stdTrainError = sqrt(stdTrainError / 5);
         
 
-        cout << "FINAL REPORT" << endl;
+        cout << "\nFINAL REPORT" << endl;
         cout << "************" << endl;
         cout << "Train error (Mean +- SD): " << averageTrainError << " +- " << stdTrainError << endl;
         cout << "Test error (Mean +- SD):          " << averageTestError << " +- " << stdTestError << endl;

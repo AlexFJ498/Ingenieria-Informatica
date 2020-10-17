@@ -136,7 +136,7 @@ MultilayerPerceptron::~MultilayerPerceptron() {
 // Free memory for the data structures
 void MultilayerPerceptron::freeMemory() {
 	layers.clear();
-	layers.shrink_to_fit();
+	vector<Layer>().swap(layers);
 }
 
 // ------------------------------
