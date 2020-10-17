@@ -14,7 +14,6 @@
 #include <string>
 #include <cstdlib>  // To establish the seed srand() and generate pseudorandom numbers rand()
 #include <limits>
-#include <random>
 #include <math.h>
 
 
@@ -80,48 +79,6 @@ void MultilayerPerceptron::initialize(int nl, int npl[]) {
 		this->layers.push_back(l);
 		nOfNeuronsPrev = l.nOfNeurons;
 	}
-
-/*
-	Layer l;
-
-	l.nOfNeurons = npl[0];
-
-	//Layer 0
-	for(int i=0; i<l.nOfNeurons; i++){
-		Neuron n;
-		n.w = NULL;
-		n.deltaW = NULL;
-		n.lastDeltaW = NULL;
-		n.wCopy = NULL;
-
-		l.neurons.push_back(n);
-	}
-	this->layers.push_back(l);
-
-	//Layers 1-n
-	for(int i=1; i<nl; i++){
-		Neuron n;
-		Layer l;
-		nOfNeuronsPrev = l.nOfNeurons;
-		l.neurons.clear();
-		l.nOfNeurons = npl[i];
-
-		n.w = new double[nOfNeuronsPrev + 1];
-		n.deltaW = new double[nOfNeuronsPrev + 1];
-		n.lastDeltaW = new double[nOfNeuronsPrev + 1];
-		n.wCopy = new double[nOfNeuronsPrev + 1];
-			
-		for(int j=0; j<nOfNeuronsPrev + 1; j++){
-			n.lastDeltaW[j] = 0.0;
-		}
-		
-		for(int j=0; j<l.nOfNeurons; j++){
-			l.neurons.push_back(n);
-		}
-
-		this->layers.push_back(l);
-	}
-	*/
 }
 
 
@@ -142,11 +99,6 @@ void MultilayerPerceptron::freeMemory() {
 // ------------------------------
 // Feed all the weights (w) with random numbers between -1 and +1
 void MultilayerPerceptron::randomWeights() {
-
-	//std::random_device rd;
-	//std::mt19937 gen(rd());
-	//std::uniform_real_distribution<> dis(-1.0, 1.0);
-
 	for(int i=1; i<this->nOfLayers; i++){
 		for(int j=0; j<this->layers.at(i).nOfNeurons; j++){
 			for(int k=0; k<this->layers.at(i-1).nOfNeurons + 1; k++){
