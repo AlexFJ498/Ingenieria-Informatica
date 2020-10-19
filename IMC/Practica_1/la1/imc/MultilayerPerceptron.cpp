@@ -364,25 +364,28 @@ void MultilayerPerceptron::predict(Dataset* pDatosTest) {
 		f << std::endl;
 		std::cout << endl;
 	}
+	f.close();
 }
 
 // ------------------------------
 // Run the traning algorithm for a given number of epochs, using trainDataset
 // Once finished, check the performance of the network in testDataset
 // Both training and test MSEs should be obtained and stored in errorTrain and errorTest
-void MultilayerPerceptron::runOnlineBackPropagation(Dataset * trainDataset, Dataset * testDataset, int maxiter, double *errorTrain, double *errorTest) {
+void MultilayerPerceptron::runOnlineBackPropagation(Dataset * trainDataset, Dataset * testDataset, int maxiter, double *errorTrain, double *errorTest, string nameProblem) {
 	int countTrain = 0;
 
 	// Random assignment of weights (starting point)
 	this->randomWeights();
 
-	int iterWithoutImproving;
+	int iterWithoutImproving = 0;
 	int validationWithoutImproving = 0;
 	double minTrainError = 0;
 	double lastValidationError = 0;
 	double testError = 0;
 	double validationError = 0;
 	Dataset *validationDataset = new Dataset[1];
+
+	ofstream f(nameProblem);
 
 	// Generate validation data
 	if(this->validationRatio > 0 && this->validationRatio < 1){
@@ -427,6 +430,7 @@ void MultilayerPerceptron::runOnlineBackPropagation(Dataset * trainDataset, Data
 	// Learning
 	do {
 		trainOnline(trainDataset);
+		testError = test(testDataset);
 		double trainError = test(trainDataset);
 		if(countTrain==0 || trainError < minTrainError){
 			minTrainError = trainError;
@@ -473,6 +477,8 @@ void MultilayerPerceptron::runOnlineBackPropagation(Dataset * trainDataset, Data
 			std::cout << "Iteration " << countTrain << "\t Training error: " << trainError << "\t Validation error: " << validationError << endl;
 		}
 
+		f << countTrain << "\t" << trainError << "\t" << testError <<std::endl;
+
 	} while ( countTrain<maxiter );
 
 	std::cout << "\nNETWORK WEIGHTS" << endl;
@@ -499,6 +505,7 @@ void MultilayerPerceptron::runOnlineBackPropagation(Dataset * trainDataset, Data
 	*errorTest=testError;
 	*errorTrain=minTrainError;
 
+	f.close();
 }
 
 // Optional Kaggle: Save the model weights in a textfile

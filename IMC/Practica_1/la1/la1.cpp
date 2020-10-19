@@ -14,6 +14,7 @@
 #include <cstdlib>  // To establish the seed srand() and generate pseudorandom numbers rand()
 #include <string.h>
 #include <math.h>
+#include <sstream>
 
 #include "imc/MultilayerPerceptron.h"
 
@@ -168,12 +169,16 @@ int main(int argc, char **argv) {
         double *testErrors = new double[5];
         double *trainErrors = new double[5];
         double bestTestError = 1;
+        string nameProblem;
         for(int i=0; i<5; i++){
             cout << "\n**********" << endl;
             cout << "SEED " << seeds[i] << endl;
             cout << "**********" << endl;
             srand(seeds[i]);
-            mlp.runOnlineBackPropagation(trainDataset,testDataset,iterations,&(trainErrors[i]),&(testErrors[i]));
+            std::ostringstream auxnameProblem;
+            auxnameProblem << "seed_" << i <<".txt";
+            nameProblem = auxnameProblem.str();
+            mlp.runOnlineBackPropagation(trainDataset,testDataset,iterations,&(trainErrors[i]),&(testErrors[i]), nameProblem);
             cout << "\nWe end!! => Final test error: " << testErrors[i] << endl;
 
             // We save the weights every time we find a better model
