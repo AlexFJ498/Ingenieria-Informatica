@@ -5,9 +5,6 @@
 
 #include "MultilayerPerceptron.h"
 
-#include "util.h"
-
-
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -19,7 +16,6 @@
 
 using namespace imc;
 using namespace std;
-using namespace util;
 
 // ------------------------------
 // Constructor: Default values for all the parameters
