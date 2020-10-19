@@ -377,9 +377,9 @@ void MultilayerPerceptron::runOnlineBackPropagation(Dataset * trainDataset, Data
 	this->randomWeights();
 
 	int iterWithoutImproving;
-	int validationWithoutImproving;
+	int validationWithoutImproving = 0;
 	double minTrainError = 0;
-	double minValidationError = 0;
+	double lastValidationError = 0;
 	double testError = 0;
 	double validationError = 0;
 	Dataset *validationDataset = new Dataset[1];
@@ -389,6 +389,10 @@ void MultilayerPerceptron::runOnlineBackPropagation(Dataset * trainDataset, Data
 		validationDataset->nOfInputs = trainDataset->nOfInputs;
 		validationDataset->nOfOutputs = trainDataset->nOfOutputs;
 		validationDataset->nOfPatterns = trainDataset->nOfPatterns * this->validationRatio;
+
+		if(validationDataset->nOfPatterns < 1){
+			validationDataset->nOfPatterns = 1;
+		}
 
 		validationDataset->inputs = new double*[validationDataset->nOfPatterns];
 		validationDataset->outputs = new double*[validationDataset->nOfPatterns];
@@ -401,9 +405,6 @@ void MultilayerPerceptron::runOnlineBackPropagation(Dataset * trainDataset, Data
 		for(int i=0; i<validationDataset->nOfPatterns; i++){
 			validationDataset->inputs[i] = trainDataset->inputs[i];
 			validationDataset->outputs[i] = trainDataset->outputs[i];
-
-			delete [] trainDataset->inputs[i];
-			delete [] trainDataset->outputs[i];
 		}
 
 		trainDataset->nOfPatterns -= validationDataset->nOfPatterns;
@@ -440,20 +441,24 @@ void MultilayerPerceptron::runOnlineBackPropagation(Dataset * trainDataset, Data
 		if(this->validationRatio > 0 && this->validationRatio < 1){
 			validationError = test(validationDataset);
 
-			if(countTrain == 0 || validationError < minValidationError){
-				minValidationError = validationError;
+			if(countTrain == 0 ){
+				lastValidationError = validationError;
 				validationWithoutImproving = 0;
 			}
-			else if ((validationError - minValidationError) < 0.00001)
+			else if ((validationError - lastValidationError) < 0.00001)
 				validationWithoutImproving = 0;
 			else
 				validationWithoutImproving++;
 			
+			lastValidationError = validationError;
 		}
 
 		if(iterWithoutImproving==50){
 			std::cout << "We exit because the training is not improving!!"<< endl;
 			restoreWeights();
+			countTrain = maxiter;
+		} else if(this->validationRatio > 0 && this->validationRatio < 1 && validationWithoutImproving == 50){
+			std::cout<<"We exit because the validation is not improving!!"<<std::endl;
 			countTrain = maxiter;
 		}
 
