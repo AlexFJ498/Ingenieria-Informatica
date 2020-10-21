@@ -26,8 +26,8 @@ using namespace std;
 
 int main(int argc, char **argv) {
 	// Process the command line
-    bool tflag = 0, Tflag = 0, iflag = 0, lflag = 0, hflag = 0, eflag = 0, mflag = 0;
-    bool vflag = 0, dflag = 0, oflag = 0, fflag = 0, sflag = 0, wflag = 0, pflag = 0;
+    bool tflag = 0, Tflag = 0, iflag = 0, lflag = 0, hflag = 0, eflag = 0;
+    bool mflag = 0, vflag = 0, dflag = 0, fflag = 0, wflag = 0, pflag = 0;
     char *tvalue = NULL, *Tvalue = NULL, *wvalue = NULL;
     int c, ivalue = 0, lvalue = 0, hvalue = 0, dvalue = 0, fvalue = 0;
     double evalue = 0.0, mvalue = 0, vvalue = 0;
@@ -80,13 +80,11 @@ int main(int argc, char **argv) {
                 dvalue = atoi(optarg);
                 break;
             case 'o':
-                oflag = true;
                 ovalue = true;
             case 'f':
                 fflag = true;
                 fvalue = atoi(optarg);
             case 's':
-                sflag = true;
                 svalue = true;
             case 'w':
                 wflag = true;
@@ -167,6 +165,12 @@ int main(int argc, char **argv) {
     	Dataset * testDataset = mlp.readData(Tvalue);
 
         // Initialize topology vector
+        if(!lflag){
+            lvalue = 1;
+        }
+        if(!hflag){
+            hvalue = 4;
+        }
         int *topology = new int[lvalue+2];
         topology[0] = trainDataset->nOfInputs;
         for(int i=1; i<(lvalue+2-1); i++)
