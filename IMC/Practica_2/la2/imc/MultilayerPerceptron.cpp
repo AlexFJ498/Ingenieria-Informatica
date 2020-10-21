@@ -188,7 +188,7 @@ void MultilayerPerceptron::predict(Dataset* dataset)
 // Both training and test MSEs should be obtained and stored in errorTrain and errorTest
 // Both training and test CCRs should be obtained and stored in ccrTrain and ccrTest
 // errorFunction=1 => Cross Entropy // errorFunction=0 => MSE
-void MultilayerPerceptron::runBackPropagation(Dataset * trainDataset, Dataset * testDataset, int maxiter, double *errorTrain, double *errorTest, double *ccrTrain, double *ccrTest, int errorFunction)
+void MultilayerPerceptron::runBackPropagation(Dataset * trainDataset, Dataset * testDataset, int maxiter, double *errorTrain, double *errorTest, double *ccrTrain, double *ccrTest, int errorFunction, std::string nameProblem)
 {
 	int countTrain = 0;
 

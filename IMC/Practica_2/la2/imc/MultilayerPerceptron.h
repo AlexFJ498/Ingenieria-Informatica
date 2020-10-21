@@ -7,6 +7,9 @@
 #ifndef _MULTILAYERPERCEPTRON_H_
 #define _MULTILAYERPERCEPTRON_H_
 
+#include <vector>
+#include <string>
+
 namespace imc{
 
 // Suggested structures
@@ -22,7 +25,7 @@ struct Neuron {
 
 struct Layer {
 	int     nOfNeurons;   /* Number of neurons of the layer*/
-	Neuron* neurons;      /* Vector with the neurons of the layer*/
+	std::vector<Neuron> neurons;      /* Vector with the neurons of the layer*/
 };
 
 struct Dataset {
@@ -36,7 +39,7 @@ struct Dataset {
 class MultilayerPerceptron {
 private:
 	int    nOfLayers;        /* Total number of layers in the network */
-	Layer* layers;           /* Vector containing every layer */
+	std::vector<Layer> layers;           /* Vector containing every layer */
 	int nOfTrainingPatterns; /* For the offline derivatives */
 
 	// Free memory for the data structures
@@ -129,7 +132,7 @@ public:
     // Both training and test MSEs should be obtained and stored in errorTrain and errorTest
     // Both training and test CCRs should be obtained and stored in ccrTrain and ccrTest
 	// errorFunction=1 => Cross Entropy // errorFunction=0 => MSE
-	void runBackPropagation(Dataset * trainDataset, Dataset * testDataset, int maxiter, double *errorTrain, double *errorTest, double *ccrTrain, double *ccrTest, int errorFunction);
+	void runBackPropagation(Dataset * trainDataset, Dataset * testDataset, int maxiter, double *errorTrain, double *errorTest, double *ccrTrain, double *ccrTest, int errorFunction, std::string nameProblem);
 
 	// Optional Kaggle: Save the model weights in a textfile
 	bool saveWeights(const char * fileName);
