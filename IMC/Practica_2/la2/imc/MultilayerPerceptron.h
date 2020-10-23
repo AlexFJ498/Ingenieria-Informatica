@@ -75,7 +75,7 @@ private:
 	void accumulateChange();
 
 	// Update the network weights, from the first layer to the last one
-	void weightAdjustment();
+	void weightAdjustment(double n);
 
 	// Print the network, i.e. all the weight matrices
 	void printNetwork();

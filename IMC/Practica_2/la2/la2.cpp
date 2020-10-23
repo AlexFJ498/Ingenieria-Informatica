@@ -81,11 +81,14 @@ int main(int argc, char **argv) {
                 break;
             case 'o':
                 ovalue = true;
+                break;
             case 'f':
                 fflag = true;
                 fvalue = atoi(optarg);
+                break;
             case 's':
                 svalue = true;
+                break;
             case 'w':
                 wflag = true;
                 wvalue = optarg;
@@ -194,6 +197,7 @@ int main(int argc, char **argv) {
             std::ostringstream auxnameProblem;
             auxnameProblem << "/pesos/seed_" << i << ".txt";
             nameProblem = auxnameProblem.str();
+            
 			mlp.runBackPropagation(trainDataset,testDataset,maxIter,&(trainErrors[i]),&(testErrors[i]),&(trainCCRs[i]),&(testCCRs[i]),error, nameProblem);
 			cout << "\nWe end!! => Final test CCR: " << testCCRs[i] << endl;
 
