@@ -19,6 +19,7 @@
 #include <sstream>
 
 #include "imc/MultilayerPerceptron.h"
+#include "imc/util.h"
 
 
 using namespace imc;
@@ -29,9 +30,9 @@ int main(int argc, char **argv) {
     bool tflag = 0, Tflag = 0, iflag = 0, lflag = 0, hflag = 0, eflag = 0;
     bool mflag = 0, vflag = 0, dflag = 0, fflag = 0, wflag = 0, pflag = 0;
     char *tvalue = NULL, *Tvalue = NULL, *wvalue = NULL;
-    int c, ivalue = 0, lvalue = 0, hvalue = 0, dvalue = 0, fvalue = 0;
+    int c, ivalue = 0, lvalue = 0, hvalue = 0, dvalue = 0, fvalue = 0, svalue = 0;
     double evalue = 0.0, mvalue = 0, vvalue = 0;
-    bool ovalue = false, svalue = false;
+    bool ovalue = false;
 
     opterr = 0;
 
@@ -87,7 +88,7 @@ int main(int argc, char **argv) {
                 fvalue = atoi(optarg);
                 break;
             case 's':
-                svalue = true;
+                svalue = 1;
                 break;
             case 'w':
                 wflag = true;
@@ -189,6 +190,20 @@ int main(int argc, char **argv) {
 		double *testCCRs = new double[5];
 		double bestTestError = DBL_MAX;
         string nameProblem;
+        double nPatterns = 0.0;
+        int * index = NULL;
+
+        if(mlp.validationRatio > 0 && mlp.validationRatio < 1){
+            nPatterns = trainDataset->nOfPatterns * mlp.validationRatio;
+
+            if(nPatterns < 1){
+                nPatterns = 1.0;
+            }
+
+            srand(time(NULL));
+            index = util::integerRandomVectorWithoutRepeating(0, trainDataset->nOfPatterns-1, (int)nPatterns);
+        }
+
 		for(int i=0; i<5; i++){
 			cout << "\n**********" << endl;
 			cout << "SEED " << seeds[i] << endl;
@@ -198,7 +213,7 @@ int main(int argc, char **argv) {
             auxnameProblem << "/pesos/seed_" << i << ".txt";
             nameProblem = auxnameProblem.str();
             
-			mlp.runBackPropagation(trainDataset,testDataset,maxIter,&(trainErrors[i]),&(testErrors[i]),&(trainCCRs[i]),&(testCCRs[i]),error, nameProblem);
+			mlp.runBackPropagation(trainDataset,testDataset,maxIter,&(trainErrors[i]),&(testErrors[i]),&(trainCCRs[i]),&(testCCRs[i]),error, index, nPatterns, nameProblem);
 			cout << "\nWe end!! => Final test CCR: " << testCCRs[i] << endl;
 
 			// We save the weights every time we find a better model

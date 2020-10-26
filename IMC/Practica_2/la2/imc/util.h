@@ -10,6 +10,7 @@
 
 namespace util{
 int * integerRandomVectorWithoutRepeating(int min, int max, int howMany);
+bool searchIndex(int num, int * array, int tam);
 
 }
 

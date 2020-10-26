@@ -32,6 +32,16 @@ int * integerRandomVectorWithoutRepeating(int min, int max, int howMany){
 
 };
 
+bool searchIndex(int num, int * array, int tam){
+        for(int i=0; i<tam; i++){
+                if(array[i] == num){
+                        return true;
+                }
+        }
+
+        return false;
+}
+
 }
 
 
