@@ -4,7 +4,6 @@
 *********************************************************************/
 
 #include "MultilayerPerceptron.h"
-#include "FuncionesAuxiliares.cpp"
 
 #include "util.h"
 
