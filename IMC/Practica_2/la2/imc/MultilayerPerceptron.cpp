@@ -31,7 +31,7 @@ MultilayerPerceptron::MultilayerPerceptron() {
 	this->validationRatio = 0.0;
 	this->decrementFactor = 1.0;
 	this->outputFunction = 0;
-	this->nOfTrainingPatterns = 0;
+	this->nOfTrainingPatterns = 1.0;
 }
 
 // ------------------------------
@@ -269,7 +269,6 @@ void MultilayerPerceptron::backpropagateError(double* target, int errorFunction)
 				else{
 					conditionSoftmax = 0;
 				}
-				//conditionSoftmax = (j == i);
 
 				if(errorFunction == 0){
 					this->layers.at(this->nOfLayers - 1).neurons.at(i).delta += -(target[j] - this->layers.at(this->nOfLayers-1).neurons.at(j).out) * out * (conditionSoftmax - this->layers.at(this->nOfLayers-1).neurons.at(j).out);
@@ -534,7 +533,7 @@ void MultilayerPerceptron::runBackPropagation(Dataset * trainDataset, Dataset * 
 
 	double minTrainError = 0;
 	int iterWithoutImproving = 0;
-	this->nOfTrainingPatterns = trainDataset->nOfPatterns;
+	this->nOfTrainingPatterns = 1.0;
 	double testError = 0;
 	double trainError = 0;
 
@@ -596,7 +595,7 @@ void MultilayerPerceptron::runBackPropagation(Dataset * trainDataset, Dataset * 
 			}
 		}
 	}
-
+std::cout<<"online: "<<this->online<<std::endl;
 	if(!this->online){
 		if(validationRatio > 0 && validationRatio < 1){
 			this->nOfTrainingPatterns = copyTrainDataset->nOfPatterns;
@@ -604,6 +603,9 @@ void MultilayerPerceptron::runBackPropagation(Dataset * trainDataset, Dataset * 
 		else{
 			this->nOfTrainingPatterns = trainDataset->nOfPatterns;
 		}
+	}
+	else{
+		std::cout<<"holaa\n";
 	}
 
 std::cout<<"nOfTrainingPatterns: "<<this->nOfTrainingPatterns<<std::endl;
