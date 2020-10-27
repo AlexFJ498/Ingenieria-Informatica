@@ -595,7 +595,7 @@ void MultilayerPerceptron::runBackPropagation(Dataset * trainDataset, Dataset * 
 			}
 		}
 	}
-std::cout<<"online: "<<this->online<<std::endl;
+
 	if(!this->online){
 		if(validationRatio > 0 && validationRatio < 1){
 			this->nOfTrainingPatterns = copyTrainDataset->nOfPatterns;
@@ -604,11 +604,7 @@ std::cout<<"online: "<<this->online<<std::endl;
 			this->nOfTrainingPatterns = trainDataset->nOfPatterns;
 		}
 	}
-	else{
-		std::cout<<"holaa\n";
-	}
 
-std::cout<<"nOfTrainingPatterns: "<<this->nOfTrainingPatterns<<std::endl;
 	// Learning
 	do {
 		if(!(validationRatio > 0 && validationRatio < 1)){
