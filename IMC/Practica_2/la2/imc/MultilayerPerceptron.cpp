@@ -158,10 +158,10 @@ void MultilayerPerceptron::restoreWeights() {
 // Calculate and propagate the outputs of the neurons, from the first layer until the last one -->-->
 void MultilayerPerceptron::forwardPropagate() {
 	double net;
-	double *sumNet = new double[this->nOfLayers-1];
+	double sumNet = 0.0;
 
 	for(int i=1; i<this->nOfLayers; i++){
-		sumNet[i-1] = 0.0;
+		sumNet = 0.0;
 		for(int j=0; j<this->layers.at(i).nOfNeurons; j++){
 			net = 0.0;
 			for(int k=1; k<this->layers.at(i-1).nOfNeurons +1; k++){
@@ -172,7 +172,7 @@ void MultilayerPerceptron::forwardPropagate() {
 
 			if((i == (this->nOfLayers - 1)) && (this->outputFunction == 1)){
 				this->layers.at(i).neurons.at(j).out = exp(net);
-				sumNet[i-1] += exp(net);
+				sumNet += exp(net);
 			}
 			else{
 				this->layers.at(i).neurons.at(j).out = 1.0 / (1 + exp(-net));
@@ -181,12 +181,11 @@ void MultilayerPerceptron::forwardPropagate() {
 
 		if((i == (this->nOfLayers - 1)) && (this->outputFunction == 1)){
 			for(int j=0; j<this->layers.at(i).nOfNeurons; j++){
-				this->layers[i].neurons[j].out /= sumNet[i-1];
+				this->layers[i].neurons[j].out /= sumNet;
 			}
 		}
 	}
 
-	delete sumNet;
 /*
 	
 	double net, sumSoftmax = 0.0;
@@ -468,7 +467,7 @@ double MultilayerPerceptron::test(Dataset* dataset, int errorFunction) {
 
 // ------------------------------
 // Test the network with a dataset and return the CCR
-double MultilayerPerceptron::testClassification(Dataset* dataset) {
+double MultilayerPerceptron::testClassification(Dataset* dataset, int **confusionMatrix) {
 	int ccr = 0.0;
 	int expectedClass = 0, obtainedClass = 0;
 	double *outArray = new double[this->layers.at(this->nOfLayers - 1).nOfNeurons];
@@ -483,6 +482,10 @@ double MultilayerPerceptron::testClassification(Dataset* dataset) {
 
 		if(expectedClass == obtainedClass){
 			ccr++;
+		}
+
+		if(confusionMatrix != NULL){
+			confusionMatrix[expectedClass][obtainedClass]++;
 		}
 	}
 
@@ -525,7 +528,7 @@ void MultilayerPerceptron::predict(Dataset* dataset) {
 // Both training and test MSEs should be obtained and stored in errorTrain and errorTest
 // Both training and test CCRs should be obtained and stored in ccrTrain and ccrTest
 // errorFunction=1 => Cross Entropy // errorFunction=0 => MSE
-void MultilayerPerceptron::runBackPropagation(Dataset * trainDataset, Dataset * testDataset, int maxiter, double *errorTrain, double *errorTest, double *ccrTrain, double *ccrTest, int errorFunction, int* index, double nPatterns, std::string nameProblem) {
+void MultilayerPerceptron::runBackPropagation(Dataset * trainDataset, Dataset * testDataset, int maxiter, double *errorTrain, double *errorTest, double *ccrTrain, double *ccrTest, int errorFunction, int* index, double nPatterns, std::string nameProblem, int **confusionMatrix) {
 	int countTrain = 0;
 
 	// Random assignment of weights (starting point)
@@ -698,12 +701,12 @@ void MultilayerPerceptron::runBackPropagation(Dataset * trainDataset, Dataset * 
 	*errorTest=test(testDataset,errorFunction);;
 	*errorTrain=minTrainError;
 
-	*ccrTest = testClassification(testDataset);
+	*ccrTest = testClassification(testDataset, confusionMatrix);
 	if(!(validationRatio > 0 && validationRatio < 1)){
-		*ccrTrain = testClassification(trainDataset);
+		*ccrTrain = testClassification(trainDataset, NULL);
 	}
 	else{
-		*ccrTrain = testClassification(copyTrainDataset);
+		*ccrTrain = testClassification(copyTrainDataset, NULL);
 		//*ccrTrain = testClassification(trainDataset);
 	}
 	

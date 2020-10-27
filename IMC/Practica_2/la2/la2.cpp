@@ -192,6 +192,24 @@ int main(int argc, char **argv) {
         string nameProblem;
         double nPatterns = 0.0;
         int * index = NULL;
+        int *** confusionMatrix = NULL;
+        confusionMatrix = new int**[5]();
+        int ** bestConfusionMatrix = NULL;
+        bestConfusionMatrix = new int*[trainDataset->nOfOutputs];
+        double bestccr = 0.0;
+        int seed = 0;
+
+        for(int i=0; i<5; i++){
+            confusionMatrix[i] = new int*[trainDataset->nOfOutputs]();
+
+            for(int j=0; j<trainDataset->nOfOutputs; j++){
+                confusionMatrix[i][j] = new int[trainDataset->nOfOutputs]();
+            }
+        }
+
+        for(int i=0; i<trainDataset->nOfOutputs; i++){
+            bestConfusionMatrix[i] = new int[trainDataset->nOfOutputs]();
+        }
 
         if(mlp.validationRatio > 0 && mlp.validationRatio < 1){
             nPatterns = trainDataset->nOfPatterns * mlp.validationRatio;
@@ -205,22 +223,28 @@ int main(int argc, char **argv) {
         }
 
 		for(int i=0; i<5; i++){
-			cout << "\n**********" << endl;
-			cout << "SEED " << seeds[i] << endl;
-			cout << "**********" << endl;
+			std::cout << "\n**********" << endl;
+			std::cout << "SEED " << seeds[i] << endl;
+			std::cout << "**********" << endl;
 			srand(seeds[i]);
             std::ostringstream auxnameProblem;
             auxnameProblem << "/pesos/seed_" << i << ".txt";
             nameProblem = auxnameProblem.str();
             
-			mlp.runBackPropagation(trainDataset,testDataset,maxIter,&(trainErrors[i]),&(testErrors[i]),&(trainCCRs[i]),&(testCCRs[i]),error, index, nPatterns, nameProblem);
-			cout << "\nWe end!! => Final test CCR: " << testCCRs[i] << endl;
+			mlp.runBackPropagation(trainDataset,testDataset,maxIter,&(trainErrors[i]),&(testErrors[i]),&(trainCCRs[i]),&(testCCRs[i]),error, index, nPatterns, nameProblem, confusionMatrix[i]);
+			std::cout << "\nWe end!! => Final test CCR: " << testCCRs[i] << endl;
 
 			// We save the weights every time we find a better model
 			if(wflag && testErrors[i] <= bestTestError){
 				mlp.saveWeights(wvalue);
 				bestTestError = testErrors[i];
 			}
+
+            if(testCCRs[i] > bestccr){
+                bestccr = testCCRs[i];
+                bestConfusionMatrix = confusionMatrix[i];
+                seed = i;
+            }
 		}
 
 
@@ -255,14 +279,25 @@ int main(int argc, char **argv) {
         trainStdCCR = sqrt(trainStdCCR / 5);
         testStdCCR = sqrt(testStdCCR / 5);
 
-		cout << "\nWE HAVE FINISHED WITH ALL THE SEEDS" << endl;
+		std::cout << "\nWE HAVE FINISHED WITH ALL THE SEEDS" << endl;
 
-		cout << "\nFINAL REPORT" << endl;
-		cout << "*************" << endl;
-	    cout << "Train error (Mean +- SD): " << trainAverageError << " +- " << trainStdError << endl;
-	    cout << "Test error (Mean +- SD): " << testAverageError << " +- " << testStdError << endl;
-	    cout << "Train CCR (Mean +- SD): " << trainAverageCCR << " +- " << trainStdCCR << endl;
-	    cout << "Test CCR (Mean +- SD): " << testAverageCCR << " +- " << testStdCCR << endl;
+        std::cout<<"\nConfusion Matrix (seed "<<seed<<")"<<std::endl;
+        for(int i=0; i<trainDataset->nOfOutputs; i++){
+            for(int j=0; j<trainDataset->nOfOutputs; j++){
+                std::cout<<bestConfusionMatrix[i][j]<<" ";
+            }
+            std::cout<<std::endl;
+        }
+
+        delete confusionMatrix;
+        delete bestConfusionMatrix;
+
+		std::cout << "\nFINAL REPORT" << endl;
+		std::cout << "*************" << endl;
+	    std::cout << "Train error (Mean +- SD): " << trainAverageError << " +- " << trainStdError << endl;
+	    std::cout << "Test error (Mean +- SD): " << testAverageError << " +- " << testStdError << endl;
+	    std::cout << "Train CCR (Mean +- SD): " << trainAverageCCR << " +- " << trainStdCCR << endl;
+	    std::cout << "Test CCR (Mean +- SD): " << testAverageCCR << " +- " << testStdCCR << endl;
 		return EXIT_SUCCESS;
     } else {
         //////////////////////////////
@@ -278,7 +313,7 @@ int main(int argc, char **argv) {
         if(!wflag || !mlp.readWeights(wvalue))
         {
             cerr << "Error while reading weights, we can not continue" << endl;
-            exit(-1);
+            std::exit(-1);
         }
 
         // Reading training and test data: call to mlp.readData(...)
@@ -287,7 +322,7 @@ int main(int argc, char **argv) {
         if(testDataset == NULL)
         {
             cerr << "The test file is not valid, we can not continue" << endl;
-            exit(-1);
+            std::exit(-1);
         }
 
         mlp.predict(testDataset);
