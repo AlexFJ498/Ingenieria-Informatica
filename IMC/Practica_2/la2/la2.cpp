@@ -228,10 +228,10 @@ int main(int argc, char **argv) {
 			std::cout << "**********" << endl;
 			srand(seeds[i]);
             std::ostringstream auxnameProblem;
-            auxnameProblem << "/pesos/seed_" << i << ".txt";
+            auxnameProblem << "seed_" << i << ".txt";
             nameProblem = auxnameProblem.str();
             
-			mlp.runBackPropagation(trainDataset,testDataset,maxIter,&(trainErrors[i]),&(testErrors[i]),&(trainCCRs[i]),&(testCCRs[i]),error, index, nPatterns, nameProblem, confusionMatrix[i]);
+			mlp.runBackPropagation(trainDataset,testDataset,maxIter,&(trainErrors[i]),&(testErrors[i]),&(trainCCRs[i]),&(testCCRs[i]),error, index, nPatterns, nameProblem.c_str(), confusionMatrix[i]);
 			std::cout << "\nWe end!! => Final test CCR: " << testCCRs[i] << endl;
 
 			// We save the weights every time we find a better model

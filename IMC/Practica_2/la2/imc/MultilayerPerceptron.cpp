@@ -528,24 +528,26 @@ void MultilayerPerceptron::predict(Dataset* dataset) {
 // Both training and test MSEs should be obtained and stored in errorTrain and errorTest
 // Both training and test CCRs should be obtained and stored in ccrTrain and ccrTest
 // errorFunction=1 => Cross Entropy // errorFunction=0 => MSE
-void MultilayerPerceptron::runBackPropagation(Dataset * trainDataset, Dataset * testDataset, int maxiter, double *errorTrain, double *errorTest, double *ccrTrain, double *ccrTest, int errorFunction, int* index, double nPatterns, std::string nameProblem, int **confusionMatrix) {
+void MultilayerPerceptron::runBackPropagation(Dataset * trainDataset, Dataset * testDataset, int maxiter, double *errorTrain, double *errorTest, double *ccrTrain, double *ccrTest, int errorFunction, int* index, double nPatterns, const char * nameProblem, int **confusionMatrix) {
 	int countTrain = 0;
 
 	// Random assignment of weights (starting point)
 	this->randomWeights();
 
-	double minTrainError = 0;
+	double minTrainError = 0.0;
 	int iterWithoutImproving = 0;
 	this->nOfTrainingPatterns = 1.0;
-	double testError = 0;
-	double trainError = 0;
+	double trainError = 0.0;
+	double trainCCR = 0.0;
+	double testCCR = 0.0;
+	double validationCCR = 0.0;
 
 	Dataset * validationDataset = new Dataset[1];
 	Dataset * copyTrainDataset = new Dataset[1];
 	double validationError = 0, previousValidationError = 0;
 	int iterWithoutImprovingValidation = 0;
 
-	std::ofstream f(nameProblem);
+	ofstream f(nameProblem);
 
 	// Generate validation data
 	if(validationRatio > 0 && validationRatio < 1){
@@ -612,8 +614,9 @@ void MultilayerPerceptron::runBackPropagation(Dataset * trainDataset, Dataset * 
 	do {
 		if(!(validationRatio > 0 && validationRatio < 1)){
 			train(trainDataset,errorFunction);
-			testError = test(testDataset,errorFunction);
 			trainError = test(trainDataset,errorFunction);
+			trainCCR = testClassification(trainDataset, NULL);
+			testCCR = testClassification(testDataset, NULL);
 			if(countTrain==0 || trainError < minTrainError){
 				minTrainError = trainError;
 				copyWeights();
@@ -633,8 +636,10 @@ void MultilayerPerceptron::runBackPropagation(Dataset * trainDataset, Dataset * 
 
 		if(validationRatio > 0 && validationRatio < 1){
 			train(copyTrainDataset,errorFunction);
-			testError = test(testDataset,errorFunction);
 			trainError = test(copyTrainDataset,errorFunction);
+			trainCCR = testClassification(copyTrainDataset, NULL);
+			testCCR = testClassification(testDataset, NULL);
+			validationCCR = testClassification(validationDataset, NULL);
 			if(countTrain==0 || trainError < minTrainError){
 				minTrainError = trainError;
 				copyWeights();
@@ -672,7 +677,7 @@ void MultilayerPerceptron::runBackPropagation(Dataset * trainDataset, Dataset * 
 		countTrain++;
 
 		std::cout << "Iteration " << countTrain << "\t Training error: " << trainError << "\t Validation error: " << validationError << endl;
-		f << countTrain << "\t" << trainError << "\t" << testError << "\t" << validationError << std::endl;
+		f << countTrain << "\t" << trainCCR << "\t" << testCCR << "\t" << validationCCR << std::endl;
 
 	} while ( countTrain<maxiter );
 

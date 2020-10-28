@@ -132,7 +132,7 @@ public:
     // Both training and test MSEs should be obtained and stored in errorTrain and errorTest
     // Both training and test CCRs should be obtained and stored in ccrTrain and ccrTest
 	// errorFunction=1 => Cross Entropy // errorFunction=0 => MSE
-	void runBackPropagation(Dataset * trainDataset, Dataset * testDataset, int maxiter, double *errorTrain, double *errorTest, double *ccrTrain, double *ccrTest, int errorFunction, int* index, double nPatterns, std::string nameProblem, int **confusionMatrix);
+	void runBackPropagation(Dataset * trainDataset, Dataset * testDataset, int maxiter, double *errorTrain, double *errorTest, double *ccrTrain, double *ccrTest, int errorFunction, int* index, double nPatterns, const char * nameProblem, int **confusionMatrix);
 
 	// Optional Kaggle: Save the model weights in a textfile
 	bool saveWeights(const char * fileName);
