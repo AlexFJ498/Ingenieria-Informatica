@@ -30,8 +30,8 @@ int main(int argc, char **argv) {
     bool tflag = 0, Tflag = 0, iflag = 0, lflag = 0, hflag = 0, eflag = 0;
     bool mflag = 0, vflag = 0, dflag = 0, fflag = 0, wflag = 0, pflag = 0;
     char *tvalue = NULL, *Tvalue = NULL, *wvalue = NULL;
-    int c, ivalue = 0, lvalue = 0, hvalue = 0, dvalue = 0, fvalue = 0, svalue = 0;
-    double evalue = 0.0, mvalue = 0, vvalue = 0;
+    int c, ivalue = 0, lvalue = 0, hvalue = 0, fvalue = 0, svalue = 0;
+    double evalue = 0.0, mvalue = 0.0, vvalue = 0.0, dvalue = 0.0;
     bool ovalue = false;
 
     opterr = 0;
@@ -78,7 +78,7 @@ int main(int argc, char **argv) {
                 break;
             case 'd':
                 dflag = true;
-                dvalue = atoi(optarg);
+                dvalue = atof(optarg);
                 break;
             case 'o':
                 ovalue = true;
@@ -144,7 +144,7 @@ int main(int argc, char **argv) {
         mlp.validationRatio = vvalue;
 
         if(!dflag){
-            dvalue = 1;
+            dvalue = 1.0;
         }
         mlp.decrementFactor = dvalue;
 

@@ -501,7 +501,7 @@ void MultilayerPerceptron::predict(Dataset* dataset) {
 	double * salidas = new double[numSalidas];
 	
 	std::cout << "Id,Category" << endl;
-	f << "Id,Predicted" << std::endl;
+	f << "Id,Category" << std::endl;
 	
 	for (int i=0; i<dataset->nOfPatterns; i++){
 
@@ -515,7 +515,7 @@ void MultilayerPerceptron::predict(Dataset* dataset) {
 				maxIndex = j;
 		
 		std::cout << i << "," << maxIndex << endl;
-		f << i << "," << maxIndex;
+		f << i << "," << maxIndex << std::endl;
 	}
 	f.close();
 }
