@@ -1,33 +1,45 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-"""
-Created on Sun Oct 25 12:37:04 2020
 
-IMC: lab assignment 3
-
-@author: pagutierrez
-"""
 
 # TODO Include all neccesary imports
 import pickle
 import os
+import numpy as np
+import click
+from sklearn.metrics import mean_squared_error
+from sklearn.preprocessing import OneHotEncoder
 
 @click.command()
 @click.option('--train_file', '-t', default=None, required=False,
               help=u'Name of the file with training data.')
-
-# TODO Include the rest of parameters...
-
+@click.option('--test_file','-T', default=None, show_default=True,
+              help=u'Name of the file with test data. ')
+@click.option('--classification', '-c', default=False, show_default=True,
+              help=u'Use of Classification or regression. ')
+@click.option('--ratio_rbf', '-r', default=0.1, show_default=True,
+              help=u'Ratio (as a fraction of 1) indicating the number of RBFs with respect to the total number of patterns. ')
+@click.option('--l2', '-l', default=False, show_default=True,
+              help=u'Use L2 regularization or L1 regularization. ')
+@click.option('--eta', '-e', default=0.01, show_default=True,
+              help=u'Value of eta. ')
+@click.option('--outputs', '-o', default=1, show_default=True,
+              help=u'Number of output columns. ')
 @click.option('--pred', '-p', is_flag=True, default=False, show_default=True,
               help=u'Use the prediction mode.') # KAGGLE
-@click.option('--model', '-m', default="", show_default=False,
+@click.option('--model_file', '-m', default="", show_default=False,
               help=u'Directory name to save the models (or name of the file to load the model, if the prediction mode is active).') # KAGGLE
-def train_rbf_total(train_file, test_file, classification, ratio_rbf, l2, eta, outputs, model, pred):
+
+
+def train_rbf_total(train_file, test_file, classification, ratio_rbf, l2, eta, outputs, model_file, pred):
     """ 5 executions of RBFNN training
     
         RBF neural network based on hybrid supervised/unsupervised training.
         We run 5 executions with different seeds.
     """
+
+    if test_file is None:
+        test_file = train_file
 
     if not pred:    
 
@@ -47,7 +59,7 @@ def train_rbf_total(train_file, test_file, classification, ratio_rbf, l2, eta, o
             np.random.seed(s)
             train_mses[s-1], test_mses[s-1], train_ccrs[s-1], test_ccrs[s-1] = \
                 train_rbf(train_file, test_file, classification, ratio_rbf, l2, eta, outputs, \
-                             model and "{}/{}.pickle".format(model, s) or "")
+                             model_file and "{}/{}.pickle".format(model_file, s) or "")
             print("Training MSE: %f" % train_mses[s-1])
             print("Test MSE: %f" % test_mses[s-1])
             print("Training CCR: %.2f%%" % train_ccrs[s-1])
@@ -63,12 +75,12 @@ def train_rbf_total(train_file, test_file, classification, ratio_rbf, l2, eta, o
             
     else:
         # KAGGLE
-        if model is None:
+        if model_file is None:
             print("You have not specified the file with the model (-m).")
             return
 
         # Obtain the predictions for the test set
-        predictions = predict(test_file, model)
+        predictions = predict(test_file, model_file)
 
         # Print the predictions in csv format
         print("Id,Category")
@@ -135,8 +147,10 @@ def train_rbf(train_file, test_file, classification, ratio_rbf, l2, eta, outputs
                                                                         test_file,
                                                                         outputs)
 
-    #TODO: Obtain num_rbf from ratio_rbf
+    #Obtain num_rbf from ratio_rbf
+    num_rbf = int(ratio_rbf * len(train_inputs))
     print("Number of RBFs used: %d" %(num_rbf))
+
     kmeans, distances, centers = clustering(classification, train_inputs, 
                                               train_outputs, num_rbf)
     
@@ -153,6 +167,8 @@ def train_rbf(train_file, test_file, classification, ratio_rbf, l2, eta, outputs
     TODO: Obtain the distances from the centroids to the test patterns
           and obtain the R matrix for the test set
     """
+    
+    r_matrix_test = calculate_r_matrix(kmeans.transform(test_inputs), radii)
 
     # # # # KAGGLE # # # #
     if model_file != "":
@@ -180,12 +196,29 @@ def train_rbf(train_file, test_file, classification, ratio_rbf, l2, eta, outputs
         TODO: Obtain the predictions for training and test and calculate
               the MSE
         """
+        prediction_train = np.matmul(r_matrix, coefficients)
+        prediction_test = np.matmul(r_matrix_test, coefficients)
+
+        train_mse = mean_squared_error(prediction_train, train_outputs)
+        test_mse = mean_squared_error(prediction_test, test_outputs)
+
+        train_ccr = 0
+        test_ccr = 0
     else:
         """
         TODO: Obtain the predictions for training and test and calculate
               the CCR. Obtain also the MSE, but comparing the obtained
               probabilities and the target probabilities
         """
+        log_b = OneHotEncoder()
+        train_binary_outputs = log_b.fit_transform(train_outputs).toarray()
+        test_binary_outputs = log_b.fit_transform(test_outputs).toarray()
+
+        train_ccr = logreg.score(r_matrix, train_outputs) * 100
+        test_ccr = logreg.score(r_matrix_test, test_outputs) * 100
+
+        train_mse = mean_squared_error(train_binary_outputs, logreg.predict_proba(r_matrix))
+        test_mse = mean_squared_error(test_binary_outputs, logreg.predict_proba(r_matrix_test))
 
     return train_mse, test_mse, train_ccr, test_ccr
 
