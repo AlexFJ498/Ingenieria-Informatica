@@ -250,6 +250,8 @@ def read_data(train_file, test_file, outputs):
     """
 
     #TODO: Complete the code of the function
+    
+
     return train_inputs, train_outputs, test_inputs, test_outputs
 
 def init_centroids_classification(train_inputs, train_outputs, num_rbf):
