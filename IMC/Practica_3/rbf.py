@@ -7,21 +7,28 @@ import pickle
 import os
 import numpy as np
 import click
+import pandas as pd
+from numpy.linalg import matrix_power
 from sklearn.metrics import mean_squared_error
 from sklearn.preprocessing import OneHotEncoder
+from sklearn.model_selection import train_test_split
+from sklearn.cluster import KMeans
+from sklearn.linear_model import LogisticRegression
+from scipy.spatial.distance import pdist
+from scipy.spatial.distance import squareform
 
 @click.command()
 @click.option('--train_file', '-t', default=None, required=False,
               help=u'Name of the file with training data.')
 @click.option('--test_file','-T', default=None, show_default=True,
               help=u'Name of the file with test data. ')
-@click.option('--classification', '-c', default=False, show_default=True,
+@click.option('--classification', '-c', default=False, show_default=True, is_flag=True,
               help=u'Use of Classification or regression. ')
 @click.option('--ratio_rbf', '-r', default=0.1, show_default=True,
               help=u'Ratio (as a fraction of 1) indicating the number of RBFs with respect to the total number of patterns. ')
-@click.option('--l2', '-l', default=False, show_default=True,
+@click.option('--l2', '-l', default=False, show_default=True, is_flag=True,
               help=u'Use L2 regularization or L1 regularization. ')
-@click.option('--eta', '-e', default=0.01, show_default=True,
+@click.option('--eta', '-e', default=0.01, show_default=True, 
               help=u'Value of eta. ')
 @click.option('--outputs', '-o', default=1, show_default=True,
               help=u'Number of output columns. ')
@@ -38,10 +45,10 @@ def train_rbf_total(train_file, test_file, classification, ratio_rbf, l2, eta, o
         We run 5 executions with different seeds.
     """
 
-    if test_file is None:
-        test_file = train_file
-
     if not pred:    
+
+        if test_file is None:
+            test_file = train_file
 
         if train_file is None:
             print("You have not specified the training file (-t)")
@@ -51,12 +58,13 @@ def train_rbf_total(train_file, test_file, classification, ratio_rbf, l2, eta, o
         train_ccrs = np.empty(5)
         test_mses = np.empty(5)
         test_ccrs = np.empty(5)
-    
+        
         for s in range(1,6,1):   
             print("-----------")
             print("Seed: %d" % s)
             print("-----------")     
             np.random.seed(s)
+            
             train_mses[s-1], test_mses[s-1], train_ccrs[s-1], test_ccrs[s-1] = \
                 train_rbf(train_file, test_file, classification, ratio_rbf, l2, eta, outputs, \
                              model_file and "{}/{}.pickle".format(model_file, s) or "")
@@ -146,7 +154,7 @@ def train_rbf(train_file, test_file, classification, ratio_rbf, l2, eta, outputs
     train_inputs, train_outputs, test_inputs, test_outputs = read_data(train_file, 
                                                                         test_file,
                                                                         outputs)
-
+    
     #Obtain num_rbf from ratio_rbf
     num_rbf = int(ratio_rbf * len(train_inputs))
     print("Number of RBFs used: %d" %(num_rbf))
@@ -157,12 +165,12 @@ def train_rbf(train_file, test_file, classification, ratio_rbf, l2, eta, outputs
     radii = calculate_radii(centers, num_rbf)
     
     r_matrix = calculate_r_matrix(distances, radii)
-
+    
     if not classification:
         coefficients = invert_matrix_regression(r_matrix, train_outputs)
     else:
         logreg = logreg_classification(r_matrix, train_outputs, l2, eta)
-
+    
     """
     TODO: Obtain the distances from the centroids to the test patterns
           and obtain the R matrix for the test set
@@ -249,8 +257,20 @@ def read_data(train_file, test_file, outputs):
             Matrix containing the outputs for the test patterns
     """
 
-    #TODO: Complete the code of the function
-    
+    #Complete the code of the function
+    df_train = pd.read_csv(train_file)
+    df_test = pd.read_csv(test_file)
+
+    train = df_train.to_numpy()
+    test = df_test.to_numpy()
+    train = train.astype(np.float32)
+    test = test.astype(np.float32)
+
+    train_inputs = train[:, 0:-outputs]
+    train_outputs = train[:, train_inputs.shape[1]:]
+
+    test_inputs = test[:, 0:-outputs]
+    test_outputs = test[:, test_inputs.shape[1]:]
 
     return train_inputs, train_outputs, test_inputs, test_outputs
 
@@ -275,6 +295,8 @@ def init_centroids_classification(train_inputs, train_outputs, num_rbf):
     """
     
     #TODO: Complete the code of the function
+    centroids, x_test, y_train, y_test = train_test_split(train_inputs, train_outputs, train_size=num_rbf, stratify=train_outputs)
+
     return centroids
 
 def clustering(classification, train_inputs, train_outputs, num_rbf):
@@ -305,7 +327,18 @@ def clustering(classification, train_inputs, train_outputs, num_rbf):
             Centers after the clustering
     """
 
-    #TODO: Complete the code of the function
+    #Complete the code of the function
+    if classification == True:
+        centroids = init_centroids_classification(train_inputs, train_outputs, num_rbf)
+        kmeans = KMeans(n_clusters=num_rbf, init=centroids, n_init=1, max_iter=500)
+    else:
+        kmeans = KMeans(n_clusters=num_rbf, init='random', n_init=1, max_iter=500)
+    
+    kmeans.fit(train_inputs)
+
+    distances = kmeans.transform(train_inputs)
+    centers = kmeans.cluster_centers_
+
     return kmeans, distances, centers
 
 def calculate_radii(centers, num_rbf):
@@ -326,7 +359,13 @@ def calculate_radii(centers, num_rbf):
             Array with the radius of each RBF
     """
 
-    #TODO: Complete the code of the function
+    #Complete the code of the function
+    dist=squareform(pdist(centers))
+    radii=np.array([],dtype=np.float64)
+
+    for x in range(0,num_rbf):
+        radii=np.append(radii, sum(dist[x])/(2*(num_rbf-1)))
+
     return radii
 
 def calculate_r_matrix(distances, radii):
@@ -349,7 +388,16 @@ def calculate_r_matrix(distances, radii):
             we include a last column with ones, which is going to act as bias
     """
 
-    #TODO: Complete the code of the function
+    #Complete the code of the function
+    r_matrix = np.power(distances, 2)
+
+    for i in range(r_matrix.shape[1]):
+        r_matrix[:, i] /= (-2 * np.power(radii[i], 2))
+
+    r_matrix = np.exp(r_matrix)
+    ones = np.ones((r_matrix.shape[0], 1))
+    r_matrix = np.hstack((r_matrix, ones))
+
     return r_matrix
 
 def invert_matrix_regression(r_matrix, train_outputs):
@@ -373,10 +421,13 @@ def invert_matrix_regression(r_matrix, train_outputs):
             of the bias 
     """
 
-    #TODO: Complete the code of the function
+    #Complete the code of the function
+    pseudo_inverse = np.linalg.pinv(r_matrix)
+    coefficients = np.matmul(pseudo_inverse, train_outputs)
+
     return coefficients
 
-def logreg_classification(matriz_r, train_outputs, l2, eta):
+def logreg_classification(r_matrix, train_outputs, l2, eta):
     """ Performs logistic regression training for the classification case
         It trains a logistic regression object to perform classification based
         on the R matrix (activations of the RBFs together with the bias)
@@ -401,6 +452,13 @@ def logreg_classification(matriz_r, train_outputs, l2, eta):
     """
 
     #TODO: Complete the code of the function
+    if l2:
+        logreg = LogisticRegression(C=(1/eta), solver='liblinear')
+    else:
+        logreg = LogisticRegression(penalty='l1', C=(1/eta), solver='liblinear')
+    
+    logreg.fit(r_matrix, train_outputs.ravel())
+
     return logreg
 
 
